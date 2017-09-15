@@ -18,3 +18,11 @@ Information <https://github.com/LivingLogic/LivingApps.Python.LivingAPI/>`__
 
 For more info about LivingApps and this Javascript SDK, see
 https://my.living-apps.de/docs/JavascriptSDK.html (in german).
+
+
+Authors
+-------
+
+- René Schwarzinger {milleniumfrog} ``livingSDK.js`` and modifications in ``livingapi.js``
+
+- Walter Dörwald <walter@livinglogic.de> ``ul4.js`` and ``livingapi.js``
