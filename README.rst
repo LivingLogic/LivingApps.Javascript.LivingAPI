@@ -23,6 +23,6 @@ https://my.living-apps.de/docs/JavascriptSDK.html (in german).
 Authors
 -------
 
-- René Schwarzinger {milleniumfrog} ``livingSDK.js`` and modifications in ``livingapi.js``
+- René Schwarzinger (milleniumfrog) ``livingSDK.js`` and modifications in ``livingapi.js``
 
 - Walter Dörwald <walter@livinglogic.de> ``ul4.js`` and ``livingapi.js``
