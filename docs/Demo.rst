@@ -102,6 +102,8 @@ erstellen.
 
 1. Gehen Sie auf die `LivingApps Login Seite`__.
 
+__ https://my.living-apps.de/login.htm
+
 2. Melden Sie sich dort mit ihrem Nutzernamen und Passwort an.
 
 3. Klicken Sie auf den Button mit der Beschriftung
@@ -149,8 +151,6 @@ erstellen.
 
 Jetzt haben Sie eine LivingApp erstellt, die später über den Server
 angesteuert werden kann.
-
-__ https://my.living-apps.de/login.htm
 
 
 Server-Script
