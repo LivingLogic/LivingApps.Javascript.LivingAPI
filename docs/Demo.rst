@@ -116,7 +116,7 @@ __ https://my.living-apps.de/login.htm
    Falls dieser nun von ``name`` oder ``abwesend`` abweicht, funktioniert das
    Skript nicht und Sie müssten im Tutorial andere Namen verwenden.
 
-6. Erstellen Sie einen Absenden Button.
+6. Erstellen Sie einen Absenden-Button.
 
 7. Speichern Sie die App und benennen Sie die ``App``.
 
@@ -203,12 +203,12 @@ geholt.
             let counter = 0;
 
             for (let d of r) {
-               k[counter] = {};
+               k.push({});
 
                for (let ident of app.controls.keys()) {
                   k[counter][ident] = d.fields.get(ident).value;
                }
-               counter++;
+               ++counter;
             }
             resolve(k);
          })
@@ -216,9 +216,10 @@ geholt.
    }
 
 Mit ``lsdk.get()`` erhält die Funktion ``dataPromise`` Zugang zur LivingAPI. Von
-dort aus können die Globals und die Datesources ausgelesen werden. Die Funktion
+dort aus können die Globals und die Datasources ausgelesen werden. Die Funktion
 gibt am Ende ein Array aus, welches alle Datenbankeinträge, die verlangt waren
-ab. Hier im Beispiel ``[{name: ..., anwesend: false}, {name: ..., anwesend: true}]``.
+beinhaltet. Hier im Beispiel
+``[{name: ..., anwesend: false}, {name: ..., anwesend: true}]``.
 
 Dem Nutzer soll das Array von ``dataPromise`` gesendet werden, wenn der User mit
 dem Server sich verbindet und wenn sich etwas ändert. Um die Informationen beim
@@ -251,7 +252,7 @@ untenstehenden Code müssen Sie in den ``io.on()``-Block schreiben.
          let datasources = res.datasources;
          let app = datasources.get('basic').app;
          let r = app.records.values();
-         let recordToUpdate;
+         let recordToUpdate = null;
 
          for (let d of r) {
             if (d.fields.get('name').value === name) {
@@ -259,7 +260,7 @@ untenstehenden Code müssen Sie in den ``io.on()``-Block schreiben.
             }
          }
 
-         if (recordToUpdate === undefined) {
+         if (recordToUpdate === null) {
             return;
          } else {
             return recordToUpdate.update({anwesend: anwesenheit}).then ((res) => {
