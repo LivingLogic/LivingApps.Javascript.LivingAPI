@@ -316,6 +316,8 @@ indem Sie in den Ordner ``webseite`` gehen und den Befehl ``npm run dev``
 ausführen.
 
 .. figure:: result.png
+   :align: center
+   :figclass: align-center
 
    Screenshot der fertigen App
 
