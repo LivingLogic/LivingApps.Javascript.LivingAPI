@@ -139,8 +139,8 @@ erstellen. |cannot load image|
     klicken.
 
 15. Hier wählen Sie jetzt bei dem Punkt :guilabel:`App` Ihre Anwesenheitsapp aus
-   und fügen bei Identifizierer einen Namen hinzu. Im Beispiel ist der
-   Identifizierer ``basic``.
+    und fügen bei Identifizierer einen Namen hinzu. Im Beispiel ist der
+    Identifizierer ``basic``.
 
 16. Klicken Sie erneut auf :guilabel:`Speichern`.
 
