@@ -29,24 +29,24 @@ Kenntnisse in Javascript und Node.js. Denn LivingApps wird lediglich als Backend
 verwendet und der Rest muss von Ihnen programmiert werden. Natürlich benötigen
 Sie neben den Programmierkenntnissen auch einen LivingApps-Zugang und bereits
 ein paar Basiskenntnisse, wie z.B. wie erstelle ich eine App, wie gebe ich
-Daten ein unsw.
+Daten ein usw.
 
 
 Demo-App: Anwesenheit
 ---------------------
 
-In diesem Post werden wir eine Anwendung erstellen, in der die Mitarbeiter einer
-fiktiven Firma angeben können, ob Sie am Platz sind oder nicht. Die Kollegen
-sollen dann in einer Liste, die in Echtzeit aktualsiert wird, den Überblick
-haben, wer ist an seinem Platz und wer nicht. Zusätzlich soll man Alexa fragen
-können, ob Mitarbeiter xy an seinem Platz sitzt und über einen physikalischen
-Knopf soll der Mitarbeiter xy der App mitteilen, dass er am Arbeitsplatz sitzt.
+Wir werden eine Anwendung erstellen, in der die Mitarbeiter einer fiktiven Firma
+angeben können, ob Sie am Platz sind oder nicht. Die Kollegen sollen dann in
+einer Liste, die in Echtzeit aktualsiert wird, den Überblick haben, wer ist an
+seinem Platz und wer nicht. Zusätzlich soll man Alexa fragen können, ob
+Mitarbeiter xy an seinem Platz sitzt und über einen physikalischen Knopf soll
+der Mitarbeiter xy der App mitteilen, dass er am Arbeitsplatz sitzt.
 
 
 Webapp kommuniziert über Sockets
 --------------------------------
 
-Eine Webapp wie ein Chat oder eben die Oben genannte Anweseheitsapp soll immer
+Eine Webapp wie ein Chat oder eben die oben genannte Anwesenheitsapp soll immer
 dann den Datensatz laden, wenn ein neuer erstellt wurde oder sich ein
 existierender geändert hat. Ein Variante wäre es z.B. jede Sekunde von der
 Webapp eine Anfrage an den Server zu schicken und die Antwort jedes mal neu zu
@@ -54,10 +54,10 @@ rendern. Wäre es nicht eleganter, wenn nur neu geladen wird, wenn ein Datensatz
 sich verändert?
 
 
-Anwesenheit Server
+Anwesenheit-Server
 ------------------
 
-Um das Laden der Daten nur bei Veränderung eines Datensatzes zu ermöglichen
+Um das Laden der Daten nur bei Veränderung eines Datensatzes zu ermöglichen,
 benötigen wir einen Server, der über einen Websocket mit der Webapp kommuniziert
 und bei Bedarf vom LivingApps-Server herunterlädt und an alle Clients die neuen
 Datensätze verschickt. Für die Websockets wird in diesem Beispiel das Package
@@ -86,18 +86,19 @@ installiert werden. Führen Sie dafür folgende Befehle aus.
 .. sourcecode:: bash
 
    npm install --save express blueimp-md5 request socket.io
-
    git clone https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git
-
    cp -R LivingApps.Javascript.LivingAPI/src scripts
-
    rm -R LivingApps.Javascript.LivingAPI
-
    touch index.js
 
 Nun haben wir den Projektordner aufgesetzt für den Server. Bevor Sie
-aber Coden dürfen, müssen Sie eine App folgendermaßen bei LivingApps
-erstellen. |cannot load image|
+aber programmieren dürfen, müssen Sie eine App folgendermaßen bei LivingApps
+erstellen.
+
+.. figure:: pathing.gif
+   :figclass: align-center
+
+   Eingabeformular der fertigen App
 
 1. Gehen Sie auf die `LivingApps Login Seite`__.
 
@@ -314,9 +315,8 @@ indem Sie in den Ordner ``webseite`` gehen und den Befehl ``npm run dev``
 ausführen.
 
 .. figure:: result.png
-   :alt: cannot load image
 
-   cannot load image
+   Screenshot der fertigen App
 
 Am Ende sollte das Resultat des ersten Teils des Posts so aussehen wie
 auf dem Bild.
@@ -418,5 +418,3 @@ Ich wünsche viel Spaß mit dem Erweitern des Beispielprojekt und mit dem
 Javascript SDK.
 
 René Schwarzinger
-
-.. |cannot load image| image:: ./pathing.gif
