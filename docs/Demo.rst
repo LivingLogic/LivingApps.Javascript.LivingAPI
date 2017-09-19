@@ -102,7 +102,7 @@ erstellen.
 
 1. Gehen Sie auf die `LivingApps Login Seite`__.
 
-   __ https://my.living-apps.de/login.htm
+__ https://my.living-apps.de/login.htm
 
 2. Melden Sie sich dort mit ihrem Nutzernamen und Passwort an.
 
