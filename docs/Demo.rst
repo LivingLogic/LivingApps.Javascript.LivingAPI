@@ -363,7 +363,7 @@ Fügen Sie folgenden Code in ``index.js`` ein.
       anwesend: function () {
          var intentObj = this.event.request.intent;
          let hoo = this;
-         let lsdk= new livingSDK("https://my.living-apps.de", "your username", "your password");
+         let lsdk = new livingSDK("https://my.living-apps.de", "your username", "your password");
          let data = lsdk.get("your appid");
          return data.then((res) => {
             let globals = res.globals;
