@@ -200,15 +200,14 @@ geholt.
             let app = datasources.get('basic').app;
             let r = app.records.values();
             let k = [];
-            let counter = 0;
 
             for (let d of r) {
-               k.push({});
+               let v = {};
 
                for (let ident of app.controls.keys()) {
-                  k[counter][ident] = d.fields.get(ident).value;
+                  v[ident] = d.fields.get(ident).value;
                }
-               ++counter;
+               k.push(v);
             }
             resolve(k);
          })
@@ -375,6 +374,7 @@ Fügen Sie folgenden Code in ``index.js`` ein.
             for (let d of r) {
                if (d.fields.get('name').value.toLowerCase() === intentObj.slots.Name.value.toLowerCase() && d.fields.get('anwesend').value) {
                   Anwesenheit = true;
+                  break;
                }
             }
             hoo.emit(':tell', `Der Mitarbeiter ${intentObj.slots.Name.value} ist ${Anwesenheit ? '': ' nicht '} anwesend` );
