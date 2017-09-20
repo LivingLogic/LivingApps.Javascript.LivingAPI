@@ -202,7 +202,7 @@ module.exports =  class {
 
 					let globals = dump.get('globals');
 					let datasources = dump.get('viewtemplates').entries().next().value[1].get('datasources');
-					globals.LOGIN = lsdk;
+					globals.Login = lsdk;
 					if (response.statusCode !== 200) {
 						reject(new Error('HTTP Statuscode: ' + response.statusCode));
 					}
