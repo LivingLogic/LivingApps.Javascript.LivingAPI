@@ -2,7 +2,7 @@ let request = require('request');
 let ul4on = require('./modules/livingapi').ul4on;
 let livingAPI = require('./modules/livingapi');
 /**
- * @type {LivAppsclass}
+ * @class
  */
 module.exports =  class {
 	/**
@@ -11,7 +11,7 @@ module.exports =  class {
 	 * @param {String} [username=undefind]
 	 * @param {String} [password=undefined]
 	 */
-	constructor(url='https://my.living-apps.de/', username=undefined, password=undefined)
+	constructor(url='https://my.living-apps.de/', username, password)
 	{
 		/**@type {URL | String} */
 		this._url = url;
@@ -28,7 +28,7 @@ module.exports =  class {
 		this._password = password;
 
 		/**@type {Boolean} */
-		this._loginNeeded = this._userName && this._password ? true : false;
+		this._loginNeeded = (this._userName && this._password);
 
 		/**@type {Boolean} */
 		this._loggedIn = false;
@@ -57,7 +57,7 @@ module.exports =  class {
 					}
 				};
 
-				request(options, (error, response, body) => {
+				request(options, (error, response) => {
 					if (error) reject(error);
 
 					if (parentClass._loginNeeded && response.headers['set-cookie']){
@@ -90,15 +90,6 @@ module.exports =  class {
 	{
 		let date = new Date(dateInit);
 		return {type: 'laDate', value: date, asjson: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`};
-	}
-
-	/**
-	 * Use to Insert or Update a String Data in Livingapps
-	 * @param {String} string
-	 */
-	static String(string)
-	{
-		return {type: 'laString', value: string, asjson: string};
 	}
 
 	/**
@@ -140,7 +131,7 @@ module.exports =  class {
 		   let options = {
 				url: url + 'login.htm',
 				method: 'post'
-			}
+			};
 			request(options, (err, response, body) => {
 				if (err)
 					reject(err);
@@ -173,7 +164,7 @@ module.exports =  class {
 						headers: {
 							"accept": "application/la-ul4on"
 						}
-					}
+					};
 					request(options, (error, response, body) => {
 						if (error) reject(error);
 						// create object from response
@@ -211,6 +202,7 @@ module.exports =  class {
 
 					let globals = dump.get('globals');
 					let datasources = dump.get('viewtemplates').entries().next().value[1].get('datasources');
+					globals.LOGIN = lsdk;
 					if (response.statusCode !== 200) {
 						reject(new Error('HTTP Statuscode: ' + response.statusCode));
 					}
