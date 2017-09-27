@@ -355,7 +355,7 @@ la.DateControl = ul4._inherit(
 		 */
 		asjson: function asjson(value) {
 			if (value instanceof Date){
-				value = `${value.getFullYear()}-${value.getMonth()+1}-${value.getvalue()} ${value.getHours()}:${value.getMinutes()}:${value.getSeconds()}`;
+				value = `${value.getFullYear()}-${value.getMonth()+1}-${value.getDate()} ${value.getHours()}:${value.getMinutes()}:${value.getSeconds()}`;
 			}
 			return value;
 		},
