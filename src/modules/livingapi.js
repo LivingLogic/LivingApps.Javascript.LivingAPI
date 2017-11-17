@@ -1,13 +1,22 @@
-;(function(){
-
-let ul4 = require('./ul4').ul4;
-let ul4on = require('./ul4').ul4on;
-
-
-var la = {};
-
-module.exports = la;
-module.exports.ul4on = ul4on;
+;(function(root){
+    
+        let amd = (typeof define === 'function' && define.amd);
+        let commonjs = (typeof module === 'object' && module.exports);
+    
+        let la = {};
+    
+		let ul4, ul4on;
+		
+        if (commonjs) {
+            ul4 = require('./ul4').ul4;
+            ul4on = require('./ul4').ul4on;
+            module.exports = la;
+        } else {
+			console.log(root.ul4);
+            ul4 = root.ul4;
+            ul4on = root.ul4on;
+            root.livingapi = la;
+        }
 
 la.Base = ul4._inherit(
 	ul4.Proto,
@@ -355,7 +364,7 @@ la.DateControl = ul4._inherit(
 		 */
 		asjson: function asjson(value) {
 			if (value instanceof Date){
-				value = `${value.getFullYear()}-${value.getMonth()+1}-${value.getvalue()} ${value.getHours()}:${value.getMinutes()}:${value.getSeconds()}`;
+				value = `${value.getFullYear()}-${value.getMonth()+1}-${value.getDate()} ${value.getHours()}:${value.getMinutes()}:${value.getSeconds()}`;
 			}
 			return value;
 		},
@@ -844,4 +853,4 @@ for (var i = 0; i < classes.length; ++i)
 	ul4on.register("de.livingapps.appdd." + name.toLowerCase(), object);
 }
 
-})();
+})(this);

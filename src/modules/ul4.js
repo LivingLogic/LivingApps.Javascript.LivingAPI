@@ -3990,7 +3990,10 @@
 
 				pos = "offset " + this.location.pos.start + ":" + this.location.pos.stop + "; line " + lineno + "; col " + colno;
 
-				return templateprefix + ": " + pos + "\n" + text + "\n" + underline;
+                var message = templateprefix + ": " + pos + "\n" + text + "\n" + underline;
+                if (this.cause !== null)
+                    message += "\n\n" + this.cause.toString();
+                return message;
 			},
 
 			__getattr__: function __getattr__(attrname)
@@ -5235,7 +5238,9 @@
 				else if (container && typeof(container.__getitem__) === "function") // objects without ``_getitem__`` don't support item access
 					return container.__getitem__(key);
 				else if (ul4._ismap(container))
-					return container.get(key);
+                    return container.get(key);
+                else if (ul4._isobject(container))
+                    return container[key];
 				else
 					throw ul4.TypeError.create("[]", ul4._type(container) + " object is not subscriptable");
 			},
@@ -5287,7 +5292,7 @@
 					container.__setitem__(key, value);
 				else if (ul4._ismap(container))
 					container.set(key, value);
-				else if (Object.prototype.toString.call(container) === "[object Object]")
+                else if (ul4._isobject(container))
 					container[key] = value;
 				else
 					throw ul4.NotSubscriptableError.create(container);
