@@ -31,11 +31,10 @@
 
 
 ;(function(undefined){
-
 	var root = this, ul4 = {}, ul4on = {};
 
-	var isamd = typeof define === 'function' && define.amd;
-	var iscommon = typeof module === 'object' && module.exports;
+	var isamd = typeof(define) === "function" && define.amd;
+	var iscommon = typeof(module) === "object" && module.exports;
 
 	if (isamd)
 	{
@@ -60,7 +59,7 @@
 		root.ul4on = ul4on;
 	}
 
-	ul4.version = "42";
+	ul4.version = "43";
 
 	//
 	// UL4ON
@@ -3990,10 +3989,10 @@
 
 				pos = "offset " + this.location.pos.start + ":" + this.location.pos.stop + "; line " + lineno + "; col " + colno;
 
-                var message = templateprefix + ": " + pos + "\n" + text + "\n" + underline;
-                if (this.cause !== null)
-                    message += "\n\n" + this.cause.toString();
-                return message;
+				var message = templateprefix + ": " + pos + "\n" + text + "\n" + underline;
+				if (this.cause !== null)
+					message += "\n\n" + this.cause.toString();
+				return message;
 			},
 
 			__getattr__: function __getattr__(attrname)
@@ -5238,9 +5237,9 @@
 				else if (container && typeof(container.__getitem__) === "function") // objects without ``_getitem__`` don't support item access
 					return container.__getitem__(key);
 				else if (ul4._ismap(container))
-                    return container.get(key);
-                else if (ul4._isobject(container))
-                    return container[key];
+					return container.get(key);
+				else if (ul4._isobject(container))
+					return container[key];
 				else
 					throw ul4.TypeError.create("[]", ul4._type(container) + " object is not subscriptable");
 			},
@@ -5292,7 +5291,7 @@
 					container.__setitem__(key, value);
 				else if (ul4._ismap(container))
 					container.set(key, value);
-                else if (ul4._isobject(container))
+				else if (ul4._isobject(container))
 					container[key] = value;
 				else
 					throw ul4.NotSubscriptableError.create(container);
@@ -7904,18 +7903,40 @@
 
 	ul4._startswith = function _startswith(string, prefix)
 	{
-		if (typeof(prefix) !== "string")
+		if (typeof(prefix) === "string")
+			return string.substr(0, prefix.length) === prefix;
+		else if (ul4._islist(prefix))
+		{
+			for (let i = 0; i < prefix.length; ++i)
+			{
+				let singlepre = prefix[i];
+				if (string.substr(0, singlepre.length) === singlepre)
+					return true;
+			}
+			return false;
+		}
+		else
 			throw ul4.TypeError.create("startswith()", "startswith() argument must be string");
 
-		return string.substr(0, prefix.length) === prefix;
 	};
 
 	ul4._endswith = function _endswith(string, suffix)
 	{
-		if (typeof(suffix) !== "string")
-			throw ul4.TypeError.create("endswith()", "endswith() argument must be string");
+		if (typeof(suffix) === "string")
+			return string.substr(string.length-suffix.length) === suffix;
+		else if (ul4._islist(suffix))
+		{
+			for (let i = 0; i < suffix.length; ++i)
+			{
+				let singlesuf = suffix[i];
+				if (string.substr(string.length-singlesuf.length) === singlesuf)
+					return true;
+			}
+			return false;
+		}
+		else
+			throw ul4.TypeError.create("endswith()", "endswith() argument must be string or list of strings");
 
-		return string.substr(string.length-suffix.length) === suffix;
 	};
 
 	ul4._isoformat = function _isoformat(obj)
@@ -9046,5 +9067,5 @@
 		ul4on.register("de.livinglogic.ul4." + ul4onname, object);
 	}
 
-	})();
+})();
 

@@ -12,7 +12,6 @@
             ul4on = require('./ul4').ul4on;
             module.exports = la;
         } else {
-			console.log(root.ul4);
             ul4 = root.ul4;
             ul4on = root.ul4on;
             root.livingapi = la;
@@ -71,8 +70,8 @@ la.App = ul4._inherit(
 			return this.globals.Login._insert(this, values);
 		},
 
-		_ul4onattrs: ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views"],
-
+		_ul4onattrs: ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagment_identifier"],
+		
 		__repr__: function repr()
 		{
 			return "<la.App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
