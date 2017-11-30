@@ -1,21 +1,21 @@
 ;(function(root){
 
-        let amd = (typeof define === 'function' && define.amd);
-        let commonjs = (typeof module === 'object' && module.exports);
+	let amd = (typeof define === 'function' && define.amd);
+	let commonjs = (typeof module === 'object' && module.exports);
 
-        let la = {};
+	let la = {};
 
-		let ul4, ul4on;
+	let ul4, ul4on;
 
-        if (commonjs) {
-            ul4 = require('./ul4').ul4;
-            ul4on = require('./ul4').ul4on;
-            module.exports = la;
-        } else {
-            ul4 = root.ul4;
-            ul4on = root.ul4on;
-            root.livingapi = la;
-        }
+	if (commonjs) {
+		ul4 = require('./ul4').ul4;
+		ul4on = require('./ul4').ul4on;
+		module.exports = la;
+	} else {
+		ul4 = root.ul4;
+		ul4on = root.ul4on;
+		root.livingapi = la;
+	}
 
 la.Base = ul4._inherit(
 	ul4.Proto,
