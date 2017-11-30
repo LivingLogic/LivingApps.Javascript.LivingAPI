@@ -434,16 +434,8 @@ la.LookupControl = ul4._inherit(
 	la.Control,
 	{
 		type: "lookup",
-		_ul4onattrs: la.Control._ul4onattrs.concat(["lookupdata", "lookupapp", "lookupcontrols"]),
 
-		asjson: function asjson(value) {
-			if(la.LookupItem.isprotoof(value)){
-				return value.key;
-			} else if (la.Record.isprotoof(value)) {
-				return value.id;
-			}
-			return value;
-		},
+		_ul4onattrs: la.Control._ul4onattrs.concat(["lookupdata"]),
 
 		// ``search.value`` must be ``null`` or a ``LookupItem`` key
 		// if this control is an applookup ``search.value`` must be an object containing the search criteria for the referenced record
@@ -496,26 +488,51 @@ la.LookupChoiceControl = ul4._inherit(
 	}
 );
 
+la.AppLookupControl = ul4._inherit(
+	la.Control,
+	{
+		type: "applookup",
+		_ul4onattrs: la.Control._ul4onattrs.concat(["lookupapp", "lookupcontrols"]),
+
+		// ``search.value`` must be an object containing the search criteria for the referenced record
+		search: function search(value, search)
+		{
+			if (value === null || search.value === null)
+				return value === search.value;
+			else
+				return value.search(search);
+		}
+	}
+);
+
+la.AppLookupSelectControl = ul4._inherit(
+	la.AppLookupControl,
+	{
+		subtype: "select",
+		__type__: "AppLookupSelectControl"
+	}
+);
+
+la.AppLookupRadioControl = ul4._inherit(
+	la.AppLookupControl,
+	{
+		subtype: "radio",
+		__type__: "AppLookupRadioControl"
+	}
+);
+
+la.AppLookupChoiceControl = ul4._inherit(
+	la.AppLookupControl,
+	{
+		subtype: "choice",
+		__type__: "AppLookupChoiceControl"
+	}
+);
+
 la.MultipleLookupControl = ul4._inherit(
 	la.LookupControl,
 	{
 		type: "multiplelookup",
-
-		asjson: function asjson(value)
-		{
-			if(la.LookupItem.isprotoof(value))
-				return value.key;
-			else if (la.Record.isprotoof(value))
-				return value.id;
-			else if (Object.prototype.toString.call(value) === "[object Array]")
-			{
-				let newValue = [];
-				for (let item of value)
-					newValue.push(this.asjson(item));
-				return newValue;
-			}
-			return value;
-		},
 
 		// search.value must be ``null`` or a ``LookupItem`` key
 		// if this control is an applookup ``search.value`` must be an object containing the search criteria for the referenced record
@@ -566,6 +583,50 @@ la.MultipleLookupCheckboxControl = ul4._inherit(
 	{
 		subtype: "checkbox",
 		__type__: "MultipleLookupCheckboxControl"
+	}
+);
+
+la.MultipleAppLookupControl = ul4._inherit(
+	la.AppLookupControl,
+	{
+		type: "multipleapplookup",
+
+		// ``search.value`` must be an object containing the search criteria for the referenced record
+		search: function search(value, search)
+		{
+			if (search.operator === "equals")
+			{
+				if (search.value === null)
+					return value.length === 0;
+				else
+				{
+					for (var i = 0; i < value.length; ++i)
+					{
+						if (value[i].search(search.value))
+							return true;
+					}
+					return false;
+				}
+			}
+			else
+				return false;
+		}
+	}
+);
+
+la.MultipleAppLookupSelectControl = ul4._inherit(
+	la.MultipleAppLookupControl,
+	{
+		subtype: "select",
+		__type__: "MultipleAppLookupSelectControl"
+	}
+);
+
+la.MultipleAppLookupCheckboxControl = ul4._inherit(
+	la.MultipleAppLookupControl,
+	{
+		subtype: "checkbox",
+		__type__: "MultipleAppLookupCheckboxControl"
 	}
 );
 
