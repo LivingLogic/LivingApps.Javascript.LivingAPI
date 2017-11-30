@@ -1,13 +1,21 @@
-;(function(){
-
-let ul4 = require('./ul4').ul4;
-let ul4on = require('./ul4').ul4on;
-
-
-var la = {};
-
-module.exports = la;
-module.exports.ul4on = ul4on;
+;(function(root){
+    
+        let amd = (typeof define === 'function' && define.amd);
+        let commonjs = (typeof module === 'object' && module.exports);
+    
+        let la = {};
+    
+		let ul4, ul4on;
+		
+        if (commonjs) {
+            ul4 = require('./ul4').ul4;
+            ul4on = require('./ul4').ul4on;
+            module.exports = la;
+        } else {
+            ul4 = root.ul4;
+            ul4on = root.ul4on;
+            root.livingapi = la;
+        }
 
 la.Base = ul4._inherit(
 	ul4.Proto,
@@ -62,8 +70,8 @@ la.App = ul4._inherit(
 			return this.globals.Login._insert(this, values);
 		},
 
-		_ul4onattrs: ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views"],
-
+		_ul4onattrs: ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagment_identifier"],
+		
 		__repr__: function repr()
 		{
 			return "<la.App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
@@ -844,4 +852,4 @@ for (var i = 0; i < classes.length; ++i)
 	ul4on.register("de.livingapps.appdd." + name.toLowerCase(), object);
 }
 
-})();
+})(this);
