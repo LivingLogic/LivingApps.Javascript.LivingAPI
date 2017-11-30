@@ -109,7 +109,7 @@
                                     let dump = ul4on.loads(body);
                                     dump.get('globals').Login = this;
                                     dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
-    
+
                                     resolve(dump);
                                     break;
                                 case 403:
@@ -177,7 +177,7 @@
                             },
                             method: 'post'
                         };
-    
+
                         request(options, (error, response, body) => {
                             //console.log(response);
                             if (error) reject(error);
@@ -221,7 +221,7 @@
                                 }
                             }
                         });
-                    } 
+                    }
                 })
             });
         }
@@ -320,7 +320,7 @@
                         })
                     } else {
                         $.ajax(`${this._options.url}gateway/v1/appdd/${app.id}/${recordId}.json`, {
-                            method: 'delete', 
+                            method: 'delete',
                             headers: {
                                 'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
                             },
