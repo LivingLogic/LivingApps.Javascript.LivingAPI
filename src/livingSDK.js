@@ -254,10 +254,20 @@
 								chunks.push(chunk);
 							});
 
-							res.on("end",  () => {
-								console.log(req.statusCode())
-									let body = Buffer.concat(chunks);
-									console.log(body);
+							res.on("end", () => {
+								let body = Buffer.concat(chunks).toString();
+								let returnObj = {
+									HTTPstatusCode: res.statusCode,
+									recordid: JSON.parse(body).id,
+									Record: livingApi.Record.create({
+										id: JSON.parse(body).id,
+										createdat: new Date(Date.now()),
+										updatedat: null,
+										updatedby: null,
+										updatecount: 0
+									})
+								};
+								resolve(returnObj);
 							});
 						});
 						req.write(JSON.stringify({"appdd": data}));
