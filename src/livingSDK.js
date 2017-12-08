@@ -405,24 +405,47 @@
 					let app = record.app;
 					let recordId = record.id;
 					if (commonjs) {
+						// let options = {
+						// 	headers: {
+						// 		'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
+						// 	},
+						// 	url: `${this._options.url}gateway/v1/appdd/${app.id}/${recordId}.json`,
+						// 	method: 'delete'
+						// };
+						// request(options, (error, response, reject) => {
+						// 	if (error)
+						// 		reject(error);
+						// 	switch (response.statusCode) {
+						// 		case 200:
+						// 			resolve (response.statusCode);
+						// 			break;
+						// 		default:
+						// 			reject ('an unexpexted error happend');
+						// 	}
+						// })
 						let options = {
-							headers: {
+							"ecdhCurve": 'auto',
+							"method": "DELETE",
+							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+							"port": 443,
+							"path": `/gateway/v1/appdd/${app.id}/${recordId}.json`,
+							"headers": {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
-							},
-							url: `${this._options.url}gateway/v1/appdd/${app.id}/${recordId}.json`,
-							method: 'delete'
-						};
-						request(options, (error, response, reject) => {
-							if (error)
-								reject(error);
-							switch (response.statusCode) {
-								case 200:
-									resolve (response.statusCode);
-									break;
-								default:
-									reject ('an unexpexted error happend');
 							}
-						})
+						};
+						let req = http.request(options, (res) => {
+							let chunks = [];
+							res.on("data",  (chunk) => {
+								chunks.push(chunk);
+							});
+
+							res.on("end", () => {
+								if (res.statusCode  === 200)
+									resolve(200);
+							});
+						});
+						req.end();
+
 					} else {
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}/${recordId}.json`, {
 							method: 'delete',
