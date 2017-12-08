@@ -29,7 +29,7 @@ describe ('login', () => {
             });
         })
     });
-    it ('update last entry', () => {
+    it ('update first entry', () => {
         let lsdk = new livingSDK({}, config.username, config.password);
         return lsdk.get(config.appId).then((LAAPI) => {
             let app = LAAPI.get('datasources').get('default').app;
@@ -37,9 +37,10 @@ describe ('login', () => {
             let last;
             for (let d of records) {
                 last = d;
+                break;
             }
             return last.update({
-                mitarbeiter: 'itsMe',
+                mitarbeiter: 'Time: ' + Date.now(),
                 interessensgebiete: ['kaffee']
             })
         })

@@ -315,34 +315,65 @@
 					data.id = app.id;
 					data.data = [{"id": record.id, "fields": fields}];
 					if (commonjs) {
+						// let options = {
+						// 	url: `${this._options.url}gateway/v1/appdd/${app.id}.json`,
+						// 	form: {"appdd": JSON.stringify(data)},
+						// 	headers: {
+						// 		'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
+						// 	},
+						// 	method: 'post'
+						// };
+						// request(options, (error, response, body) => {
+						// 	//console.log("hello");
+						// 	if (error) {
+						// 		reject(error);
+						// 	}
+						// 	switch (response.statusCode) {
+						// 		case 200:
+						// 			for (let ident in values)
+						// 				record.fields.get(ident).value = values[ident];
+						// 			let returnObj = {
+						// 				HTTPstatusCode: response.statusCode,
+						// 				recordid: JSON.parse(body).id,
+						// 				Record: record
+						// 			};
+						// 			resolve(returnObj);
+						// 			break;
+						// 		default:
+						// 			reject(`an unexpexted error happend, Statuscode ${response.statusCode}`);
+						// 	}
+						// });
 						let options = {
-							url: `${this._options.url}gateway/v1/appdd/${app.id}.json`,
-							form: {"appdd": JSON.stringify(data)},
-							headers: {
+							"ecdhCurve": 'auto',
+							"method": "POST",
+							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+							"port": 443,
+							"path": `/gateway/v1/appdd/${app.id}.json`,
+							"headers": {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
-							},
-							method: 'post'
+							}
 						};
-						request(options, (error, response, body) => {
-							//console.log("hello");
-							if (error) {
-								reject(error);
-							}
-							switch (response.statusCode) {
-								case 200:
-									for (let ident in values)
-										record.fields.get(ident).value = values[ident];
-									let returnObj = {
-										HTTPstatusCode: response.statusCode,
-										recordid: JSON.parse(body).id,
-										Record: record
-									};
-									resolve(returnObj);
-									break;
-								default:
-									reject(`an unexpexted error happend, Statuscode ${response.statusCode}`);
-							}
+						let req = http.request(options, (res) => {
+							let chunks = [];
+							res.on("data",  (chunk) => {
+								chunks.push(chunk);
+							});
+
+							res.on("end", () => {
+								let body = Buffer.concat(chunks).toString();
+								for (let ident in values)
+									record.fields.get(ident).value = values[ident];
+								let returnObj = {
+									HTTPstatusCode: res.statusCode,
+									recordid: JSON.parse(body).id,
+									Record: record
+								};
+								resolve(returnObj);
+							});
 						});
+						req.write(JSON.stringify({"appdd": data}));
+						req.end();
+
 					} else {
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
 							data: {"appdd": JSON.stringify(data)},
