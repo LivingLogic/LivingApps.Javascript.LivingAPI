@@ -60,13 +60,13 @@
 							"content-type": "application/json"
 					  	}
 					};
-					let req = http.request(options, function (res) {
+					let req = http.request(options,  (res) => {
 						let chunks = [];;
-					  	res.on("data", function (chunk) {
+					  	res.on("data", (chunk) => {
 							chunks.push(chunk);
 						});
 					
-					  	res.on("end", function () {
+					  	res.on("end", () => {
 							let body = Buffer.concat(chunks);
 							resolve(JSON.parse(body.toString()).auth_token);
 					  	});
@@ -209,35 +209,59 @@
 					data.id = app.id;
 					data.data = [{"fields": fields}];
 					if (commonjs) {
-						let options = {
-							url: `${this._options.url}gateway/v1/appdd/${app.id}.json`,
-							form: {"appdd": JSON.stringify(data)},
-							headers: {
-								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
-							},
-							method: 'post'
-						};
+						// let options = {
+						// 	url: `${this._options.url}gateway/v1/appdd/${app.id}.json`,
+						// 	form: {"appdd": JSON.stringify(data)},
+						// 	headers: {
+						// 		'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
+						// 	},
+						// 	method: 'post'
+						// };
 
-						request(options, (error, response, body) => {
-							//console.log(response);
-							if (error) reject(error);
-							//console.log(response.statusCode);
-							if (response.statusCode !== 200) {
-								reject('HTTP Code ' + response.statusCode);
+						// request(options, (error, response, body) => {
+						// 	//console.log(response);
+						// 	if (error) reject(error);
+						// 	//console.log(response.statusCode);
+						// 	if (response.statusCode !== 200) {
+						// 		reject('HTTP Code ' + response.statusCode);
+						// 	}
+						// 	let returnObj = {
+						// 		HTTPstatusCode: response.statusCode,
+						// 		recordid: JSON.parse(body).id,
+						// 		Record: livingApi.Record.create({
+						// 			id: JSON.parse(body).id,
+						// 			createdat: new Date(Date.now()),
+						// 			updatedat: null,
+						// 			updatedby: null,
+						// 			updatecount: 0
+						// 		})
+						// 	};
+						// 	resolve(returnObj);
+						// })
+						let options = {
+							"ecdhCurve": 'auto',
+							"method": "POST",
+							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+							"port": 443,
+							"path": `/gateway/v1/appdd/${app.id}.json`,
+							"headers": {
+								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
-							let returnObj = {
-								HTTPstatusCode: response.statusCode,
-								recordid: JSON.parse(body).id,
-								Record: livingApi.Record.create({
-									id: JSON.parse(body).id,
-									createdat: new Date(Date.now()),
-									updatedat: null,
-									updatedby: null,
-									updatecount: 0
-								})
-							};
-							resolve(returnObj);
-						})
+						};
+						let req = http.request(options, (res) => {
+							let chunks = [];
+							res.on("data",  (chunk) => {
+								chunks.push(chunk);
+							});
+
+							res.on("end",  () => {
+								console.log(req.statusCode())
+									let body = Buffer.concat(chunks);
+									console.log(body);
+							});
+						});
+						req.write(JSON.stringify({"appdd": data}));
+						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
 							method: 'post',
