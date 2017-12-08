@@ -1,8 +1,11 @@
-let livingSDK = this.livingSDK;
-let config = this.config;
+let livingSDK;
+let config;
 if (typeof module === 'object' && module.exports){
     livingSDK = require('../src/livingSDK');
     config = require('./config');
+} else {
+    config = this.config;
+    livingSDK = this.livingSDK;
 }
 describe ('login', () => {
     it ('login', () => {
