@@ -104,7 +104,7 @@ Dateien wichtig:
 - app Ordner
 - pages Ordner
 - assets Ordner
-- provider Ordner (dieser Ordner sollte noch
+- providers Ordner (dieser Ordner sollte noch
 nicht existieren, falls er schon existiert,
 desto besser)
 - index.html
@@ -150,4 +150,121 @@ Binden Sie nun die einzelnen Dateien im index.html ein.
   ionic g provider la
   ```
  Der erzeugte Provider heißt la und nun sollte bei ihnen der Ordner provider im src-Ordner erstellt worden sein.
- 
+
+### Schritt 6.
+Betrachten Sie den soeben erzeugten Provider, die Datei liegt unter "src/providers/la/la.ts".
+Löschen Sie aus dem Konstruktor den automatisch erzeugten Parameter und die erste Zeile, 
+die HttpClient einbindet, da dieser nicht benötigt wird.
+Erzeugen Sie die Instanzvariable window folgendermaßen:
+```Javascript
+private window: any;
+constructor() {
+	this.window = window;
+}
+```
+Nun können Sie mit this.window.livingSDK auf das SDK zugreifen. Würden Sie versuchen über window.livingSDK auf das SDK zuzugreifen wird der Typescriptcompiler "meckern", da livingSDK
+keine Eigenschaft von Window (dem Interface) ist.
+
+## Kurzes Revue:
+Die Schritte 1-6 sind Schritte die Sie absolvieren müssen, bevor Sie mit der eigentlichen Oberfläche
+und Logik (in Verbindung mit LivingApps) beginnen. 
+- Sie haben eine App angelegt
+- Sie haben eine LivingApp angelegt
+- Sie haben das livingSDK in index.html eingebunden
+- Sie haben einen Provider angelegt
+- Sie beobachen alle Veränderungen an ihrem Script im Browser dank ihres gestartet Webservers (Schritt 1)
+
+### Schritt 7.
+Lassen Sie uns nun mit der Verbindung zwischen LivingApps und ihrer App beginnen. Betrachten
+Sie hierzu zuerst diesen Codeschnipsel und fügen ihn in ihrer Klasse LaProvider ein.
+```Javascript
+addCoffee (input) {
+    return new Promise((resolve, reject) => {
+      let lsdk = new this.window.livingSDK({},this.window.username, this.window.password);
+      lsdk.get("appid of your Livingapp").then((LAAPI) => {
+        let app = LAAPI.get('datasources').get('coffee').app;
+        app.insert(input).then((res) => {
+          console.log(res);
+          resolve(res);
+        })
+      })
+    });
+  }
+```
+Diese Funktion soll die Variable input an Livingapps schicken und dort abspeichern.
+Vielleicht ist ihnen schon aufgefallen, das die Funktion asynchon ist, Sie liefert also ein Promise zurück. Es wird eine Instanz (lsdk) des SDKs erzeugt, welches Sie automatisch mit den übergebenen Daten
+einloggt. Falls Sie die falschen Daten angegeben haben müssen Sie das Programm abbrechen.
+Sie können nun die Daten einer App vom LivingApps-Server abfragen indem Sie lsdk.get("ihre App Id") 
+aufrufen. Da diese Funktion ebenfalls Asynchron ist, erhalten Sie ein Promise, welches, falls die
+Anfrage erfolgreich war, das die Map LAAPI enthält. Von dieser können Sie die "datasources", die sie
+vor Schritt 1 angelegt haben abrufen. Diese "datasources" enthalten die Eigenschaft "app", welches wiederum die Funktion "insert" hat, welcher Sie die ihre Daten, die Sie in ihrer LivingApp speichern
+wollen, übergeben. "insert" liefert einen Eintrag zurück.
+Sie können diesen im nachhinein auf seine Korrektheit überprüfen.
+
+Hier ist noch ein Codebeispiel, falls Sie Daten abfragen möchten, anstatt Sie wie oben hinzuzufügen.
+
+```Javascript
+
+  listWorkers () {
+    return new Promise ((resolve, reject) => {
+      let workers = [];
+      let lsdk = new this.window.livingSDK({}, this.window.username, this.window.password);
+      lsdk.get('ihr App Id').then((LAAPI) => {
+        let datasources = LAAPI.get('datasources');
+        let app = datasources.get('default').app;
+        let records = app.records;
+        for (let record of Array.from(records)) {
+          let workerMetaData = {
+            name: record[1].fields.get('mitarbeiter').value,
+            interests: record[1].fields.get('interessensgebiete').value,
+            picture: record[1].fields.get('picture').value
+          };
+          workers.push(workerMetaData);
+        }
+        resolve(workers);
+      })
+    });
+  }
+  ```
+
+Und schon haben Sie ihre gewünschte Verbindung zwischen LivingApps und ihrer App hergestellt,
+ab jetzt folgt nur noch UI.
+
+### Schritt 8.
+Öffnen Sie nun home.html und löschen den Inhalt des Tags "ion-content". Ändern Sie den Inhalt
+des Tags "ion-title" zu "mein Kaffee" oder einem anderen Titel.
+Sie haben dadurch einen leeren Contenbereich, dem Sie nun folgendes Element hinzufügen können.
+```html
+<ion-list>
+	...
+</ion-list>
+```
+Sie haben eine Liste erstellt, in der der erste Eintrag (Tag: "ion-item") die Auswahlbox für die Kaffeesorte sein soll.
+```html
+<ion-label>Kaffeesorte:</ion-label>
+    <ion-select value="Mocha" (input)="coffee = $event.target.value">
+    <ion-option value="Mocha">Mocha</ion-option>
+</ion-select>
+```
+Das zweite Element der Liste ist ein Zähler, wieviele Kaffees heute getrunken wurden.
+Fügen Sie folgenden Code in ein zweites ion-item.
+```html
+<ion-grid>
+    <ion-row>
+        <ion-col col-4><button ion-button full (click)="changeNumber(-1)"><ion-icon 	name="remove"></ion-icon></button></ion-col>
+        <ion-col col-4><button style="width:100%" ion-button outline>{{number}}</button></ion-col>
+        <ion-col col-4><button ion-button full (click)="changeNumber(1)"><ion-icon name="add"></ion-icon></button></ion-col>
+    </ion-row>
+</ion-grid>
+```
+Als drittes Element fügen Sie ein Eingabefeld zur Eingabe des Konsumenten hinzu.
+```html
+<ion-label floating>Konsument</ion-label>
+	<ion-input type="text" value="{{consumer}}" (input)="consumer = $event.target.value">
+</ion-input>
+```
+
+Zuguter letzt benötigen Sie noch einen Absendebutton.
+```html
+<button ion-button full (click)="add()"><ion-icon name="add"></ion-icon></button>
+```

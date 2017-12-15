@@ -1,17 +1,23 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-/*
-  Generated class for the LaProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
 @Injectable()
 export class LaProvider {
+  private window: any;
+  constructor() {
+    this.window = window;
+  }
 
-  constructor(public http: HttpClient) {
-    console.log('Hello LaProvider Provider');
+  addCoffee (input) {
+    return new Promise((resolve, reject) => {
+      let lsdk = new this.window.livingSDK({},this.window.username, this.window.password);
+      lsdk.get("appid of your Livingapp").then((LAAPI) => {
+        let app = LAAPI.get('datasources').get('coffee').app;
+        app.insert(input).then((res) => {
+          console.log(res);
+          resolve(res);
+        })
+      })
+    });
   }
 
 }
