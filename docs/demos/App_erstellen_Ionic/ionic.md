@@ -268,3 +268,95 @@ Zuguter letzt benötigen Sie noch einen Absendebutton.
 ```html
 <button ion-button full (click)="add()"><ion-icon name="add"></ion-icon></button>
 ```
+
+![Bild kann nicht geladen werden](./src/assets/Screenshot_20171215_120146.png)
+
+Ihre App solte nun so aussehen wie auf dem Bild.
+Allerdings fehlt noch ein Zähler und wenn Sie bestimmte
+Elemente anklicken erscheint eine Fehlermeldung. 
+Das liegt daran, dass diese Oberfläche mit ein paar Logiken
+verbunden ist, die Sie noch nicht erstellt haben, was Sie 
+aber im nächsten Schritt nachholen.
+
+### Schritt 9.
+Die Auswahl des Kaffees beinhaltet folgenden Code, der bei einer
+Veränderung des Wertes der Selectbox aufgerufen wird.
+```Javascript
+(input)="coffee = $event.target.value"
+```
+Der Code weist den Wert, den Ihre Option besitzt der Instanzvariablen
+coffee zu. Aber moment mal, Sie haben doch noch keine Instanzvariable
+coffee erzeugt. Genau das holen Sie jetzt nach, öffnen Sie dazu die 
+Datei home.ts und fügen Sie der Klasse HomePage die Variable coffee hinzu.
+```Javascript
+private coffee: any = "Mocha"; // schonmal vorinitialisiert;
+```
+Damit ist jetzt der erste Teil vollständig nutzbar.
+Für den zweiten Teil benötigen Sie ebenfalls eine solche Variable: 
+```Javascript
+private number: number = 1;
+```
+und schon erscheint die 1 im zweiten Button der Reihe.
+Mit den Plus- und Minusbutton können Sie die Zahl noch nicht verändern.
+Legen Sie dazu eine Funktion, die number verändert und begrenzt. Bspw so:
+```Javascript
+changeNumber (diffrence: number) {
+	if ((this.number <= 1 && diffrence < 0) || (this.number >= 5 && 	diffrence > 0)) {
+      return;
+    }
+    this.number += diffrence;
+  }
+```
+Sie können nun die die Anzahl getrunkener Kaffee am Tag auch verändern.
+Jetzt müssen Sie noch den Namen des Konsumenten abfragen, fügen Sie dazu
+wieder eine Variable ein:
+```Javascript
+  private consumer: any = "Der Herr des Kaffees";
+```
+Es folgt hier wieder dem Schema der Eingabe des Kaffees, die Wertzuweisung
+an die Instanzvariable erfolgt im HTML
+```Javascript
+(input)="consumer = $event.target.value"
+```
+Nun können Sie mit der App Daten vom User abfragen, aber noch nicht
+abschicken, da wenn Sie den Abschickenbutton klicken, dann rufen 
+Sie die nicht existente Funktion add() auf.
+Für add() benötigen Sie aber noch zugriff auf ihren vorhin erstellten
+Provider, den Sie mit 
+```Javascript
+import { LaProvider }from '../../providers/la/la';
+```
+in home.ts einbinden und durch Anpassen ihres Konstruktors, instanziieren.
+```Javascript
+constructor(public navCtrl: NavController, private laProv: LaProvider) {
+```
+(Achtung !!! Besonderheit von TypeScript, in Javascript verwenden Sie weiterhin
+new -- Ionic nutzt TS)
+
+Anschließen können Sie mit der Funktion add() beginnen.
+Die Funktion gibt im Codebeispiel zur Kontrolle auf der Konsole 
+die zu übermittelnden Daten aus und ruft dann den Provider auf.
+```Javascript
+  add(){
+    console.log("add entry" + JSON.stringify({
+      kaffeesorte: 	this.coffee,
+      runde: this.number,
+      mitarbeiter: this.consumer
+    }));
+    this.laProv.addCoffee({
+      kaffeesorte: 	this.coffee,
+      runde: this.number.toString(),
+      mitarbeiter: this.consumer
+    }).then((res)=>{
+      alert("erfolgreich einen Datensatz hinzugefügt");
+    });
+  }
+```
+
+### FIN
+
+Damit haben Sie nun ihre App erstellt und können Sie für die Produktion
+noch etwas anpassen und dann ausliefern.
+
+Wir hoffen Sie hatten Spaß.
+Für Fragen und Verbesserungen stehen Wir gerne für Sie zur Verfügung.
