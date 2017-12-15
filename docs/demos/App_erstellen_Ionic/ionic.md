@@ -14,7 +14,6 @@ und Ionic.
 ## Todo-Liste
 - eine Living-App
 - ein Formular zur Eingabe des Kaffeekonsums
-- Schnellzugriffsliste auf Namen
 
 ## eine Living-App erstellen
 Zuallererst benötigen Sie ein Living-Apps Konto mit erweiterten Rechten,
