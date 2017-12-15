@@ -87,3 +87,67 @@ ionic serve
 ``` 
 Dieser Befehl started einen Webserver, der alle gespeicherten Veränderungen 
 live nachlädt.
+
+### Schritt 2.
+öffnen Sie den Editor ihrer Wahl, in dem Beitrag wird Visual Studio Code verwendet.
+```bash
+code .
+```
+Sie sehen nun eine Menge von Ordner und Dateien, für den Beitrag wichtig 
+ist nur der "src"-Ordner. In diesem Bearbeiten Sie die Seiten, die später
+der App angezeigt werden sollen, während der "www"-Ordner nur den fertig
+kompilierten Code beinhaltet. Verändern Sie deshalb nie den Inhalt des
+"www"-Ordners, weil Ihre Änderungen nach dem nächstem "build"-Vorgang 
+überschrieben werden.
+Im "src"-Ordner sind folgenden Ordner und 
+Dateien wichtig:
+- app Ordner
+- pages Ordner
+- assets Ordner
+- provider Ordner (dieser Ordner sollte noch
+nicht existieren, falls er schon existiert,
+desto besser)
+- index.html
+
+### Schritt 3.
+klonen Sie sich das aktuelle offizielle Javascript Livingapi Repository in den "assets"-Ordner
+```bash
+git clone https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git
+```
+Kopieren Sie die Dateien aus dem "src" Folder
+des soeben geklonten Repositories und fügen 
+Sie in dem assets Ordner ein. Löschen Sie anschließend den Ordner des geklonten
+Repositories, da Sie sonst in ihrem Projekt
+Dateien wie den Unittest und diese Dokumentation
+in ihrem Projekt dabei haben.
+
+Schritt 4.
+Binden Sie nun die einzelnen Dateien im index.html ein.
+```html
+ <script>
+    window.username = prompt("Livingapps Username:");
+    window.password = prompt("Livingapps Passwort:"); 
+  </script>
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <script src="./assets/scripts/src/modules/ul4.js"></script>
+  <script src="./assets/scripts/src/modules/livingapi.js"></script>
+  <script src="./assets/scripts/src/livingSDK.js"></script>
+  ```
+  Sie haben, wenn Sie den Code kopiert haben neben dem Einbinden der Dateien 
+  eine Abfrage des Usernames und des Passwortes
+  eingerichtet, Sie können natürlich auf Ihren
+  Benutzernamen und ihr Passwort direkt in
+  den Variablen hinterlegen, dann müssen Sie
+  es nicht immer neu eingeben. Falls Sie die App
+  aber veröffentlichen möchten sollten Sie keinesfalls ihre Nutzerdaten im Code stehen haben.
+
+  ### Schritt 5.
+  Erzeugen Sie nun einen Provider. Es handelt sich dabei um ein Skript, das später mit LivingApps kommuniziert, damit Sie nicht später bei jeder Seite es neu implementieren müssen.
+  ```bash
+  ionic g provider la
+  ```
+ Der erzeugte Provider heißt la und nun sollte bei ihnen der Ordner provider im src-Ordner erstellt worden sein.
+ 
