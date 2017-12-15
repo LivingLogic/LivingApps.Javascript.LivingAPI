@@ -85,5 +85,5 @@ Führen Sie folgenden Befehl aus:
 ```bash
 ionic serve
 ``` 
-Nun können Sie im Browser sehen, wie die App aussieht und dank 
-des Live-Previews sehen Sie die Veränderungen.
+Dieser Befehl started einen Webserver, der alle gespeicherten Veränderungen 
+live nachlädt.
