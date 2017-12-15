@@ -1,14 +1,16 @@
 # Apps erstellen mit Ionic und Living-Apps
 
+Hmm, lecker dieser Mocha.
+
 Kaffee ist eine wichtige Resource in einem Softwareunternehmen,
 deshalb verfolgen wir mithilfe einer Living-App wieviel Kaffee
-konsumiert wird. Allerdings gibt es keine zentrale Station wo
-der Kaffeekonsum eingetragen wird, sondern es wird jeweils fast
-immer am Rechner nachgetragen. Nun wollen wir in diesem Beitrag
+konsumiert wird. Allerdings gibt es keine zentrale Station an der
+der Kaffeekonsum eingetragen wird, es wird stattdessen jeweils Arbeitsplatz-
+Rechner nachgetragen. Nun wollen wir in diesem Beitrag
 eine App erstellen, die auf einem in der Küche aufgestellten Tablet
-installiert wird und eine zentrale Anlaufstelle zum eintragen des 
+installiert werden könnte und eine zentrale Anlaufstelle zum Eintragen des 
 Kaffees ist. 
-Für diesen Beitrag benötigen Sie etwas Kenntnisse über Javascript
+Für diesen Beitrag benötigen Sie etwas Kenntnisse über HTML, SCSS, Javascript
 und Ionic.
 
 ## Todo-Liste
@@ -30,7 +32,8 @@ nicht auch einen Absenden-Button zu erstellen.
 ![alt](./src/assets/Screenshot_20171208_155022.png)
 ![alt](./src/assets/Screenshot_20171208_155049.png)
 
-Damit Sie später die App besser erkennen können benennen Sie die Living-App. Öffnen Sie nun bei Ihrer App den Reiter Erweitert und Konfiguration.
+Damit Sie später die App besser erkennen können benennen Sie die Living-App.
+Öffnen Sie nun bei Ihrer App den Reiter Erweitert und Konfiguration.
 
 ![alt](./src/assets/Screenshot_20171208_155142.png)
 
