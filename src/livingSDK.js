@@ -93,41 +93,10 @@
 			});
 		}
 
-		/**
-		 *
-		 */
 		get(appID, templateName) {
 			return new Promise((resolve, reject) => {
 				this.session.then((auth_token) => {
 					if (commonjs) {
-						// let options = {
-						// 	headers: {
-						// 		'accept': 'application/la-ul4on',
-						// 		'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
-						// 	},
-						// 	method: 'GET',
-						// 	url: `${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : '' }`,
-						// };
-						// request(options, (error, response, body) => {
-						// 	if (error)
-						// 		reject(error);
-						// 	switch (response.statusCode) {
-						// 		case 200:
-						// 			let dump = ul4on.loads(body);
-						// 			dump.get('globals').Login = this;
-						// 			dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
-
-						// 			resolve(dump);
-						// 			break;
-						// 		case 403:
-						// 			this.session = this.login();
-						// 			console.log("token is not valid");
-						// 			resolve(this.get(appID, templateName));
-						// 			break;
-						// 		default:
-						// 			reject("an error happend");
-						// 	}
-						// })
 						let options = {
 							"ecdhCurve": 'auto',
 							"method": "GET",
@@ -199,7 +168,6 @@
 						if (!app.controls.has(ident)) {
 							reject(`insert() got an unexpected keyword argument ${ident}`);
 						}
-						// add data to fields
 
 						fields[ident] = app.controls.get(ident).asjson(values[ident]);
 					}
@@ -209,35 +177,6 @@
 					data.id = app.id;
 					data.data = [{"fields": fields}];
 					if (commonjs) {
-						// let options = {
-						// 	url: `${this._options.url}gateway/v1/appdd/${app.id}.json`,
-						// 	form: {"appdd": JSON.stringify(data)},
-						// 	headers: {
-						// 		'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
-						// 	},
-						// 	method: 'post'
-						// };
-
-						// request(options, (error, response, body) => {
-						// 	//console.log(response);
-						// 	if (error) reject(error);
-						// 	//console.log(response.statusCode);
-						// 	if (response.statusCode !== 200) {
-						// 		reject('HTTP Code ' + response.statusCode);
-						// 	}
-						// 	let returnObj = {
-						// 		HTTPstatusCode: response.statusCode,
-						// 		recordid: JSON.parse(body).id,
-						// 		Record: livingApi.Record.create({
-						// 			id: JSON.parse(body).id,
-						// 			createdat: new Date(Date.now()),
-						// 			updatedat: null,
-						// 			updatedby: null,
-						// 			updatecount: 0
-						// 		})
-						// 	};
-						// 	resolve(returnObj);
-						// })
 						let options = {
 							"ecdhCurve": 'auto',
 							"method": "POST",
@@ -255,6 +194,10 @@
 							});
 
 							res.on("end", () => {
+								if (res.statusCode !== 200) {
+									reject(res.statusCode);
+									return;
+								}
 								let body = Buffer.concat(chunks).toString();
 								let returnObj = {
 									HTTPstatusCode: res.statusCode,
@@ -315,34 +258,6 @@
 					data.id = app.id;
 					data.data = [{"id": record.id, "fields": fields}];
 					if (commonjs) {
-						// let options = {
-						// 	url: `${this._options.url}gateway/v1/appdd/${app.id}.json`,
-						// 	form: {"appdd": JSON.stringify(data)},
-						// 	headers: {
-						// 		'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
-						// 	},
-						// 	method: 'post'
-						// };
-						// request(options, (error, response, body) => {
-						// 	//console.log("hello");
-						// 	if (error) {
-						// 		reject(error);
-						// 	}
-						// 	switch (response.statusCode) {
-						// 		case 200:
-						// 			for (let ident in values)
-						// 				record.fields.get(ident).value = values[ident];
-						// 			let returnObj = {
-						// 				HTTPstatusCode: response.statusCode,
-						// 				recordid: JSON.parse(body).id,
-						// 				Record: record
-						// 			};
-						// 			resolve(returnObj);
-						// 			break;
-						// 		default:
-						// 			reject(`an unexpexted error happend, Statuscode ${response.statusCode}`);
-						// 	}
-						// });
 						let options = {
 							"ecdhCurve": 'auto',
 							"method": "POST",
@@ -405,24 +320,6 @@
 					let app = record.app;
 					let recordId = record.id;
 					if (commonjs) {
-						// let options = {
-						// 	headers: {
-						// 		'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
-						// 	},
-						// 	url: `${this._options.url}gateway/v1/appdd/${app.id}/${recordId}.json`,
-						// 	method: 'delete'
-						// };
-						// request(options, (error, response, reject) => {
-						// 	if (error)
-						// 		reject(error);
-						// 	switch (response.statusCode) {
-						// 		case 200:
-						// 			resolve (response.statusCode);
-						// 			break;
-						// 		default:
-						// 			reject ('an unexpexted error happend');
-						// 	}
-						// })
 						let options = {
 							"ecdhCurve": 'auto',
 							"method": "DELETE",
@@ -464,7 +361,6 @@
 		}
 	}
 
-	// export livingsdk
 	if (commonjs) {
 		module.exports = livingSDK;
 	} else {
