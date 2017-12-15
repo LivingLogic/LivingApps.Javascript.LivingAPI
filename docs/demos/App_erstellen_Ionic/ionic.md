@@ -18,7 +18,7 @@ und Ionic.
 - ein Formular zur Eingabe des Kaffeekonsums
 
 ## eine Living-App erstellen
-Zuallererst benötigen Sie ein Living-Apps Konto mit erweiterten Rechten,
+Zuerst benötigen Sie ein Living-Apps Konto mit erweiterten Rechten,
 um später Datenquellen freizuschalten. Folgen Sie einfach der Anleitung
 und falls bei ihnen etwas anders aufscheint schreiben Sie uns.
 
