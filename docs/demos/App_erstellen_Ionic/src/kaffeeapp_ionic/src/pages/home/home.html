@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Mein Kaffee
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+        <ion-label>Kaffeesorte:</ion-label>
+        <ion-select value="Mocha" (input)="coffee = $event.target.value">
+          <ion-option value="Mocha">Mocha</ion-option>
+        </ion-select>
+    </ion-item>
+    <ion-item>
+        <ion-grid>
+            <ion-row>
+             <ion-col col-4><button ion-button full (click)="changeNumber(-1)"><ion-icon name="remove"></ion-icon></button></ion-col>
+             <ion-col col-4><button style="width:100%" ion-button outline>{{number}}</button></ion-col>
+             <ion-col col-4><button ion-button full (click)="changeNumber(1)"><ion-icon name="add"></ion-icon></button></ion-col>
+            </ion-row>
+          </ion-grid>
+    </ion-item>
+    <ion-item>
+        <ion-label floating>Konsument</ion-label>
+        <ion-input type="text" value="{{consumer}}" (input)="consumer = $event.target.value">
+        </ion-input>
+    </ion-item>
+    <ion-item><button ion-button full (click)="add()"><ion-icon name="add"></ion-icon></button></ion-item>
+   
+  </ion-list>
+</ion-content>

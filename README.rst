@@ -1,7 +1,7 @@
 LivingSDK
 =========
 
-The Node.js SDK for LivingApps
+The Node.js SDK and Javascript SDK for LivingApps
 ------------------------------
 
 This package provides a Javascript API for the LivingApps system (see
