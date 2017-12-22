@@ -60,8 +60,6 @@
 							"content-type": "application/json"
 					  	}
 					};
-					console.log( this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
-				);
 					let req = http.request(options,  (res) => {
 						let chunks = [];;
 					  	res.on("data", (chunk) => {
