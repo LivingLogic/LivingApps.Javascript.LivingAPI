@@ -53,13 +53,15 @@
 					let options = {
 						"ecdhCurve": 'auto',
 					  	"method": "POST",
-					  	"hostname": "my.living-apps.de",
-					  	"port": 443,
+						"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+						"port": 443,
 					  	"path": "/gateway/login",
 					  	"headers": {
 							"content-type": "application/json"
 					  	}
 					};
+					console.log( this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+				);
 					let req = http.request(options,  (res) => {
 						let chunks = [];;
 					  	res.on("data", (chunk) => {
@@ -71,8 +73,8 @@
 							resolve(JSON.parse(body.toString()).auth_token);
 					  	});
 					});
-					req.write(JSON.stringify({ username: 'rene.schwarzinger@milleniumfrog.de',
-						password: 'Kl9BgZriXzxmLdpo' }));
+					req.write(JSON.stringify({ username: this._userName,
+						password: this._password }));
 					req.end();    
 				} else {
 					$.ajax(`${this._options.url}gateway/login`, {
