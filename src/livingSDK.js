@@ -32,8 +32,8 @@
 				/** @type {Boolean} */
 				loginRequired: options.loginRequired !== undefined ? options.loginRequired : true
 			};
-
 			this._options.url = this._options.url.lastIndexOf('/') === this._options.url.length - 1 ? this._options.url : `${this._options.url}/`;
+			this.hostName = this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length - 1);
 			if (this._options.loginRequired && !this._userName) {
 				throw new Error('[livingSDK] You want to login without a username')
 			}
@@ -49,34 +49,41 @@
 				return undefined;
 			}
 			return new Promise((resolve, reject) => {
-				if (commonjs) {     
+
+
+				if (commonjs) {
 					let options = {
-						"ecdhCurve": 'auto',
-					  	"method": "POST",
-						"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
-						"port": 443,
-					  	"path": "/gateway/login",
-					  	"headers": {
-							"content-type": "application/json"
-					  	}
+						'ecdhCurve': 'auto',
+						'method': 'POST',
+						'hostname': this.hostName,
+						'port': 443,
+						'path': '/gateway/login',
+						'headers': {
+							'content-type': 'application/json'
+						}
 					};
-					let req = http.request(options,  (res) => {
+					let req = http.request(options, (res) => {
 						let chunks = [];;
-					  	res.on("data", (chunk) => {
+						if (res.statusCode !== 200) {
+							reject(new Error('Http Statuscode ' + res.statusCode));
+						}
+						res.on('data', (chunk) => {
 							chunks.push(chunk);
 						});
-					
-					  	res.on("end", () => {
+
+						res.on('end', () => {
 							let body = Buffer.concat(chunks);
 							resolve(JSON.parse(body.toString()).auth_token);
-					  	});
+						});
 					});
-					req.write(JSON.stringify({ username: this._userName,
-						password: this._password }));
-					req.end();    
+					req.write(JSON.stringify({
+						username: this._userName,
+						password: this._password
+					}));
+					req.end();
 				} else {
 					$.ajax(`${this._options.url}gateway/login`, {
-						dataType: "json",
+						dataType: 'json',
 						data: JSON.stringify({
 							'username': this._userName,
 							'password': this._password
@@ -98,23 +105,23 @@
 				this.session.then((auth_token) => {
 					if (commonjs) {
 						let options = {
-							"ecdhCurve": 'auto',
-							"method": "GET",
-							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
-							"port": 443,
-							"path": `/gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : '' }`,
-							"headers": {
+							'ecdhCurve': 'auto',
+							'method': 'GET',
+							'hostname':this.hostName,
+							'port': 443,
+							'path': `/gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`,
+							'headers': {
 								'accept': 'application/la-ul4on',
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
 						let req = http.request(options, (res) => {
 							let chunks = [];
-							res.on("data", function (chunk) {
+							res.on('data', function (chunk) {
 								chunks.push(chunk);
 							});
 
-							res.on("end",  () => {
+							res.on('end', () => {
 								if (res.statusCode === 200) {
 									let body = Buffer.concat(chunks).toString();
 									let dump = ul4on.loads(body.toString());
@@ -124,34 +131,34 @@
 									resolve(dump);
 								} else if (res.statusCode === 403) {
 									this.session = this.login();
-									console.log("token is not valid");
+									console.log('token is not valid');
 									resolve(this.get(appID, templateName));
+								} else {
+									reject(new Error('Http Statuscode ' + res.statusCode));
 								}
 							});
 						});
 						req.end();
 					} else {
-						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : '' }`, {
+						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
 							headers: {
 								'accept': 'application/la-ul4on',
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'GET',
-							statusCode: {
-								500: () => {
-									reject('internal error httpStatus: 500');
-								},
-								403: () => {
+							error: (error) => {
+								if (error.status === 403) {
 									this.session = this.login();
-									console.log("token is not valid");
+									console.log('token is not valid');
 									resolve(this.get(appID, templateName));
-								},
-								200: (body) => {
-									let dump = ul4on.loads(body);
-									dump.get('globals').Login = this;
-									dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
-									resolve(dump);
 								}
+								reject(error);
+							},
+							success: (body) => {
+								let dump = ul4on.loads(body);
+								dump.get('globals').Login = this;
+								dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
+								resolve(dump);
 							}
 						})
 					}
@@ -171,29 +178,32 @@
 
 						fields[ident] = app.controls.get(ident).asjson(values[ident]);
 					}
-					let data = {};{
+					let data = {}; {
 
 					}
 					data.id = app.id;
-					data.data = [{"fields": fields}];
+					data.data = [{ 'fields': fields }];
 					if (commonjs) {
 						let options = {
-							"ecdhCurve": 'auto',
-							"method": "POST",
-							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
-							"port": 443,
-							"path": `/gateway/v1/appdd/${app.id}.json`,
-							"headers": {
+							'ecdhCurve': 'auto',
+							'method': 'POST',
+							'hostname': this.hostName,
+							'port': 443,
+							'path': `/gateway/v1/appdd/${app.id}.json`,
+							'headers': {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
 						let req = http.request(options, (res) => {
+							if (res.statusCode !== 200) {
+								reject(new Error('Http Statuscode ' + res.statusCode));
+							}
 							let chunks = [];
-							res.on("data",  (chunk) => {
+							res.on('data', (chunk) => {
 								chunks.push(chunk);
 							});
 
-							res.on("end", () => {
+							res.on('end', () => {
 								if (res.statusCode !== 200) {
 									reject(res.statusCode);
 									return;
@@ -213,29 +223,30 @@
 								resolve(returnObj);
 							});
 						});
-						req.write(JSON.stringify({"appdd": data}));
+						req.write(JSON.stringify({ 'appdd': data }));
 						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
 							method: 'post',
-							data: {"appdd": JSON.stringify(data)},
+							data: { 'appdd': JSON.stringify(data) },
 							headers: {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
-							statusCode: {
-								200: function (body) {
-									let returnObj = {
-										recordid:body.id,
-										Record: livingApi.Record.create({
-											id: body.id,
-											createdat: new Date(Date.now()),
-											updatedat: null,
-											updatedby: null,
-											updatecount: 0
-										})
-									};
-									resolve(returnObj);
-								}
+							success: (body) => {
+								let returnObj = {
+									recordid: body.id,
+									Record: livingApi.Record.create({
+										id: body.id,
+										createdat: new Date(Date.now()),
+										updatedat: null,
+										updatedby: null,
+										updatecount: 0
+									})
+								};
+								resolve(returnObj);
+							},
+							error: (error) => {
+								reject(error);
 							}
 						});
 					}
@@ -256,25 +267,28 @@
 					}
 					let data = {};
 					data.id = app.id;
-					data.data = [{"id": record.id, "fields": fields}];
+					data.data = [{ 'id': record.id, 'fields': fields }];
 					if (commonjs) {
 						let options = {
-							"ecdhCurve": 'auto',
-							"method": "POST",
-							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
-							"port": 443,
-							"path": `/gateway/v1/appdd/${app.id}.json`,
-							"headers": {
+							'ecdhCurve': 'auto',
+							'method': 'POST',
+							'hostname': this.hostName,
+							'port': 443,
+							'path': `/gateway/v1/appdd/${app.id}.json`,
+							'headers': {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
 						let req = http.request(options, (res) => {
+							if (res.statusCode !== 200) {
+								reject(new Error('Http Statuscode ' + res.statusCode));
+							}
 							let chunks = [];
-							res.on("data",  (chunk) => {
+							res.on('data', (chunk) => {
 								chunks.push(chunk);
 							});
 
-							res.on("end", () => {
+							res.on('end', () => {
 								let body = Buffer.concat(chunks).toString();
 								for (let ident in values)
 									record.fields.get(ident).value = values[ident];
@@ -286,27 +300,28 @@
 								resolve(returnObj);
 							});
 						});
-						req.write(JSON.stringify({"appdd": data}));
+						req.write(JSON.stringify({ 'appdd': data }));
 						req.end();
 
 					} else {
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
-							data: {"appdd": JSON.stringify(data)},
+							data: { 'appdd': JSON.stringify(data) },
 							headers: {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'post',
-							statusCode: {
-								200: (body) => {
-									for (let ident in values)
-										record.fields.get(ident).value = values[ident];
-									let returnObj = {
-										HTTPstatusCode: 200,
-										recordid: body.id,
-										Record: record
+							success: (body) => {
+								for (let ident in values)
+									record.fields.get(ident).value = values[ident];
+								let returnObj = {
+									HTTPstatusCode: 200,
+									recordid: body.id,
+									Record: record
 								};
 								resolve(returnObj);
-								}
+							},
+							error: (error) => {
+								reject(error);
 							}
 						})
 					}
@@ -314,30 +329,33 @@
 			});
 		}
 
-		_delete (record) {
-			return new Promise ((resolve, reject) => {
+		_delete(record) {
+			return new Promise((resolve, reject) => {
 				this.session.then((auth_token) => {
 					let app = record.app;
 					let recordId = record.id;
 					if (commonjs) {
 						let options = {
-							"ecdhCurve": 'auto',
-							"method": "DELETE",
-							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
-							"port": 443,
-							"path": `/gateway/v1/appdd/${app.id}/${recordId}.json`,
-							"headers": {
+							'ecdhCurve': 'auto',
+							'method': 'DELETE',
+							'hostname': this.hostName,
+							'port': 443,
+							'path': `/gateway/v1/appdd/${app.id}/${recordId}.json`,
+							'headers': {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
 						let req = http.request(options, (res) => {
+							if (res.statusCode !== 200) {
+								reject(new Error('Http Statuscode ' + res.statusCode));
+							}
 							let chunks = [];
-							res.on("data",  (chunk) => {
+							res.on('data', (chunk) => {
 								chunks.push(chunk);
 							});
 
-							res.on("end", () => {
-								if (res.statusCode  === 200)
+							res.on('end', () => {
+								if (res.statusCode === 200)
 									resolve(200);
 							});
 						});
@@ -349,10 +367,11 @@
 							headers: {
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
-							statusCode: {
-								200: () => {
-									resolve (200);
-								}
+							success: () => {
+								resolve(200);
+							},
+							error: () => {
+								reject(error);
 							}
 						});
 					}

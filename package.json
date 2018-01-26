@@ -2,15 +2,14 @@
   "name": "livingapps",
   "version": "0.0.1",
   "description": "the livingapps api for nodejs",
-  "main": "index.js",
+  "main": "src/livingSDK.js",
   "scripts": {
     "test": "mocha"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "blueimp-md5": "^2.10.0",
-    "request-cookies": "^1.1.0"
+    "blueimp-md5": "^2.10.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
