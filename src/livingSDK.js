@@ -184,6 +184,7 @@
 							"port": 443,
 							"path": `/gateway/v1/appdd/${app.id}.json`,
 							"headers": {
+								"content-type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -220,6 +221,7 @@
 							method: 'post',
 							data: {"appdd": JSON.stringify(data)},
 							headers: {
+								"content-type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							statusCode: {
@@ -265,6 +267,7 @@
 							"port": 443,
 							"path": `/gateway/v1/appdd/${app.id}.json`,
 							"headers": {
+								"content-type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -293,6 +296,7 @@
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
 							data: {"appdd": JSON.stringify(data)},
 							headers: {
+								"content-type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'post',
