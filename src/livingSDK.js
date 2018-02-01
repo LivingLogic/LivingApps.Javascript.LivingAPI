@@ -57,7 +57,7 @@
 						"port": 443,
 					  	"path": "/gateway/login",
 					  	"headers": {
-							"content-type": "application/json"
+							"Content-Type": "application/json"
 					  	}
 					};
 					let req = http.request(options,  (res) => {
@@ -104,7 +104,7 @@
 							"port": 443,
 							"path": `/gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : '' }`,
 							"headers": {
-								'accept': 'application/la-ul4on',
+								'Accept': 'application/la-ul4on',
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -133,7 +133,7 @@
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : '' }`, {
 							headers: {
-								'accept': 'application/la-ul4on',
+								'Accept': 'application/la-ul4on',
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'GET',
@@ -184,7 +184,7 @@
 							"port": 443,
 							"path": `/gateway/v1/appdd/${app.id}.json`,
 							"headers": {
-								"content-type": "application/json",
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -221,7 +221,7 @@
 							method: 'post',
 							data: {"appdd": JSON.stringify(data)},
 							headers: {
-								"content-type": "application/json",
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							statusCode: {
@@ -267,7 +267,7 @@
 							"port": 443,
 							"path": `/gateway/v1/appdd/${app.id}.json`,
 							"headers": {
-								"content-type": "application/json",
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -296,7 +296,7 @@
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
 							data: {"appdd": JSON.stringify(data)},
 							headers: {
-								"content-type": "application/json",
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'post',
