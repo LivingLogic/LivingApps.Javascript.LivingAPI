@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "the livingapps api for nodejs",
   "main": "src/livingSDK.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
+  },
   "scripts": {
     "test": "mocha"
   },
