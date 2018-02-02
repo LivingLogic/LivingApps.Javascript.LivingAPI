@@ -231,7 +231,6 @@
 							method: 'post',
 							data: { 'appdd': JSON.stringify(data) },
 							headers: {
-								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							success: (body) => {
@@ -310,7 +309,6 @@
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
 							data: { 'appdd': JSON.stringify(data) },
 							headers: {
-								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'post',
