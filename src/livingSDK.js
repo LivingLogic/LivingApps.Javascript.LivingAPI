@@ -53,14 +53,14 @@
 
 				if (commonjs) {
 					let options = {
-						'ecdhCurve': 'auto',
-						'method': 'POST',
-						'hostname': this.hostName,
-						'port': 443,
-						'path': '/gateway/login',
-						'headers': {
-							'content-type': 'application/json'
-						}
+						"ecdhCurve": 'auto',
+					  	"method": "POST",
+						"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+						"port": 443,
+					  	"path": "/gateway/login",
+					  	"headers": {
+							"Content-Type": "application/json"
+					  	}
 					};
 					let req = http.request(options, (res) => {
 						let chunks = [];;
@@ -105,13 +105,13 @@
 				this.session.then((auth_token) => {
 					if (commonjs) {
 						let options = {
-							'ecdhCurve': 'auto',
-							'method': 'GET',
-							'hostname':this.hostName,
-							'port': 443,
-							'path': `/gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`,
-							'headers': {
-								'accept': 'application/la-ul4on',
+							"ecdhCurve": 'auto',
+							"method": "GET",
+							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+							"port": 443,
+							"path": `/gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : '' }`,
+							"headers": {
+								'Accept': 'application/la-ul4on',
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -142,7 +142,7 @@
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
 							headers: {
-								'accept': 'application/la-ul4on',
+								'Accept': 'application/la-ul4on',
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'GET',
@@ -185,12 +185,13 @@
 					data.data = [{ 'fields': fields }];
 					if (commonjs) {
 						let options = {
-							'ecdhCurve': 'auto',
-							'method': 'POST',
-							'hostname': this.hostName,
-							'port': 443,
-							'path': `/gateway/v1/appdd/${app.id}.json`,
-							'headers': {
+							"ecdhCurve": 'auto',
+							"method": "POST",
+							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+							"port": 443,
+							"path": `/gateway/v1/appdd/${app.id}.json`,
+							"headers": {
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -230,6 +231,7 @@
 							method: 'post',
 							data: { 'appdd': JSON.stringify(data) },
 							headers: {
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							success: (body) => {
@@ -270,12 +272,13 @@
 					data.data = [{ 'id': record.id, 'fields': fields }];
 					if (commonjs) {
 						let options = {
-							'ecdhCurve': 'auto',
-							'method': 'POST',
-							'hostname': this.hostName,
-							'port': 443,
-							'path': `/gateway/v1/appdd/${app.id}.json`,
-							'headers': {
+							"ecdhCurve": 'auto',
+							"method": "POST",
+							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
+							"port": 443,
+							"path": `/gateway/v1/appdd/${app.id}.json`,
+							"headers": {
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							}
 						};
@@ -307,6 +310,7 @@
 						$.ajax(`${this._options.url}gateway/v1/appdd/${app.id}.json`, {
 							data: { 'appdd': JSON.stringify(data) },
 							headers: {
+								"Content-Type": "application/json",
 								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
 							},
 							method: 'post',
