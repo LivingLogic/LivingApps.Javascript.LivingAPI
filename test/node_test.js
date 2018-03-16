@@ -4,7 +4,7 @@ if (typeof module === 'object' && module.exports){
     livingSDK = require('../src/livingSDK');
     config = require('./config');
 } else {
-    config = this.config;
+    config = this.configs;
     livingSDK = this.livingSDK;
 }
 describe ('login', () => {

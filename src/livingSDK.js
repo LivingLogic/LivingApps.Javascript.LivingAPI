@@ -1,4 +1,5 @@
 ;(function (root) {
+	let livingAppsVersion = 0.2;
 	// amd is not implemented yet
 	let amd = (typeof define === 'function' && define.amd);
 	let commonjs = (typeof module === 'object' && module.exports);
@@ -6,7 +7,7 @@
 	let livingApi, ul4on, request, http;
 	if (commonjs) {
 		livingApi = require('./modules/livingapi');
-		ul4on = require('./modules/ul4').ul4on;
+		ul4on = require('ul4/ul4.min.js').ul4on;
 		http = require('https');
 	} else {
 		livingApi = root.livingapi;
