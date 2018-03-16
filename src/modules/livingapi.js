@@ -1,4 +1,4 @@
-;(function(root){
+;(function(undefined){
 
 	let amd = (typeof define === 'function' && define.amd);
 	let commonjs = (typeof module === 'object' && module.exports);
@@ -8,15 +8,14 @@
 	let ul4, ul4on;
 
 	if (commonjs) {
-		ul4 = require('./ul4').ul4;
-		ul4on = require('./ul4').ul4on;
+		ul4 = require('ul4/ul4.min.js').ul4;
+		ul4on = require('ul4/ul4.min.js').ul4on;
 		module.exports = la;
 	} else {
 		ul4 = root.ul4;
 		ul4on = root.ul4on;
 		root.livingapi = la;
 	}
-
 la.Base = ul4._inherit(
 	ul4.Proto,
 	{
@@ -28,13 +27,35 @@ la.Base = ul4._inherit(
 		ul4ondump: function ul4ondump(encoder)
 		{
 			for (var i = 0; i < this._ul4onattrs.length; ++i)
-				encoder.dump(this[this._ul4onattrs[i]]);
+				encoder.dump(this._dumpUL4ONAttr(this._ul4onattrs[i]));
+		},
+
+		_dumpUL4ONAttr: function _dumpUL4ONAttr(name)
+		{
+			return this[name];
 		},
 
 		ul4onload: function ul4onload(decoder)
 		{
-			for (var i = 0; i < this._ul4onattrs.length; ++i)
-				this[this._ul4onattrs[i]] = decoder.load();
+			for (var i = 0, iter = decoder.loadcontent(); i < this._ul4onattrs.length; ++i)
+			{
+				var iteritem = iter.next();
+				if (iteritem.done)
+					break;
+				this._loadUL4ONAttr(this._ul4onattrs[i], iteritem.value);
+			}
+			for (; i < this._ul4onattrs.length; ++i)
+				this._setDefaultUL4ONAttr(this._ul4onattrs[i]);
+		},
+
+		_loadUL4ONAttr: function _loadUL4ONAttr(name, value)
+		{
+			this[name] = value;
+		},
+
+		_setDefaultUL4ONAttr: function _setDefaultUL4ONAttr(name)
+		{
+			this[name] = null;
 		}
 	}
 );
@@ -46,7 +67,34 @@ la.Globals = ul4._inherit(
 
 		__repr__: function repr()
 		{
-			return "<la.Globals version=" + ul4._repr(this.version) + " platform=" + ul4._repr(this.platform) + ">";
+			return "<la.Globals version=" + ul4._repr(this.version) + ">";
+		},
+
+		// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
+		geodist: function geodist(geo1, geo2)
+		{
+			var sqsin = function sqsin(x) {x = Math.sin(x); return x*x};
+			var sqcos = function sqsos(x) {x = Math.cos(x); return x*x};
+			var deg2rad = Math.PI/180; // Conversion factor degree -> radians
+			var radius = 6378.137; // Equatorial radius of earth in km
+			var flat = 1/298.257223563; // Earth flattening
+
+			var lat1 = geo1.lat * deg2rad;
+			var long1 = geo1.long * deg2rad;
+			var lat2 = geo2.lat * deg2rad;
+			var long2 = geo2.long * deg2rad;
+			var F = (lat1 + lat2)/2;
+			var G = (lat1 - lat2)/2;
+			var l = (long1 - long2)/2;
+			var S = sqsin(G) * sqcos(l) + sqcos(F) * sqsin(l);
+			var C = sqcos(G) * sqcos(l) + sqsin(F) * sqsin(l);
+			var w = Math.atan(Math.sqrt(S/C));
+			var D = 2 * w * radius;
+			var T = Math.sqrt(S*C)/w;
+			var H1 = (3*T-1)/(2*C);
+			var H2 = (3*T+1)/(2*S);
+			var s = D * (1 + flat * H1 * sqsin(F) * sqcos(G) - flat * H2 * sqcos(F) * sqsin(G));
+			return s;
 		}
 	}
 );
@@ -66,11 +114,7 @@ la.FlashMessage = ul4._inherit(
 la.App = ul4._inherit(
 	la.Base,
 	{
-		insert: function (values) {
-			return this.globals.Login._insert(this, values);
-		},
-
-		_ul4onattrs: ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagment_identifier"],
+		_ul4onattrs: ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier"],
 
 		__repr__: function repr()
 		{
@@ -106,14 +150,7 @@ la.DataSource = ul4._inherit(
 la.Record = ul4._inherit(
 	la.Base,
 	{
-		delete: function () {
-			return this.app.globals.Login._delete(this);
-		},
-
-		update: function (values) {
-			return this.app.globals.Login._update(this, values);
-		},
-
+		_ul4onattrs: ["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"],
 		__repr__: function repr()
 		{
 			return "<la.Record id=" + ul4._repr(this.id) + ">";
@@ -133,56 +170,61 @@ la.Record = ul4._inherit(
 			return true;
 		},
 
-		ul4ondump: function ul4ondump(encoder)
+		_dumpUL4ONAttr: function _dumpUL4ONAttr(name)
 		{
-			encoder.dump(this.id);
-			encoder.dump(this.app);
-			encoder.dump(this.createdat);
-			encoder.dump(this.createdby);
-			encoder.dump(this.updatedat);
-			encoder.dump(this.updatedby);
-			encoder.dump(this.updatecount);
+			if (name === "values")
+				return this._sparsevalues;
+			else
+				return this[name];
+		},
 
-			var fieldvalues = {};
-			for (var id in this.fields)
+		_loadUL4ONAttr: function _loadUL4ONAttr(name, value)
+		{
+			if (name === "values")
 			{
-				var field = this.fields[id];
-
-				if (field.value !== null)
-					fieldvalues[id] = field.value;
+				this._sparsevalues = value;
+				this._values = null;
+				this._fields = null;
 			}
-			encoder.dump(fieldvalues);
-
-			encoder.dump(this.attachments);
-		},
-
-		ul4onload: function ul4onload(decoder)
-		{
-			this.id = decoder.load();
-			this.app = decoder.load();
-			this.createdat = decoder.load();
-			this.createdby = decoder.load();
-			this.updatedat = decoder.load();
-			this.updatedby = decoder.load();
-			this.updatecount = decoder.load();
-			var self = this;
-			this.fields = ul4on._havemap ? new Map() : {};
-
-			var fieldvalues = decoder.load();
-
-			this.app.controls.forEach(function(control, id){
-				var fieldvalue = fieldvalues.get(control.identifier);
-				if (typeof(fieldvalue) === "undefined")
-					fieldvalue = null;
-
-				var field = la.Field.create(control, self.app, fieldvalue);
-				self.fields.set(id, field);
-			});
-
-			this.attachments = decoder.load();
-		},
+			else
+				this[name] = value;
+		}
 	}
 );
+
+Object.defineProperty(la.Record, "values", {
+	get: function()
+	{
+		if (this._values === null)
+		{
+			this._values = ul4on._havemap ? new Map() : {};
+			var self = this;
+			this.app.controls.forEach(function(control, id){
+				var fieldvalue = self._sparsevalues.get(control.identifier);
+				if (typeof(fieldvalue) === "undefined")
+					fieldvalue = null;
+				self._values.set(id, fieldvalue);
+			});
+		}
+		return this._values;
+	}
+});
+
+Object.defineProperty(la.Record, "fields", {
+	get: function()
+	{
+		if (this._fields === null)
+		{
+			this._fields = ul4on._havemap ? new Map() : {};
+			var self = this;
+			this.values.forEach(function(value, id){
+				var field = la.Field.create(self.app.controls.get(id), self.app, value);
+				self._fields.set(id, field);
+			});
+		}
+		return this._fields;
+	}
+});
 
 la.Control = ul4._inherit(
 	la.Base,
@@ -194,10 +236,6 @@ la.Control = ul4._inherit(
 		__repr__: function repr()
 		{
 			return "<la." + this.__type__ + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
-		},
-
-		asjson: function asjson(value) {
-			return value;
 		},
 
 		_logsearch: function _logsearch(value, search)
@@ -264,6 +302,12 @@ la.NumberControl = ul4._inherit(
 			this._logsearch(value, search);
 			if (search.operator === "equals")
 				return search.value === value;
+			else if (search.operator === "range")
+			{
+				if (value === null)
+					return false;
+				return (search.minvalue === null || search.minvalue <= value) && (search.maxvalue === null || value < search.maxvalue);
+			}
 			else
 				return false;
 		}
@@ -274,10 +318,6 @@ la.StringControl = ul4._inherit(
 	la.Control,
 	{
 		type: "string",
-
-		asjson: function (value) {
-			return value;
-		},
 
 		search: function search(value, search)
 		{
@@ -358,16 +398,6 @@ la.DateControl = ul4._inherit(
 				return "%m/%d/%Y";
 		},
 
-		/**
-		 * @param {Date} value
-		 */
-		asjson: function asjson(value) {
-			if (value instanceof Date){
-				value = `${value.getFullYear()}-${value.getMonth()+1}-${value.getDate()} ${value.getHours()}:${value.getMinutes()}:${value.getSeconds()}`;
-			}
-			return value;
-		},
-
 		// searchvalue must be ``null``, a ``Date`` object or a string
 		search: function search(value, search)
 		{
@@ -441,7 +471,7 @@ la.LookupControl = ul4._inherit(
 		// if this control is an applookup ``search.value`` must be an object containing the search criteria for the referenced record
 		search: function search(value, search)
 		{
-			if (this.lookupapp === null)
+			if (this.lookupapp === null || typeof(this.lookupapp) === "undefined")
 			{
 				if (search.operator === "equals")
 				{
@@ -634,14 +664,7 @@ la.GeoControl = ul4._inherit(
 	la.Control,
 	{
 		type: "geo",
-		__type__: "GeoControl",
-
-		asjson: function asjson(value)
-		{
-			if (la.Geo.isprotoof(value))
-				value = `${value.lat}, ${value.long}, ${value.info}`;
-			return value;
-		}
+		__type__: "GeoControl"
 	}
 );
 
@@ -701,7 +724,6 @@ la.User = ul4._inherit(
 	la.Base,
 	{
 		_ul4onattrs: ["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"],
-		//_ul4onattrs: ["id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"],
 
 		__repr__: function repr()
 		{
@@ -725,15 +747,6 @@ la.File = ul4._inherit(
 la.Geo = ul4._inherit(
 	la.Base,
 	{
-		create: function create(lat, long, info)
-		{
-			var geo = la.Base.create.call(this);
-			geo.lat = lat;
-			geo.long = long;
-			geo.info = info;
-			return geo;
-		},
-
 		_ul4onattrs: ["lat", "long", "info"],
 
 		__repr__: function repr()
@@ -796,15 +809,21 @@ la.JSONAttachment = ul4._inherit(
 	{
 		type: "jsonattachment",
 		__type__: "JSONAttachment",
-		ul4ondump: function ul4ondump(encoder)
+		_ul4onattrs: la.Attachment._ul4onattrs.concat(["value"]),
+		_dumpUL4ONAttr: function _dumpUL4ONAttr(name)
 		{
-			la.Attachment.ul4ondump.call(this, encoder);
-			encoder.dump(ul4._asjson(this.value));
+			if (name === "value")
+				return ul4._asjson(this.value);
+			else
+				return this[name];
 		},
-		ul4onload: function ul4onload(decoder)
+
+		_loadUL4ONAttr: function _loadUL4ONAttr(name, value)
 		{
-			la.Attachment.ul4onload.call(this, decoder);
-			this.value = ul4._fromjson(decoder.load());
+			if (name === "value")
+				this.value = ul4._fromjson(value);
+			else
+				this[name] = value
 		}
 	}
 );
@@ -882,11 +901,20 @@ var classes = [
 	"DateControl",
 	"DatetimeMinuteControl",
 	"DatetimeSecondControl",
+	"LookupControl",
 	"LookupSelectControl",
 	"LookupRadioControl",
 	"LookupChoiceControl",
+	"AppLookupControl",
+	"AppLookupSelectControl",
+	"AppLookupRadioControl",
+	"AppLookupChoiceControl",
+	"MultipleLookupControl",
 	"MultipleLookupSelectControl",
 	"MultipleLookupCheckboxControl",
+	"MultipleAppLookupControl",
+	"MultipleAppLookupSelectControl",
+	"MultipleAppLookupCheckboxControl",
 	"GeoControl",
 	"FileControl",
 	"ButtonControl",
@@ -913,4 +941,4 @@ for (var i = 0; i < classes.length; ++i)
 	ul4on.register("de.livingapps.appdd." + name.toLowerCase(), object);
 }
 
-})(this);
+})();
