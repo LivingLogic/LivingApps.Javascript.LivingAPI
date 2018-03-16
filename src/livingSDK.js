@@ -125,7 +125,14 @@
 							res.on('end', () => {
 								if (res.statusCode === 200) {
 									let body = Buffer.concat(chunks).toString();
-									let dump = ul4on.loads(body.toString());
+									let dump;
+									try{
+										dump = ul4on.loads(body.toString());
+									}
+									catch(err) {
+										reject(err);
+										return;
+									}
 									dump.get('globals').Login = this;
 									resolve(dump);
 								} else if (res.statusCode === 403) {
@@ -137,6 +144,7 @@
 								}
 							});
 						});
+						console.log(req);
 						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
