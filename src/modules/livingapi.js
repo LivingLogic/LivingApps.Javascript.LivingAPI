@@ -1,4 +1,5 @@
-;(function(undefined){
+;(function(root){
+
 
 	let amd = (typeof define === 'function' && define.amd);
 	let commonjs = (typeof module === 'object' && module.exports);
@@ -116,6 +117,11 @@ la.App = ul4._inherit(
 	{
 		_ul4onattrs: ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier"],
 
+		insert: function (values)
+		{
+			return this.globals.Login._insert(this, values);
+		},
+
 		__repr__: function repr()
 		{
 			return "<la.App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
@@ -151,6 +157,17 @@ la.Record = ul4._inherit(
 	la.Base,
 	{
 		_ul4onattrs: ["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"],
+		
+		delete: function ()
+		{
+			return this.app.globals.Login._delete(this);
+		},
+
+		update: function (values)
+		{
+			return this.app.globals.Login._update(this, values);
+		},
+
 		__repr__: function repr()
 		{
 			return "<la.Record id=" + ul4._repr(this.id) + ">";
@@ -233,9 +250,14 @@ la.Control = ul4._inherit(
 		subtype: null,
 		_ul4onattrs: ["id", "identifier", "field", "app", "label", "priority", "order", "default"],
 
-		__repr__: function repr()
+		__repr__: function repr() 
 		{
 			return "<la." + this.__type__ + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		},
+
+		asjson: function(value) 
+		{
+			return value;
 		},
 
 		_logsearch: function _logsearch(value, search)
@@ -319,6 +341,11 @@ la.StringControl = ul4._inherit(
 	{
 		type: "string",
 
+		asjson: function (value) 
+		{
+			return value;
+		},
+
 		search: function search(value, search)
 		{
 			this._logsearch(value, search);
@@ -387,6 +414,14 @@ la.DateControl = ul4._inherit(
 		type: "date",
 		subtype: "date",
 		__type__: "DateControl",
+
+		asjson: function (value) 
+		{
+			if (value instanceof Date){
+				value = `${value.getFullYear()}-${value.getMonth()+1}-${value.getDate()} ${value.getHours()}:${value.getMinutes()}:${value.getSeconds()}`;
+			}
+			return value;
+		},
 
 		formatstring: function formatstring(language)
 		{
@@ -664,6 +699,15 @@ la.GeoControl = ul4._inherit(
 	la.Control,
 	{
 		type: "geo",
+
+
+		asjson: function(value)
+		{
+			if (la.Geo.isprotoof(value))
+				value = `${value.lat}, ${value.long}, ${value.info}`;
+			return value;
+		},
+
 		__type__: "GeoControl"
 	}
 );
@@ -941,4 +985,4 @@ for (var i = 0; i < classes.length; ++i)
 	ul4on.register("de.livingapps.appdd." + name.toLowerCase(), object);
 }
 
-})();
+})(this);
