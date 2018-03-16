@@ -148,6 +148,7 @@
 								}
 							});
 						});
+						console.log(req);
 						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
