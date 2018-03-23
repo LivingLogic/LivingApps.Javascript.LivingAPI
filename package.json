@@ -1,6 +1,6 @@
 {
   "name": "livingapps",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "the livingapps api for nodejs",
   "main": "src/livingSDK.js",
   "repository": {
@@ -13,11 +13,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "blueimp-md5": "^2.10.0"
+    "blueimp-md5": "^2.10.0",
+    "ul4": "git+https://github.com/LivingLogic/LivingLogic.Javascript.ul4.git#42000c4bb95490e369b3358084bad4a02f4d14c4"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "express": "^4.15.4",
-    "mocha": "^3.5.2"
+    "mocha": "^3.5.2",
+    "typescript": "^2.7.2"
   }
 }

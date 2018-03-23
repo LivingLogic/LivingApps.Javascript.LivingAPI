@@ -1,4 +1,5 @@
 ;(function (root) {
+	let livingAppsVersion = 0.2;
 	// amd is not implemented yet
 	let amd = (typeof define === 'function' && define.amd);
 	let commonjs = (typeof module === 'object' && module.exports);
@@ -6,7 +7,7 @@
 	let livingApi, ul4on, request, http;
 	if (commonjs) {
 		livingApi = require('./modules/livingapi');
-		ul4on = require('./modules/ul4').ul4on;
+		ul4on = require('ul4/ul4.min.js').ul4on;
 		http = require('https');
 	} else {
 		livingApi = root.livingapi;
@@ -124,7 +125,14 @@
 							res.on('end', () => {
 								if (res.statusCode === 200) {
 									let body = Buffer.concat(chunks).toString();
-									let dump = ul4on.loads(body.toString());
+									let dump;
+									try{
+										dump = ul4on.loads(body.toString());
+									}
+									catch(err) {
+										reject(err);
+										return;
+									}
 									dump.get('globals').Login = this;
 									dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
 
@@ -138,6 +146,7 @@
 								}
 							});
 						});
+						console.log(req);
 						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
