@@ -7,7 +7,7 @@
 	let livingApi, ul4on, request, http;
 	if (commonjs) {
 		livingApi = require('./modules/livingapi');
-		ul4on = require('ul4/ul4.min.js').ul4on;
+		ul4on = require('./modules/ul4.js').ul4on;
 		http = require('https');
 	} else {
 		livingApi = root.livingapi;
@@ -126,6 +126,7 @@
 								if (res.statusCode === 200) {
 									let body = Buffer.concat(chunks).toString();
 									let dump;
+									console.log(body.toString());
 									try{
 										dump = ul4on.loads(body.toString());
 									}
