@@ -126,8 +126,6 @@
 									let body = Buffer.concat(chunks).toString();
 									let dump = ul4on.loads(body.toString());
 									dump.get('globals').Login = this;
-									dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
-
 									resolve(dump);
 								} else if (res.statusCode === 403) {
 									this.session = this.login();
@@ -157,7 +155,6 @@
 							success: (body) => {
 								let dump = ul4on.loads(body);
 								dump.get('globals').Login = this;
-								dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
 								resolve(dump);
 							}
 						})
