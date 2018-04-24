@@ -134,7 +134,10 @@
 										return;
 									}
 									dump.get('globals').Login = this;
+<<<<<<< HEAD
 
+=======
+>>>>>>> Remove outdated code.
 									resolve(dump);
 								} else if (res.statusCode === 403) {
 									this.session = this.login();
