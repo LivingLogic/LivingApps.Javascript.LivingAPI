@@ -126,7 +126,6 @@
 								if (res.statusCode === 200) {
 									let body = Buffer.concat(chunks).toString();
 									let dump;
-									console.log(body.toString());
 									try{
 										dump = ul4on.loads(body.toString());
 									}
@@ -146,7 +145,6 @@
 								}
 							});
 						});
-						console.log(req);
 						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
