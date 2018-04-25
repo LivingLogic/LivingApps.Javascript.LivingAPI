@@ -135,6 +135,9 @@
 									}
 									dump.get('globals').Login = this;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fix: viewtemplates are not required anymore
 
 =======
 >>>>>>> Remove outdated code.
