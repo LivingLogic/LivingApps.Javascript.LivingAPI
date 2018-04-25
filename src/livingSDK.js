@@ -135,7 +135,6 @@
 										return;
 									}
 									dump.get('globals').Login = this;
-									dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
 
 									resolve(dump);
 								} else if (res.statusCode === 403) {
@@ -167,7 +166,6 @@
 							success: (body) => {
 								let dump = ul4on.loads(body);
 								dump.get('globals').Login = this;
-								dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
 								resolve(dump);
 							}
 						})
