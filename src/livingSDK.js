@@ -135,6 +135,7 @@
 										return;
 									}
 									dump.get('globals').Login = this;
+
 									resolve(dump);
 								} else if (res.statusCode === 403) {
 									this.session = this.login();
