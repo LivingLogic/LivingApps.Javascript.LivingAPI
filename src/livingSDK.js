@@ -7,7 +7,7 @@
 	let livingApi, ul4on, request, http;
 	if (commonjs) {
 		livingApi = require('./modules/livingapi');
-		ul4on = require('ul4/ul4.min.js').ul4on;
+		ul4on = require('./modules/ul4.js').ul4on;
 		http = require('https');
 	} else {
 		livingApi = root.livingapi;
@@ -134,7 +134,6 @@
 										return;
 									}
 									dump.get('globals').Login = this;
-									dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
 
 									resolve(dump);
 								} else if (res.statusCode === 403) {
@@ -146,7 +145,6 @@
 								}
 							});
 						});
-						console.log(req);
 						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
@@ -166,7 +164,6 @@
 							success: (body) => {
 								let dump = ul4on.loads(body);
 								dump.get('globals').Login = this;
-								dump.set('datasources', dump.get('viewtemplates').entries().next().value[1].get('datasources'));
 								resolve(dump);
 							}
 						})
