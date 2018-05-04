@@ -1,28 +1,28 @@
-let livingSDK;
+
 let config;
 let defaultSettings = {
 }
 if (typeof module === 'object' && module.exports){
-    livingSDK = require('../src/livingSDK');
-    config = require('./config');
+    test(require('../dist/livingsdk').default, require('./config'));
 } else {
-    config = this.configs;
-    livingSDK = this.livingSDK;
+    test(window.LivingSDK, window.configs);
 }
+
+function test (LivingSDK, config) {
 describe ('login', () => {
     it ('login', () => {
-        let lsdk = new livingSDK(defaultSettings, config.username, config.password);
+        let lsdk = new LivingSDK(defaultSettings, config.username, config.password);
         return lsdk.login().then((res) => console.log(res));
     });
     it ('login and get function', () => {
-        let lsdk = new livingSDK(defaultSettings, config.username, config.password);
+        let lsdk = new LivingSDK(defaultSettings, config.username, config.password);
         lsdk.session = (function() {return new Promise ((resolve, reject) => {resolve(123)})})();
         return lsdk.get(config.appId).then((LAAPI) => {
             return LAAPI
         });
     });
     it ('insert a entry', () => {
-        let lsdk = new livingSDK(defaultSettings, config.username, config.password);
+        let lsdk = new LivingSDK(defaultSettings, config.username, config.password);
         return lsdk.get(config.appId).then((LAAPI) => {
             let app = LAAPI.get('datasources').get('default').app;
             return app.insert({
@@ -32,7 +32,7 @@ describe ('login', () => {
         })
     });
     it ('update first entry', () => {
-        let lsdk = new livingSDK(defaultSettings, config.username, config.password);
+        let lsdk = new LivingSDK(defaultSettings, config.username, config.password);
         return lsdk.get(config.appId).then((LAAPI) => {
             let app = LAAPI.get('datasources').get('default').app;
             let records = app.records.values();
@@ -48,7 +48,7 @@ describe ('login', () => {
         })
     });
     it ('delete a entry', () => {
-        let lsdk = new livingSDK(defaultSettings, config.username, config.password);
+        let lsdk = new LivingSDK(defaultSettings, config.username, config.password);
         return lsdk.get(config.appId).then((LAAPI) => {
             let app = LAAPI.get('datasources').get('default').app;
             let records = app.records.values();
@@ -59,4 +59,13 @@ describe ('login', () => {
             return last.delete();
         })
     })
-});
+})
+    describe('without login', () => {
+        it ('get function', () => {
+            let lsdk = new LivingSDK({loginRequired: false});
+            return lsdk.get(config.appId).then((LAAPI) => {
+                return LAAPI
+            });
+        });
+    });
+}

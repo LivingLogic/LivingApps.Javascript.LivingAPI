@@ -1,6 +1,6 @@
 {
-  "name": "livingapi",
-  "version": "1.0.0",
+  "name": "livingsdk",
+  "version": "0.3.0",
   "description": "livingapps api for javascript (nodjs and browser) written in typescript",
   "main": "dist/livingSDK.js",
   "repository": {
@@ -8,20 +8,23 @@
     "url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "tsc -p ./tsconfig.cjs.json && mocha",
     "build": "sh shellscripts/build.sh"
   },
-  "author": "",
+  "author": "Living Logic AG",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
     "blueimp-md5": "^2.10.0"
   },
   "devDependencies": {
+    "@types/node": "^10.0.3",
     "chai": "^4.1.2",
     "express": "^4.15.4",
     "mocha": "^3.5.2",
     "rollup": "^0.58.2",
-    "typescript": "^2.8.3"
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "typescript": "^2.8.3",
+    "webpack-cli": "^2.1.2"
   }
 }
