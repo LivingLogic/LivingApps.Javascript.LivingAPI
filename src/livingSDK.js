@@ -47,7 +47,7 @@
 		 */
 		login() {
 			if (!this._options.loginRequired) {
-				return undefined;
+				return Promise.resolve(undefined);
 			}
 			return new Promise((resolve, reject) => {
 
@@ -111,11 +111,14 @@
 							"hostname": this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length-1),
 							"port": 443,
 							"path": `/gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : '' }`,
-							"headers": {
+							"headers": auth_token !== undefined ? {
 								'Accept': 'application/la-ul4on',
-								'X-La-Auth-Token': auth_token !== undefined ? auth_token : ''
+								'X-La-Auth-Token': auth_token
+							} : {
+								'Accept': 'application/la-ul4on'
 							}
 						};
+						
 						let req = http.request(options, (res) => {
 							let chunks = [];
 							res.on('data', function (chunk) {

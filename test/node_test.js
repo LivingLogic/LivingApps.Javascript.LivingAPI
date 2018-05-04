@@ -2,6 +2,9 @@ let livingSDK;
 let config;
 let defaultSettings = {
 }
+let defaultNoLogin = {
+    loginRequired: false
+}
 if (typeof module === 'object' && module.exports){
     livingSDK = require('../src/livingSDK');
     config = require('./config');
@@ -59,4 +62,13 @@ describe ('login', () => {
             return last.delete();
         })
     })
+});
+describe ('without login', () => {
+    it ('get function', () => {
+        let lsdk = new livingSDK(defaultNoLogin);
+        lsdk.session = (function() {return new Promise ((resolve, reject) => {resolve(123)})})();
+        return lsdk.get(config.appId).then((LAAPI) => {
+            return LAAPI
+        });
+    }); 
 });
