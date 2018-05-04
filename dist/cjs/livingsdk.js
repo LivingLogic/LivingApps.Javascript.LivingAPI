@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 let commonjs = (typeof module === 'object' && module.exports);
 let nodejs = {};
 let axios = undefined;
@@ -14,7 +16,7 @@ else {
     ul4on = window.ul4on;
     livingApi = window.livingapi;
 }
-export default class LivingSDK {
+class LivingSDK {
     constructor(options = {}, username, password) {
         this._password = password;
         this._userName = username;
@@ -156,4 +158,5 @@ export default class LivingSDK {
         });
     }
 }
+exports.default = LivingSDK;
 ;
