@@ -1,4 +1,3 @@
-/// <reference path="../node_modules/axios/index.d.ts" />
 export declare type Auth_Token = string;
 export declare type LivingApi = any;
 export declare type LAPIRecord = any;
