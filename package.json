@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "livingapps api for javascript (nodjs and browser) written in typescript",
   "main": "dist/livingsdk.js",
-  "types": "dist/livingsdk.d.ts",
+  "t      ypes": "dist/livingsdk.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
