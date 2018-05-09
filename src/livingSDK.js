@@ -137,7 +137,16 @@
 										return;
 									}
 									dump.get('globals').Login = this;
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fix: viewtemplates are not required anymore
+=======
+>>>>>>> eda86940027a5eb38483741b9138d6ad4d7c68d6
 
+=======
+>>>>>>> Remove outdated code.
 									resolve(dump);
 								} else if (res.statusCode === 403) {
 									this.session = this.login();
@@ -148,6 +157,7 @@
 								}
 							});
 						});
+						console.log(req);
 						req.end();
 					} else {
 						$.ajax(`${this._options.url}gateway/apps/${appID}${templateName !== undefined ? '/' + templateName : ''}`, {
