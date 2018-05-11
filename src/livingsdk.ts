@@ -78,7 +78,7 @@ export default class LivingSDK {
 			.then((a: any) => a.data.auth_token);
 	}
 
-	get(appId: string, templateName: string): Promise<LivingApi> {
+	get(appId: string, templateName?: string): Promise<LivingApi> {
 		return this.session.then((auth_token: Auth_Token | undefined) => {
 			return axios.get(`https://${this.hostName}/gateway/apps/${appId}${templateName !== undefined ? '/' + templateName : ''}`,
 				{
