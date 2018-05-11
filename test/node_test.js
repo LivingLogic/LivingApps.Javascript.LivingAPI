@@ -3,7 +3,7 @@ let config;
 let defaultSettings = {
 }
 if (typeof module === 'object' && module.exports){
-    test(require('../dist/livingsdk').default, require('./config'));
+    test(require('../dist/umd/livingsdk').default, require('./config'));
 } else {
     test(window.LivingSDK, window.configs);
 }

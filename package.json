@@ -3,13 +3,13 @@
   "version": "0.3.0",
   "description": "livingapps api for javascript (nodjs and browser) written in typescript",
   "main": "dist/livingsdk.js",
-  "t      ypes": "dist/livingsdk.d.ts",
+  "types": "dist/livingsdk.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
   },
   "scripts": {
-    "test": "tsc -p ./tsconfig.cjs.json && mocha",
+    "test": "npm run build && mocha",
     "build": "sh shellscripts/build.sh"
   },
   "author": "Living Logic AG",
@@ -23,8 +23,6 @@
     "chai": "^4.1.2",
     "express": "^4.15.4",
     "mocha": "^3.5.2",
-    "rollup": "^0.58.2",
-    "rollup-plugin-node-resolve": "^3.3.0",
     "typescript": "^2.8.3",
     "webpack-cli": "^2.1.2"
   }

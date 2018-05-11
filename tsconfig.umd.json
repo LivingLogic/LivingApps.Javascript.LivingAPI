@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    
+    "target": "es6",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./dist/umd",
+    "rootDir": "./src", 
+    "removeComments": true, 
+    "moduleResolution": "node", 
+    "esModuleInterop": true
+ }
+}
