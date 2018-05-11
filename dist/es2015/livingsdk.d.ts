@@ -13,7 +13,7 @@ export default class LivingSDK {
     private session;
     constructor(options: any, username: string, password: string);
     login(): Promise<Auth_Token | undefined>;
-    get(appId: string, templateName: string): Promise<LivingApi>;
+    get(appId: string, templateName?: string): Promise<LivingApi>;
     _insert(app: any, values: any): Promise<LAPIRecord>;
     _update(record: LAPIRecord, values: any): Promise<any>;
     _delete(record: LAPIRecord): Promise<any>;
