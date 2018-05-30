@@ -1,25 +1,23 @@
+import axios from 'axios';
 let commonjs = (typeof module === 'object' && module.exports);
 let nodejs = {};
-let axios = undefined;
 let ul4on;
 let livingApi;
 if (commonjs) {
     livingApi = require('./modules/livingapi');
     nodejs.https = require('https');
-    axios = require('axios');
     ul4on = require('./modules/ul4').ul4on;
 }
 else {
-    axios = window.axios;
     ul4on = window.ul4on;
     livingApi = window.livingapi;
 }
-export default class LivingSDK {
+export class LivingSDK {
     constructor(options = {}, username, password) {
-        this._password = password;
-        this._userName = username;
+        this._password = password || '';
+        this._userName = username || '';
         this._options = {
-            url: options.url !== undefined ? options.url : 'https://my.living-apps.de',
+            url: options.url || 'https://my.living-apps.de',
             loginRequired: options.loginRequired !== undefined ? options.loginRequired : true
         };
         this._options.url = this._options.url.lastIndexOf('/') === this._options.url.length - 1 ? this._options.url : `${this._options.url}/`;
@@ -157,3 +155,4 @@ export default class LivingSDK {
     }
 }
 ;
+export default LivingSDK;
