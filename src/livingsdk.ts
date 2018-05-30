@@ -1,5 +1,5 @@
 import * as https from 'https';
-import { AxiosStatic, AxiosResponse } from 'axios';
+import axios, { AxiosStatic, AxiosResponse } from 'axios';
 
 declare let module: any;
 declare let require: any;
@@ -11,39 +11,36 @@ export type LAPIRecord = any;
 
 let commonjs = (typeof module === 'object' && module.exports);
 let nodejs: any = {};
-let axios: any = undefined;
 let ul4on: any;
 let livingApi: any;
 if (commonjs) {
 	livingApi = require('./modules/livingapi');
 	nodejs.https = require('https')
-	axios = require('axios');
 	ul4on = require('./modules/ul4').ul4on;
 } else {
-	axios = window.axios;
 	ul4on = window.ul4on;
 	livingApi = window.livingapi;
 }
-export interface LivingAPIOptions {
-	url: string;
-	loginRequired: boolean;
+export interface LivingSDKOptions {
+	url?: string;
+	loginRequired?: boolean;
 }
 
-export default class LivingSDK {
+export class LivingSDK {
 	private _password: string;
 	private _userName: string;
-	private _options: LivingAPIOptions
+	private _options: LivingSDKOptions
 	private hostName: string;
 	private session: Promise<string | undefined>;
-	constructor(options: any = {}, username: string, password: string) {
+	constructor(options: LivingSDKOptions = {}, username?: string, password?: string) {
 		/** @type {String} */
-		this._password = password;
+		this._password = password || '';
 		/** @type {String} */
-		this._userName = username;
+		this._userName = username || '';
 		/** @type {Object} */
 		this._options = {
 			/** @type {String} */
-			url: options.url !== undefined ? options.url : 'https://my.living-apps.de',
+			url: options.url || 'https://my.living-apps.de',
 			/** @type {Boolean} */
 			loginRequired: options.loginRequired !== undefined ? options.loginRequired : true
 		};
@@ -196,3 +193,4 @@ export default class LivingSDK {
 	}
 };
 	
+export default LivingSDK;

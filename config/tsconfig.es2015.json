@@ -1,14 +1,16 @@
 {
+  "exclude": [
+    "**/*.test.ts"
+  ],
   "include": [
-    "./src/**/*.ts"
+    "../src/**/*.ts"
   ],
   "compilerOptions": {
     
     "target": "es2015",
-    "module": "umd",
+    "module": "es2015",
     "declaration": true,
-
-    "outDir": "./dist/umd",
+    "outDir": "../dist/es2015",
     "removeComments": true, 
     "moduleResolution": "node", 
     "esModuleInterop": true

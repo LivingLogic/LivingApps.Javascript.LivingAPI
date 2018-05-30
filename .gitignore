@@ -3,3 +3,5 @@ test/config.js
 Archiv.zip
 node.js
 **/old_*
+.vscode
+**/config.ts
