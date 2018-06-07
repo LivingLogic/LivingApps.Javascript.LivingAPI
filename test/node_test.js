@@ -1,7 +1,7 @@
 let livingSDK;
 let config;
 let defaultSettings = {
-}
+};
 if (typeof module === 'object' && module.exports){
     livingSDK = require('../src/livingSDK');
     config = require('./config');
@@ -16,9 +16,9 @@ describe ('login', () => {
     });
     it ('login and get function', () => {
         let lsdk = new livingSDK(defaultSettings, config.username, config.password);
-        lsdk.session = (function() {return new Promise ((resolve, reject) => {resolve(123)})})();
+        lsdk.session = (function() {return new Promise ((resolve, reject) => {resolve(123);});})();
         return lsdk.get(config.appId).then((LAAPI) => {
-            return LAAPI
+            return LAAPI;
         });
     });
     it ('insert a entry', () => {
@@ -29,7 +29,7 @@ describe ('login', () => {
                 mitarbeiter: 'Einstein',
                 interessensgebiete: ['kaffee']
             });
-        })
+        });
     });
     it ('update first entry', () => {
         let lsdk = new livingSDK(defaultSettings, config.username, config.password);
@@ -44,8 +44,8 @@ describe ('login', () => {
             return last.update({
                 mitarbeiter: 'Time: ' + Date.now(),
                 interessensgebiete: ['kaffee']
-            })
-        })
+            });
+        });
     });
     it ('delete a entry', () => {
         let lsdk = new livingSDK(defaultSettings, config.username, config.password);
@@ -57,6 +57,6 @@ describe ('login', () => {
                 last = d;
             }
             return last.delete();
-        })
-    })
+        });
+    });
 });

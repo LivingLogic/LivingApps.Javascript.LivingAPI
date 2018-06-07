@@ -77,8 +77,8 @@
 			// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
 			geodist: function geodist(geo1, geo2)
 			{
-				var sqsin = function sqsin(x) {x = Math.sin(x); return x*x};
-				var sqcos = function sqsos(x) {x = Math.cos(x); return x*x};
+				var sqsin = function sqsin(x) {x = Math.sin(x); return x*x;};
+				var sqcos = function sqsos(x) {x = Math.cos(x); return x*x;};
 				var deg2rad = Math.PI/180; // Conversion factor degree -> radians
 				var radius = 6378.137; // Equatorial radius of earth in km
 				var flat = 1/298.257223563; // Earth flattening
@@ -939,7 +939,7 @@
 				if (name === "value")
 					this.value = ul4._fromjson(value);
 				else
-					this[name] = value
+					this[name] = value;
 			}
 		}
 	);

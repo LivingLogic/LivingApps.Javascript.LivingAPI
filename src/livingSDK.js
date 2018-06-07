@@ -36,7 +36,7 @@
 			this._options.url = this._options.url.lastIndexOf('/') === this._options.url.length - 1 ? this._options.url : `${this._options.url}/`;
 			this.hostName = this._options.url.split('//')[1].substr(0, this._options.url.split('//')[1].length - 1);
 			if (this._options.loginRequired && !this._userName) {
-				throw new Error('[livingSDK] You want to login without a username')
+				throw new Error('[livingSDK] You want to login without a username');
 			}
 			this.session = this.login();
 		}
@@ -166,7 +166,7 @@
 								dump.get('globals').Login = this;
 								resolve(dump);
 							}
-						})
+						});
 					}
 				});
 			});
@@ -257,7 +257,7 @@
 							}
 						});
 					}
-				})
+				});
 			});
 		}
 
@@ -331,7 +331,7 @@
 							error: (error) => {
 								reject(error);
 							}
-						})
+						});
 					}
 				});
 			});
@@ -383,8 +383,8 @@
 							}
 						});
 					}
-				})
-			})
+				});
+			});
 		}
 	}
 
