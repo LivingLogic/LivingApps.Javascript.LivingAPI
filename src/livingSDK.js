@@ -50,8 +50,6 @@
 				return undefined;
 			}
 			return new Promise((resolve, reject) => {
-
-
 				if (commonjs) {
 					let options = {
 						"ecdhCurve": 'auto',
@@ -64,7 +62,7 @@
 					  	}
 					};
 					let req = http.request(options, (res) => {
-						let chunks = [];;
+						let chunks = [];
 						if (res.statusCode !== 200) {
 							reject(new Error('Http Statuscode ' + res.statusCode));
 						}
