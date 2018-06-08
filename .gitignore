@@ -7,3 +7,6 @@ node.js
 **/config.ts
 **/*.test.js
 **/*.test.d.ts
+**/config.ts
+**/config.js
+**/config.d.ts
