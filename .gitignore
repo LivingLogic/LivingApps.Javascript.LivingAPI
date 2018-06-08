@@ -5,3 +5,5 @@ node.js
 **/old_*
 .vscode
 **/config.ts
+**/*.test.js
+**/*.test.d.ts
