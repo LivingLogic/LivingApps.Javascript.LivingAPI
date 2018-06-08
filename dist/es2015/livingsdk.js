@@ -154,5 +154,4 @@ export class LivingSDK {
         });
     }
 }
-;
 export default LivingSDK;

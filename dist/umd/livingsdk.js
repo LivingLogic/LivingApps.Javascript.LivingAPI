@@ -169,6 +169,5 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         }
     }
     exports.LivingSDK = LivingSDK;
-    ;
     exports.default = LivingSDK;
 });
