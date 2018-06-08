@@ -2,6 +2,7 @@ import { LivingSDK, LivingSDKOptions, Auth_Token } from './livingsdk';
 import { expect } from 'chai';
 import 'mocha';
 import {livingappsData as lsd } from './config'
+import { AxiosError } from 'axios';
 
 enum lsdktemplates {
 	default= 'default',
@@ -179,5 +180,31 @@ describe('LivingSDK: ', () => {
 					});
 				});
 		});
+		it('auto login', () => {
+			let lsdk = createMaxLSDK();
+			return lsdk.get(lsd.appId, lsdktemplates.admin)
+				.then((LAAPI: LAAPI) => {
+					(<any>lsdk).session = Promise.resolve('undefined');
+					return LAAPI.get('datasources').get('storage');
+				})
+				.then((storage: any) => {
+					return storage.app.insert({id: '[JS] before relogged'})
+						.then(() => {
+							return storage;
+						})
+						.catch((err: AxiosError) => {
+							if (err.response.status === 403) {
+								(<any>lsdk).session = lsdk.login();
+								return storage;
+							} else {
+								return storage;
+							}
+						})
+				})
+				.then((storage) => {
+					return storage.app.insert({id: '[JS] relogged'})
+				})
+	
+		})
 	});
 });
