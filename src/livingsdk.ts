@@ -92,8 +92,8 @@ export class LivingSDK {
 					dump = ul4on.loads(res.data);
 					dump.get('globals').Login = this;
 					return <LivingApi>dump;
-				})
-		})
+				});
+		});
 	}
 
 	_insert(app: any, values: any): Promise<LAPIRecord> {
@@ -173,8 +173,8 @@ export class LivingSDK {
 						Record: record
 					};
 					return returnObj;
-				})
-		})
+				});
+		});
 	}
 
 	_delete(record: LAPIRecord) {
@@ -191,6 +191,6 @@ export class LivingSDK {
 			})
 		})
 	}
-};
+}
 	
 export default LivingSDK;
