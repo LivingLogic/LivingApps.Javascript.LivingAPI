@@ -1,7 +1,7 @@
 import { LivingSDK, LivingSDKOptions, Auth_Token } from './livingsdk';
 import { expect } from 'chai';
 import 'mocha';
-import {livingappsData as lsd } from './config'
+import {livingappsData as lsd, removeData } from './config'
 import { AxiosError } from 'axios';
 
 enum lsdktemplates {
@@ -29,18 +29,21 @@ describe('LivingSDK: ', () => {
 	 * - getAuthToken
 	 */
 	describe('.login()', () => {
+
 		it('no login', () => {
 			let lsdk = new LivingSDK({loginRequired: false});
 			return lsdk.login().then((auth_token: Auth_Token) => {
 				expect(typeof auth_token).to.equal('undefined');
 			});
 		});
+
 		it('login with correct username and password', () => {
 			let lsdk = new LivingSDK({}, lsd.username, lsd.password);
 			return lsdk.login().then((auth_token: Auth_Token) => {
 				expect(typeof auth_token).to.equal('string');
 			});
 		});
+
 		it('change auth_token', () => {
 			let lsdk = new LivingSDK({}, lsd.username, lsd.password);
 			return lsdk.login().then(() => {
@@ -56,6 +59,7 @@ describe('LivingSDK: ', () => {
 				expect(err.message).to.equal("Request failed with status code 403");
 			});
 		});
+
 		it('login with wrong data', () => {
 			let lsdk = new LivingSDK({}, "foo", "bar");
 			return lsdk.login().then((auth_token: Auth_Token) => {
@@ -67,10 +71,13 @@ describe('LivingSDK: ', () => {
 
 
 	describe('.get()', () => {
+
 		describe('permissions without login', () => {
+
 			it('request default', () => {
 				return createMinLSDK().get(lsd.appId);
 			});
+
 			it('request loggedInUsers', () => {
 				return createMinLSDK().get(lsd.appId, lsdktemplates.loggedIn)
 					.then(() => {
@@ -79,7 +86,8 @@ describe('LivingSDK: ', () => {
 					.catch((err: any) => {
 						expect(err.message).to.equal('Request failed with status code 403');
 					})
-			})
+			});
+
 			it('request withPermissionsForApp', () => {
 				return createMinLSDK().get(lsd.appId, lsdktemplates.permissions)
 					.then(() => {
@@ -88,7 +96,8 @@ describe('LivingSDK: ', () => {
 					.catch((err: any) => {
 						expect(err.message).to.equal('Request failed with status code 403');
 					})
-			})
+			});
+
 			it('request withWorkingPrivelegesApp', () => {
 				return createMinLSDK().get(lsd.appId, lsdktemplates.workpriv)
 					.then(() => {
@@ -97,7 +106,8 @@ describe('LivingSDK: ', () => {
 					.catch((err: any) => {
 						expect(err.message).to.equal('Request failed with status code 403');
 					})
-			})
+			});
+
 			it('request withAdminPriveleges', () => {
 				return createMinLSDK().get(lsd.appId, lsdktemplates.admin)
 					.then(() => {
@@ -107,24 +117,31 @@ describe('LivingSDK: ', () => {
 						expect(err.message).to.equal('Request failed with status code 403');
 					})
 			})
+
 		});
 
 		describe('permissions with admin login', () => {
+
 			it('request default', () => {
 				return createMaxLSDK().get(lsd.appId);
 			});
+
 			it('request loggedInUsers', () => {
 				return createMaxLSDK().get(lsd.appId, lsdktemplates.loggedIn);
-			})
+			});
+
 			it('request withPermissionsForApp', () => {
 				return createMaxLSDK().get(lsd.appId, lsdktemplates.permissions);
-			})
+			});
+
 			it('request withWorkingPrivelegesApp', () => {
 				return createMaxLSDK().get(lsd.appId, lsdktemplates.workpriv);
-			})
+			});
+
 			it('request withAdminPriveleges', () => {
 				return createMaxLSDK().get(lsd.appId, lsdktemplates.admin);
-			})
+			});
+
 		});
 
 		it('request not existing app', () => {
@@ -136,9 +153,11 @@ describe('LivingSDK: ', () => {
 					expect(err.message).to.equal('Request failed with status code 404');
 				})
 		});	
+
 	});
 
 	describe('._insert()', () => {
+
 		it('insert in unknown Datasource', () => {
 			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
 				.then((LAAPI: LAAPI) => {
@@ -148,6 +167,7 @@ describe('LivingSDK: ', () => {
 					expect(storage).to.equal(undefined);
 				});
 		});
+
 		it('insert an ID to StorageApp', () => {
 			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
 				.then((LAAPI: LAAPI) => {
@@ -157,6 +177,7 @@ describe('LivingSDK: ', () => {
 					return storage.app.insert({id: `[JS]${(new Date()).toDateString()}`});
 				});
 		});
+
 		it('insert to self', () => {
 			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
 				.then((LAAPI: LAAPI) => {
@@ -180,7 +201,8 @@ describe('LivingSDK: ', () => {
 					});
 				});
 		});
-		it('auto login', () => {
+
+		it('auto relog login', () => {
 			let lsdk = createMaxLSDK();
 			return lsdk.get(lsd.appId, lsdktemplates.admin)
 				.then((LAAPI: LAAPI) => {
@@ -203,8 +225,120 @@ describe('LivingSDK: ', () => {
 				})
 				.then((storage) => {
 					return storage.app.insert({id: '[JS] relogged'})
-				})
-	
-		})
+				});
+		});
+
 	});
+
+	describe('._update()', () => {
+
+		it('update in storage', () => {
+			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
+				.then((LAAPI: LAAPI) => {
+					return LAAPI.get('datasources').get('storage').app;
+				})
+				.then((storage: any) => {
+					return storage.records.values();
+				})
+				.then((records: any) => {
+					for (let i of records) {
+						return i.update({id: '[JS] updated'});
+					}
+				});
+		}).timeout(5000);
+
+		it('update in self', () => {
+			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
+			.then((LAAPI: LAAPI) => {
+				return LAAPI.get('datasources').get('self').app;
+			})
+			.then((storage: any) => {
+				return storage.records.values();
+			})
+			.then((records: any) => {
+				for (let i of records) {
+					return i.update({
+						text: '[JS] this is a updated text',
+						number: 84,
+						phone: '+49 0000 0000000001',
+						url: 'https://dev.milleniumfrog.de',
+						mail: 'update@example.com',
+						date: new Date(),
+						textarea: '[JS] this is an even more updated text',
+						selection: 'option_2',
+						options: '_3',
+						multiple_options: ['_2'],
+						checkmark: true,
+						geodata: '0.1,1.0,'
+					});
+				}
+			});
+		})
+		it('auto relog update', () => {
+			let lsdk = createMaxLSDK();
+			return lsdk.get(lsd.appId, lsdktemplates.admin)
+			.then((LAAPI: LAAPI) => {
+				return LAAPI.get('datasources').get('storage').app;
+			})
+			.then((storage: any) => {
+				(<any>lsdk).session = Promise.resolve('undefined');
+				return storage.records.values();
+			})
+			.then((records: any) => {
+				for (let i of records) {
+					return i.update({id: '[JS] updated'}).catch((err: AxiosError) => {
+						if (err.response.status === 403) {
+							(<any>lsdk).session = lsdk.login();
+							return i;
+						}
+						throw err;
+					});
+				}
+			})
+			.then((record: any) => {
+				return record.update({id: '[JS] updated after relog'});
+			});
+		}).timeout(5000);
+
+	});
+
+	if (removeData) {
+		describe('._delete()', () => {
+
+			it('remove all records from storage', () => {
+				return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
+				.then((LAAPI: LAAPI) => {
+					return LAAPI.get('datasources').get('storage').app;
+				})
+				.then((storage: any) => {
+					return storage.records.values();
+				})
+				.then((records: any) => {
+					let arr: Array<Promise<any>> = []
+					for (let i of records) {
+						arr.push(i.delete());
+					}
+					return Promise.all(arr);
+				});
+			}).timeout(10000);
+
+			it('remove all records from self', () => {
+				return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
+				.then((LAAPI: LAAPI) => {
+					return LAAPI.get('datasources').get('self').app;
+				})
+				.then((storage: any) => {
+					return storage.records.values();
+				})
+				.then((records: any) => {
+					let arr: Array<Promise<any>> = []
+					for (let i of records) {
+						arr.push(i.delete());
+					}
+					return Promise.all(arr);
+				});
+			}).timeout(10000);
+
+		});
+	}
 });
