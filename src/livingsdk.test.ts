@@ -11,6 +11,17 @@ enum lsdktemplates {
 	workpriv = 'withWorkingPriveleges'
 }
 
+type LAAPI = any;
+
+// not logged in user
+function createMinLSDK () {
+	return new LivingSDK({loginRequired: false});
+}
+// logged in user
+function createMaxLSDK () {
+	return new LivingSDK({}, lsd.username, lsd.password);
+}
+
 describe('LivingSDK: ', () => {
 	/*
 	 * test login
@@ -55,14 +66,6 @@ describe('LivingSDK: ', () => {
 
 
 	describe('.get()', () => {
-		// not logged in user
-		function createMinLSDK () {
-			return new LivingSDK({loginRequired: false});
-		}
-		// logged in user
-		function createMaxLSDK () {
-			return new LivingSDK({}, lsd.username, lsd.password);
-		}
 		describe('permissions without login', () => {
 			it('request default', () => {
 				return createMinLSDK().get(lsd.appId);
@@ -131,7 +134,50 @@ describe('LivingSDK: ', () => {
 				.catch((err: any) => {
 					expect(err.message).to.equal('Request failed with status code 404');
 				})
-		});
-	})
+		});	
+	});
 
+	describe('._insert()', () => {
+		it('insert in unknown Datasource', () => {
+			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
+				.then((LAAPI: LAAPI) => {
+					return LAAPI.get('datasources').get('unknown');
+				})
+				.then((storage: any) => {
+					expect(storage).to.equal(undefined);
+				});
+		});
+		it('insert an ID to StorageApp', () => {
+			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
+				.then((LAAPI: LAAPI) => {
+					return LAAPI.get('datasources').get('storage');
+				})
+				.then((storage: any) => {
+					return storage.app.insert({id: `[JS]${(new Date()).toDateString()}`});
+				});
+		});
+		it('insert to self', () => {
+			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
+				.then((LAAPI: LAAPI) => {
+					return LAAPI.get('datasources').get('self');
+				})
+				.then((storage: any) => {
+					// ignore file upload
+					return storage.app.insert({
+						text: '[JS] this is a text',
+						number: 42,
+						phone: '+49 0000 0000000000',
+						url: 'https://milleniumfrog.de',
+						mail: 'web@example.com',
+						date: new Date(),
+						textarea: '[JS] this is even more text',
+						selection: 'option_1',
+						options: '_1',
+						multiple_options: ['_1'],
+						checkmark: true,
+						geodata: '0.0,0.0,'
+					});
+				});
+		});
+	});
 });
