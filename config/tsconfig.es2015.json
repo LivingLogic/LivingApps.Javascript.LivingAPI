@@ -1,12 +1,13 @@
 {
-  "exclude": [
-    "**/*.test.ts"
-  ],
   "include": [
     "../src/**/*.ts"
   ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/config.ts"  
+  ],
   "compilerOptions": {
-    
+    "rootDir": "../src",
     "target": "es2015",
     "module": "es2015",
     "declaration": true,

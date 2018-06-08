@@ -7,7 +7,7 @@
     "target": "es2015",
     "module": "umd",
     "declaration": true,
-
+    "rootDir": "./src",
     "outDir": "./dist/umd",
     "removeComments": true, 
     "moduleResolution": "node", 
