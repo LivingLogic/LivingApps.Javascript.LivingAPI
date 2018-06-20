@@ -4,6 +4,9 @@ import 'mocha';
 import {livingappsData as lsd, removeData } from './config'
 import { AxiosError } from 'axios';
 
+const SERVER = 'https://my.living-apps.de'
+
+
 enum lsdktemplates {
 	default= 'default',
 	loggedIn = 'loggedInUsers',
@@ -16,11 +19,11 @@ type LAAPI = any;
 
 // not logged in user
 function createMinLSDK () {
-	return new LivingSDK({loginRequired: false});
+	return new LivingSDK({loginRequired: false, url: SERVER});
 }
 // logged in user
 function createMaxLSDK () {
-	return new LivingSDK({}, lsd.username, lsd.password);
+	return new LivingSDK({url: SERVER}, lsd.username, lsd.password);
 }
 
 describe('LivingSDK: ', () => {
@@ -31,21 +34,21 @@ describe('LivingSDK: ', () => {
 	describe('.login()', () => {
 
 		it('no login', () => {
-			let lsdk = new LivingSDK({loginRequired: false});
+			let lsdk = new LivingSDK({loginRequired: false, url: SERVER});
 			return lsdk.login().then((auth_token: Auth_Token) => {
 				expect(typeof auth_token).to.equal('undefined');
 			});
 		});
 
 		it('login with correct username and password', () => {
-			let lsdk = new LivingSDK({}, lsd.username, lsd.password);
+			let lsdk = new LivingSDK({ url: SERVER}, lsd.username, lsd.password);
 			return lsdk.login().then((auth_token: Auth_Token) => {
 				expect(typeof auth_token).to.equal('string');
 			});
 		});
 
 		it('change auth_token', () => {
-			let lsdk = new LivingSDK({}, lsd.username, lsd.password);
+			let lsdk = new LivingSDK({ url: SERVER}, lsd.username, lsd.password);
 			return lsdk.login().then(() => {
 				// session is private -> cast lsdk to any
 				(<any>lsdk).session = Promise.resolve("10");
@@ -61,7 +64,7 @@ describe('LivingSDK: ', () => {
 		});
 
 		it('login with wrong data', () => {
-			let lsdk = new LivingSDK({}, "foo", "bar");
+			let lsdk = new LivingSDK({ url: SERVER}, "foo", "bar");
 			return lsdk.login().then((auth_token: Auth_Token) => {
 				// teste ob ergebnis leer ist
 				expect(auth_token).to.equal(undefined);
@@ -161,6 +164,7 @@ describe('LivingSDK: ', () => {
 		it('insert in unknown Datasource', () => {
 			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
 				.then((LAAPI: LAAPI) => {
+					console.log(LAAPI.globals);
 					return LAAPI.get('datasources').get('unknown');
 				})
 				.then((storage: any) => {
