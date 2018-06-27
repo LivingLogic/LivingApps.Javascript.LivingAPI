@@ -4,7 +4,8 @@ import 'mocha';
 import {livingappsData as lsd, removeData } from './config'
 import { AxiosError } from 'axios';
 
-const SERVER = 'https://my.living-apps.de'
+const SERVER = 'https://ci01.ci.xist4c.de'
+// const SERVER = 'https://my.living-apps.de'
 
 
 enum lsdktemplates {
