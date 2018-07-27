@@ -1,11 +1,10 @@
 import { LivingSDK, LivingSDKOptions, Auth_Token } from './livingsdk';
 import { expect } from 'chai';
 import 'mocha';
-import {livingappsData as lsd, removeData } from './config'
+import {livingappsData as lsd, removeData, livingappsData } from './config'
 import { AxiosError } from 'axios';
 
-const SERVER = 'https://ci01.ci.xist4c.de'
-// const SERVER = 'https://my.living-apps.de'
+let SERVER = lsd.url;
 
 
 enum lsdktemplates {
@@ -44,6 +43,7 @@ describe('LivingSDK: ', () => {
 		it('login with correct username and password', () => {
 			let lsdk = new LivingSDK({ url: SERVER}, lsd.username, lsd.password);
 			return lsdk.login().then((auth_token: Auth_Token) => {
+				console.log(auth_token);
 				expect(typeof auth_token).to.equal('string');
 			});
 		});
@@ -165,7 +165,6 @@ describe('LivingSDK: ', () => {
 		it('insert in unknown Datasource', () => {
 			return createMaxLSDK().get(lsd.appId, lsdktemplates.admin)
 				.then((LAAPI: LAAPI) => {
-					console.log(LAAPI.globals);
 					return LAAPI.get('datasources').get('unknown');
 				})
 				.then((storage: any) => {

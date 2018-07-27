@@ -55,12 +55,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 }) : undefined,
                 headers: {
                     "Content-Type": "application/json"
-                }
+               n }
             })
                 .then((a) => a.data.auth_token);
         }
         get(appId, templateName) {
             return this.session.then((auth_token) => {
+                debugger;
                 return axios_1.default.get(`https://${this.hostName}/gateway/apps/${appId}${templateName !== undefined ? '?template=' + templateName : ''}`, {
                     httpsAgent: commonjs ? new nodejs.https.Agent({
                         ecdhCurve: 'auto'
@@ -71,6 +72,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                     }
                 })
                     .then((res) => {
+                    debugger;
                     let dump;
                     dump = ul4on.loads(res.data);
                     dump.get('globals').Login = this;
@@ -130,6 +132,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 let data = {};
                 data.id = app.id;
                 data.data = [{ 'id': record.id, 'fields': fields }];
+                console.log(`https://${this.hostName}/gateway/v1/appdd/${app.id}.json`);
                 return axios_1.default.post(`https://${this.hostName}/gateway/v1/appdd/${app.id}.json`, {
                     appdd: data
                 }, {
