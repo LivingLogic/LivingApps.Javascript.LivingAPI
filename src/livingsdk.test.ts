@@ -1,7 +1,7 @@
 import { LivingSDK, LivingSDKOptions, Auth_Token } from './livingsdk';
 import { expect } from 'chai';
 import 'mocha';
-import {livingappsData as lsd, removeData, livingappsData } from './config'
+import {livingappsData as lsd, removeData } from './config'
 import { AxiosError } from 'axios';
 
 let SERVER = lsd.url;
