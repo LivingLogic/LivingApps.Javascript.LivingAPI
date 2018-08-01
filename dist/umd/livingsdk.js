@@ -55,7 +55,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 }) : undefined,
                 headers: {
                     "Content-Type": "application/json"
-               n }
+                }
             })
                 .then((a) => a.data.auth_token);
         }
