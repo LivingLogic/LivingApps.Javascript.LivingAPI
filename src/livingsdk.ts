@@ -1,5 +1,4 @@
-import * as https from 'https';
-import axios, { AxiosStatic, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 declare let module: any;
 declare let require: any;
