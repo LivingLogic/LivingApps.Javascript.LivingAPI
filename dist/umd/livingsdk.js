@@ -61,7 +61,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         }
         get(appId, templateName) {
             return this.session.then((auth_token) => {
-                debugger;
                 return axios_1.default.get(`https://${this.hostName}/gateway/apps/${appId}${templateName !== undefined ? '?template=' + templateName : ''}`, {
                     httpsAgent: commonjs ? new nodejs.https.Agent({
                         ecdhCurve: 'auto'
@@ -72,7 +71,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                     }
                 })
                     .then((res) => {
-                    debugger;
                     let dump;
                     dump = ul4on.loads(res.data);
                     dump.get('globals').Login = this;

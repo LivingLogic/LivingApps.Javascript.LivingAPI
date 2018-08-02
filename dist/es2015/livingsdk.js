@@ -47,7 +47,6 @@ export class LivingSDK {
     }
     get(appId, templateName) {
         return this.session.then((auth_token) => {
-            debugger;
             return axios.get(`https://${this.hostName}/gateway/apps/${appId}${templateName !== undefined ? '?template=' + templateName : ''}`, {
                 httpsAgent: commonjs ? new nodejs.https.Agent({
                     ecdhCurve: 'auto'
@@ -58,7 +57,6 @@ export class LivingSDK {
                 }
             })
                 .then((res) => {
-                debugger;
                 let dump;
                 dump = ul4on.loads(res.data);
                 dump.get('globals').Login = this;

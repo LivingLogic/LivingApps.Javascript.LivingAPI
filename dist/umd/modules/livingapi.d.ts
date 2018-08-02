@@ -93,21 +93,33 @@ export interface Record extends Base {
 
 export interface Control extends Base {
 	id: string;
-	ident
+	identifier: string;
+	type: string;
+	subtype: string;
+	field: Field;
+	default: any;
+	app: App;
+	label: string;
+	priority: boolean;
+	order: number;
 	asjson:(...any: any[]) => any;
 	ul4onload: (...any: any[]) => any;
-
+	__repr__: () => string;
+	search: (value: any, search: null | any) => boolean;
 }
 
 export interface BoolControl extends Control {
+	__type__: string;
 	search: (value: any, search: null | boolean) => boolean;
 }
 
 export interface IntControl extends Control {
+	__type__: string;
 	search: (value: any, search: null | number) => boolean;
 }
 
 export interface NumberControl extends Control {
+	__type__: string;
 	search: (value: any, search: null | number) => boolean;
 }
 
@@ -117,11 +129,15 @@ export interface StringControl extends Control {
 }
 
 export interface TextControl extends StringControl {
-
+	__type__: string;
 }
 
 export interface EmailControl extends StringControl {
+	__type__: string;
+}
 
+export interface URLControl extends StringControl {
+	__type__: string;
 }
 
 export interface TelControl extends StringControl {
@@ -133,10 +149,11 @@ export interface PasswordControl extends StringControl {
 }
 
 export interface TextAreaControl extends StringControl {
-
+	__type__: string;
 }
 
 export interface DateControl extends Control {
+	__type__: string;
 	asjson: (...any: any[]) => any;
 	formatString: (language: string) => string;
 	search: (value: any, search: null | Date | string) => boolean;
@@ -156,19 +173,21 @@ export interface LookupControl extends Control {
 }
 
 export interface LookupSelectControl extends LookupControl {
-
+	__type__:string;
 }
 
 export interface LookupRadioControl extends LookupControl {
-	
+	__type__:string;
 }
 
 export interface LookupChoiceControl extends LookupControl {
-	
+	__type__:string;
 }
 
 export interface AppLookupControl extends Control {
-
+	ul4onload: (decoder: any) => void;
+	ul4onattr: () => string[];
+	search: ( value: any, serach: any) => boolean; 
 }
 
 export interface AppLookupSelectControl extends AppLookupControl {
@@ -208,7 +227,7 @@ export interface MultipleAppLookupCheckboxControl extends MultipleAppLookupContr
 }
 
 export interface GeoControl extends Control {
-
+	asjson: ( value: any ) => any;
 }
 
 export interface FileControl extends Control {
@@ -222,6 +241,7 @@ export interface ButtonControl extends Control {
 export interface Field extends Base {
 	create: (control, record, value) => Field;
 	search: (searchvalue) =>  boolean;
+	__repr__: () => string;
 }
 
 export interface LookupItem extends Base {
