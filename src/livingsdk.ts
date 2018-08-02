@@ -76,7 +76,6 @@ export class LivingSDK {
 
 	get(appId: string, templateName?: string): Promise<LivingApi> {
 		return this.session.then((auth_token: Auth_Token | undefined) => {
-			debugger;
 			return axios.get(`https://${this.hostName}/gateway/apps/${appId}${templateName !== undefined ? '?template=' + templateName : ''}`,
 				{
 					httpsAgent: commonjs ? new nodejs.https.Agent({
@@ -88,7 +87,6 @@ export class LivingSDK {
 					}
 				})
 				.then((res: AxiosResponse) => {
-					debugger;
 					let dump: any;
 					dump = ul4on.loads(res.data);
 					dump.get('globals').Login = this;
