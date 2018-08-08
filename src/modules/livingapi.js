@@ -252,26 +252,7 @@
 			type: null,
 			subtype: null,
 			_ul4onattrs: ["id", "identifier", "field", "app", "label", "priority", "order", "default"],
-	
-			ul4onload: function ul4onload(decoder)
-			{
-				ul4onattrs = this._ul4onattrs.slice();
-				for (var i = 0, iter = decoder.loadcontent(); i < ul4onattrs.length; ++i)
-				{
-					var iteritem = iter.next();
-					if (iteritem.done)
-						break;
-					this._loadUL4ONAttr(ul4onattrs[i], iteritem.value);
-					if (ul4onattrs[i] === "app" && this.app.globals.version != "6")
-					{
-						ul4onattrs.push("ininsertprocedure");
-						ul4onattrs.push("inupdateprocedure");
-					}
-				}
-				for (; i < ul4onattrs.length; ++i)
-					this._setDefaultUL4ONAttr(ul4onattrs[i]);
-			},
-	
+    
 			__repr__: function repr()
 			{
 				return "<la." + this.__type__ + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
@@ -521,30 +502,8 @@
 		la.Control,
 		{
 			type: "lookup",
-	
-			ul4onload: function ul4onload(decoder)
-			{
-				ul4onattrs = this._ul4onattrs.slice();
-				for (var i = 0, iter = decoder.loadcontent(); i < ul4onattrs.length; ++i)
-				{
-					var iteritem = iter.next();
-					if (iteritem.done)
-						break;
-					this._loadUL4ONAttr(ul4onattrs[i], iteritem.value);
-					if (ul4onattrs[i] === "app")
-					{
-						if (this.app.globals.version != "6")
-						{
-							ul4onattrs.push("ininsertprocedure");
-							ul4onattrs.push("inupdateprocedure");
-						}
-						ul4onattrs.push("lookupdata");
-					}
-				}
-				for (; i < ul4onattrs.length; ++i)
-					this._setDefaultUL4ONAttr(ul4onattrs[i]);
-			},
-	
+            _ul4onattrs: la.Control._ul4onattrs.concat(["lookupdata"]),
+            
 			// ``search.value`` must be ``null`` or a ``LookupItem`` key
 			// if this control is an applookup ``search.value`` must be an object containing the search criteria for the referenced record
 			search: function search(value, search)
