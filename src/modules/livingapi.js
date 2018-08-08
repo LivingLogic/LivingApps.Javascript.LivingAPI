@@ -251,7 +251,7 @@
 		{
 			type: null,
 			subtype: null,
-			_ul4onattrs: ["id", "identifier", "field", "app", "label", "priority", "order", "default"],
+			_ul4onattrs: ["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"],
     
 			__repr__: function repr()
 			{
