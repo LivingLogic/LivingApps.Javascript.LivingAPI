@@ -10,9 +10,9 @@ let SERVER = lsd.url;
 enum lsdktemplates {
 	default= 'default',
 	loggedIn = 'loggedInUsers',
-	admin = 'withAdminPriveleges',
+	admin = 'withAdminPrivileges',
 	permissions = 'withPermissions',
-	workpriv = 'withWorkingPriveleges'
+	workpriv = 'withWorkingPrivileges'
 }
 
 type LAAPI = any;
@@ -102,7 +102,7 @@ describe('LivingSDK: ', () => {
 					})
 			});
 
-			it('request withWorkingPrivelegesApp', () => {
+			it('request withWorkingPrivilegesApp', () => {
 				return createMinLSDK().get(lsd.appId, lsdktemplates.workpriv)
 					.then(() => {
 						throw new Error('should not reach this part of code');
@@ -112,7 +112,7 @@ describe('LivingSDK: ', () => {
 					})
 			});
 
-			it('request withAdminPriveleges', () => {
+			it('request withAdminPrivileges', () => {
 				return createMinLSDK().get(lsd.appId, lsdktemplates.admin)
 					.then(() => {
 						throw new Error('should not reach this part of code');
@@ -138,18 +138,18 @@ describe('LivingSDK: ', () => {
 				return createMaxLSDK().get(lsd.appId, lsdktemplates.permissions);
 			});
 
-			it('request withWorkingPrivelegesApp', () => {
+			it('request withWorkingPrivilegesApp', () => {
 				return createMaxLSDK().get(lsd.appId, lsdktemplates.workpriv);
 			});
 
-			it('request withAdminPriveleges', () => {
+			it('request withAdminPrivileges', () => {
 				return createMaxLSDK().get(lsd.appId, lsdktemplates.admin);
 			});
 
 		});
 
 		it('request not existing app', () => {
-			return createMaxLSDK().get('afsdadstasda')
+			return createMaxLSDK().get('template-unknown-test')
 				.then(() => {
 					throw new Error('should not reach this part of code');
 				})

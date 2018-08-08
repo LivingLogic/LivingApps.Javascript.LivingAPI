@@ -600,36 +600,7 @@
 		la.Control,
 		{
 			type: "applookup",
-	
-			ul4onload: function ul4onload(decoder)
-			{
-				ul4onattrs = this._ul4onattrs.slice();
-				for (var i = 0, iter = decoder.loadcontent(); i < ul4onattrs.length; ++i)
-				{
-					var iteritem = iter.next();
-					if (iteritem.done)
-						break;
-					this._loadUL4ONAttr(ul4onattrs[i], iteritem.value);
-					if (ul4onattrs[i] === "app")
-					{
-						if (this.app.globals.version != "6")
-						{
-							ul4onattrs.push("ininsertprocedure");
-							ul4onattrs.push("inupdateprocedure");
-						}
-						ul4onattrs.push("lookupapp");
-						ul4onattrs.push("lookupcontrols");
-					}
-				}
-				for (; i < ul4onattrs.length; ++i)
-					this._setDefaultUL4ONAttr(ul4onattrs[i]);
-			},
-	
-			ul4onattrs: function ul4onattrs()
-			{
-				var ul4onattrs = la.Control.ul4onattrs.call(this);
-				return ul4onattrs;
-			},
+            _ul4onattrs: la.Control._ul4onattrs.concat(["lookupapp", "lookupcontrols"]),
 	
 			// ``search.value`` must be an object containing the search criteria for the referenced record
 			search: function search(value, search)
