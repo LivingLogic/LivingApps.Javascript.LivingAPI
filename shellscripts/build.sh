@@ -1,9 +1,10 @@
 rm -Rf ./dist
 echo build LivingApps.Javascript.LivingAPI
-tsc -p ./config/tsconfig.es2015.json & 
-tsc -p ./tsconfig.json
+./node_modules/typescript/bin/tsc -p ./config/tsconfig.es2015.json
 wait
 echo copy modules
 cp -R ./src/modules ./dist/es2015/
-cp -R ./src/modules ./dist/umd/
-echo finished copying
+echo run rollup
+./node_modules/rollup/bin/rollup -c
+echo copy d.ts file
+cp ./dist/es2015/livingsdk.d.ts ./dist/umd/livingsdk.d.ts

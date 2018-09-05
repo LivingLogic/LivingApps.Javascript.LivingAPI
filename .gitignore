@@ -5,8 +5,9 @@ node.js
 **/old_*
 .vscode
 **/config.ts
-**/*.test.js
+**/*.test.js*
 **/*.test.d.ts
 **/config.ts
 **/config.js
 **/config.d.ts
+**/config.js.map

@@ -1,17 +1,8 @@
 import axios from 'axios';
+import livingApi from './modules/livingapi';
+import { ul4on } from './modules/ul4';
 let commonjs = (typeof module === 'object' && module.exports);
 let nodejs = {};
-let ul4on;
-let livingApi;
-if (commonjs) {
-    livingApi = require('./modules/livingapi');
-    nodejs.https = require('https');
-    ul4on = require('./modules/ul4').ul4on;
-}
-else {
-    ul4on = window.ul4on;
-    livingApi = window.livingapi;
-}
 export class LivingSDK {
     constructor(options = {}, username, password) {
         this._password = password || '';
@@ -156,3 +147,4 @@ export class LivingSDK {
     }
 }
 export default LivingSDK;
+//# sourceMappingURL=livingsdk.js.map

@@ -1,25 +1,15 @@
 import axios, { AxiosResponse } from 'axios';
+///@ts-ignore
+import livingApi from './modules/livingapi';
+///@ts-ignore
+import { ul4, ul4on } from './modules/ul4';
 
-declare let module: any;
-declare let require: any;
-declare let window: any;
+
 export type Auth_Token = string;
-
 export type LivingApi = any;
 export type LAPIRecord = any;
-
 let commonjs = (typeof module === 'object' && module.exports);
 let nodejs: any = {};
-let ul4on: any;
-let livingApi: any;
-if (commonjs) {
-	livingApi = require('./modules/livingapi');
-	nodejs.https = require('https')
-	ul4on = require('./modules/ul4').ul4on;
-} else {
-	ul4on = window.ul4on;
-	livingApi = window.livingapi;
-}
 export interface LivingSDKOptions {
 	url?: string;
 	loginRequired?: boolean;
