@@ -30,10 +30,6 @@
 /*jslint vars: true */
 
 
-
-let amd = (typeof define === 'function' && define.amd);
-let commonjs = (typeof module === 'object' && module.exports);
-
 export let ul4 = {};
 export let ul4on = {};
 

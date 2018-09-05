@@ -1,8 +1,8 @@
 import axios from 'axios';
 import livingApi from './modules/livingapi';
 import { ul4on } from './modules/ul4';
+import * as https from 'https';
 let commonjs = (typeof module === 'object' && module.exports);
-let nodejs = {};
 export class LivingSDK {
     constructor(options = {}, username, password) {
         this._password = password || '';
@@ -27,7 +27,7 @@ export class LivingSDK {
             username: this._userName,
             password: this._password
         }, {
-            httpsAgent: commonjs ? new nodejs.https.Agent({
+            httpsAgent: commonjs ? new https.Agent({
                 ecdhCurve: 'auto'
             }) : undefined,
             headers: {
@@ -39,7 +39,7 @@ export class LivingSDK {
     get(appId, templateName) {
         return this.session.then((auth_token) => {
             return axios.get(`https://${this.hostName}/gateway/apps/${appId}${templateName !== undefined ? '?template=' + templateName : ''}`, {
-                httpsAgent: commonjs ? new nodejs.https.Agent({
+                httpsAgent: commonjs ? new https.Agent({
                     ecdhCurve: 'auto'
                 }) : undefined,
                 headers: {
@@ -72,7 +72,7 @@ export class LivingSDK {
             return axios.post(`https://${this.hostName}/gateway/v1/appdd/${app.id}.json`, {
                 appdd: data
             }, {
-                httpsAgent: commonjs ? new nodejs.https.Agent({
+                httpsAgent: commonjs ? new https.Agent({
                     ecdhCurve: 'auto'
                 }) : undefined,
                 headers: {
@@ -111,7 +111,7 @@ export class LivingSDK {
             return axios.post(`https://${this.hostName}/gateway/v1/appdd/${app.id}.json`, {
                 appdd: data
             }, {
-                httpsAgent: commonjs ? new nodejs.https.Agent({
+                httpsAgent: commonjs ? new https.Agent({
                     ecdhCurve: 'auto'
                 }) : undefined,
                 headers: {
@@ -136,7 +136,7 @@ export class LivingSDK {
         let app = record.app;
         return this.session.then((auth_token) => {
             return axios.delete(`https://${this.hostName}/gateway/v1/appdd/${app.id}/${record.id}.json`, {
-                httpsAgent: commonjs ? new nodejs.https.Agent({
+                httpsAgent: commonjs ? new https.Agent({
                     ecdhCurve: 'auto'
                 }) : undefined,
                 headers: {
