@@ -11,3 +11,4 @@ node.js
 **/config.js
 **/config.d.ts
 **/config.js.map
+dist/test/

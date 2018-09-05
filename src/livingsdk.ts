@@ -3,13 +3,12 @@ import axios, { AxiosResponse } from 'axios';
 import livingApi from './modules/livingapi';
 ///@ts-ignore
 import { ul4, ul4on } from './modules/ul4';
-
+import * as https from 'https';
 
 export type Auth_Token = string;
 export type LivingApi = any;
 export type LAPIRecord = any;
 let commonjs = (typeof module === 'object' && module.exports);
-let nodejs: any = {};
 export interface LivingSDKOptions {
 	url?: string;
 	loginRequired?: boolean;
@@ -54,7 +53,7 @@ export class LivingSDK {
 			username: this._userName,
 			password: this._password
 		}, {
-				httpsAgent: commonjs ? new nodejs.https.Agent({
+				httpsAgent: commonjs ? new https.Agent({
 					ecdhCurve: 'auto'
 				}) : undefined,
 				headers: {
@@ -68,7 +67,7 @@ export class LivingSDK {
 		return this.session.then((auth_token: Auth_Token | undefined) => {
 			return axios.get(`https://${this.hostName}/gateway/apps/${appId}${templateName !== undefined ? '?template=' + templateName : ''}`,
 				{
-					httpsAgent: commonjs ? new nodejs.https.Agent({
+					httpsAgent: commonjs ? new https.Agent({
 						ecdhCurve: 'auto'
 					}) : undefined,
 					headers: {
@@ -104,7 +103,7 @@ export class LivingSDK {
 			return axios.post(`https://${this.hostName}/gateway/v1/appdd/${app.id}.json`, {
 				appdd: data
 			}, {
-					httpsAgent: commonjs ? new nodejs.https.Agent({
+					httpsAgent: commonjs ? new https.Agent({
 						ecdhCurve: 'auto'
 					}) : undefined,
 					headers: {
@@ -145,7 +144,7 @@ export class LivingSDK {
 			return axios.post(`https://${this.hostName}/gateway/v1/appdd/${app.id}.json`, {
 				appdd: data
 			}, {
-					httpsAgent: commonjs ? new nodejs.https.Agent({
+					httpsAgent: commonjs ? new https.Agent({
 						ecdhCurve: 'auto'
 					}) : undefined,
 					headers: {
@@ -171,7 +170,7 @@ export class LivingSDK {
 		let app = record.app;
 		return this.session.then((auth_token: Auth_Token | undefined) => {
 			return axios.delete(`https://${this.hostName}/gateway/v1/appdd/${app.id}/${record.id}.json`, {
-				httpsAgent: commonjs ? new nodejs.https.Agent({
+				httpsAgent: commonjs ? new https.Agent({
 					ecdhCurve: 'auto'
 				}) : undefined,
 				headers: {

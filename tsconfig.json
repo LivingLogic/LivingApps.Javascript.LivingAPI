@@ -1,17 +1,16 @@
 {
-  "include": [
-    "./src/**/*.ts"
-  ],
-  "compilerOptions": {
-    
-    "target": "es2015",
-    "module": "umd",
-    "declaration": true,
-    "rootDir": "./src",
-    "outDir": "./dist/umd",
-    "removeComments": true, 
-    "moduleResolution": "node", 
-    "esModuleInterop": true,
-    
- }
-}
+	"include": [
+	  "./src/**/*.ts"
+	],
+	"compilerOptions": {
+	  "rootDir": "./src",
+	  "target": "es2015",
+	  "module": "es2015",
+	  "declaration": true,
+	  "outDir": "./dist/es2015",
+	  "removeComments": true, 
+	  "moduleResolution": "node", 
+	  "esModuleInterop": true,
+	  "sourceMap": true
+   }
+  }

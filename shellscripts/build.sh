@@ -1,6 +1,6 @@
 rm -Rf ./dist
 echo build LivingApps.Javascript.LivingAPI
-./node_modules/typescript/bin/tsc -p ./config/tsconfig.es2015.json
+./node_modules/typescript/bin/tsc
 wait
 echo copy modules
 cp -R ./src/modules ./dist/es2015/

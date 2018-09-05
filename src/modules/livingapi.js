@@ -1,6 +1,4 @@
 import { ul4, ul4on } from './ul4';
-let amd = (typeof define === 'function' && define.amd);
-let commonjs = (typeof module === 'object' && module.exports);
 
 let la = {};
 
