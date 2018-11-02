@@ -1,23 +1,37 @@
 {
-  "name": "livingapps",
-  "version": "0.2.0",
-  "description": "the livingapps api for nodejs",
-  "main": "src/livingSDK.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
-  },
-  "scripts": {
-    "test": "mocha"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "blueimp-md5": "^2.10.0"
-  },
-  "devDependencies": {
-    "chai": "^4.1.2",
-    "express": "^4.15.4",
-    "mocha": "^3.5.2"
-  }
+	"name": "livingapps",
+	"version": "0.2.0",
+	"description": "the livingapps api for nodejs",
+	"main": "src/livingSDK.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
+	},
+	"scripts": {
+		"test": "mocha",
+		"build": "cd src/modules && ../../node_modules/babel-cli/bin/babel.js livingapi.js --source-maps=true --out-file livingapi.min.js"
+	},
+	"author": "Walter Dörwald",
+	"license": "ISC",
+	"dependencies": {
+		"ul4": "git+https://github.com/LivingLogic/LivingLogic.Javascript.ul4.git"
+	},
+	"devDependencies": {
+		"babel": "^6.23.0",
+		"babel-cli": "^6.26.0",
+		"babel-plugin-syntax-object-rest-spread": "^6.13.0",
+		"babel-plugin-transform-async-to-generator": "^6.24.1",
+		"babel-plugin-transform-es2015-block-scoping": "^6.26.0",
+		"babel-plugin-transform-es2015-classes": "^6.24.1",
+		"babel-plugin-transform-es2015-destructuring": "^6.23.0",
+		"babel-plugin-transform-es2015-for-of": "^6.23.0",
+		"babel-plugin-transform-es2015-literals": "^6.22.0",
+		"babel-plugin-transform-es2015-parameters": "^6.24.1",
+		"babel-plugin-transform-es2015-shorthand-properties": "^6.24.1",
+		"babel-plugin-transform-es2015-spread": "^6.22.0",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
+		"chai": "^4.1.2",
+		"express": "^4.15.4",
+		"mocha": "^3.5.2"
+	}
 }

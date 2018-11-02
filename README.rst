@@ -2,11 +2,11 @@ LivingSDK
 =========
 
 The Node.js SDK and Javascript SDK for LivingApps
-------------------------------
+-------------------------------------------------
 
 This package provides a Javascript API for the LivingApps system (see
-`http://www.living-apps.de/ <http://www.living-apps.de>`__) or
-`http://www.living-apps.com <http://www.living-apps.de/>`__ for more
+`http://www.living-apps.de/ <http://www.living-apps.de/>`__) or
+`http://www.living-apps.com/ <http://www.living-apps.de/>`__ for more
 information).
 
 It allows you to fetch the configured data sources from a template,
