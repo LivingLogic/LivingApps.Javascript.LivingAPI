@@ -1,20 +1,26 @@
-(function(root){
+;(function(){
+let root = this, la = {}, ul4;
 
-let amd = (typeof define === 'function' && define.amd);
-let commonjs = (typeof module === 'object' && module.exports);
+let isamd = typeof(define) === "function" && define.amd;
+let iscommon = typeof(module) === "object" && module.exports;
 
-let la = {};
-
-let ul4;
-
-if (commonjs)
+if (isamd)
 {
+	// AMD
+	define([], function()
+	{
+		return la;
+	});
+}
+else if (iscommon)
+{
+	// COMMONJS
 	ul4 = require('./ul4.js');
-	module.exports = la;
+	module.exports.la = la;
 }
 else
 {
-	ul4 = root.ul4;
+	// DEFAULT
 	root.la = la;
 }
 
@@ -880,4 +886,4 @@ for (let name of classes)
 	ul4.register("de.livingapps.livingapi." + name.toLowerCase(), constructor);
 }
 
-})(this);
+})();
