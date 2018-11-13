@@ -21,6 +21,7 @@ else if (iscommon)
 else
 {
 	// DEFAULT
+	ul4 = root.ul4;
 	root.la = la;
 }
 
@@ -66,45 +67,40 @@ la.Base = class Base extends ul4.Proto
 	{
 		this[name] = null;
 	}
+
+	__getattr__(name)
+	{
+		if (this._ul4attrs.has(name))
+		{
+			let value = this[name];
+			if (typeof(value) === "function")
+			{
+				let realvalue = value.bind(this);
+				realvalue._ul4_name = value._ul4_name || value.name;
+				realvalue._ul4_signature = value._ul4_signature;
+				realvalue._ul4_needsobject = value._ul4_needsobject;
+				realvalue._ul4_needscontext = value._ul4_needscontext;
+				return realvalue;
+			}
+			return value;
+		}
+		throw new ul4.AttributeError(this, name);
+	}
+
+	__repr__()
+	{
+		return "<la." + this.constructor.name + ">";
+	}
 };
 
 la.Handler = class Handler
 {
-	insert(app, values)
-	{
-	}
-
-	update(record, values)
+	save(record)
 	{
 	}
 
 	delete(record)
 	{
-	}
-
-	__repr__()
-	{
-		return "<la.Handler>";
-	}
-};
-
-la.Globals = class Globals extends la.Base
-{
-	constructor()
-	{
-		super();
-		this.version = null;
-		this.platform = null;
-		this.user = null;
-		this.maxdbactions = null;
-		this.maxtemplateruntime = null;
-		this.flashmessages = null;
-		this.handler = new la.Handler();
-	}
-
-	__repr__()
-	{
-		return "<la.Globals version=" + ul4._repr(this.version) + ">";
 	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
@@ -135,7 +131,28 @@ la.Globals = class Globals extends la.Base
 	}
 };
 
+la.Globals = class Globals extends la.Base
+{
+	constructor()
+	{
+		super();
+		this.version = null;
+		this.platform = null;
+		this.user = null;
+		this.maxdbactions = null;
+		this.maxtemplateruntime = null;
+		this.flashmessages = null;
+		this.handler = new la.Handler();
+	}
+
+	__repr__()
+	{
+		return "<la.Globals version=" + ul4._repr(this.version) + ">";
+	}
+};
+
 la.Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages"];
+la.Globals.prototype._ul4attrs = ul4._makeset("version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages");
 
 la.FlashMessage = class FlashMessage extends la.Base
 {
@@ -146,6 +163,7 @@ la.FlashMessage = class FlashMessage extends la.Base
 };
 
 la.FlashMessage.prototype._ul4onattrs = ["timestamp", "type", "title", "message"];
+la.FlashMessage.prototype._ul4attrs = ul4._makeset("timestamp", "type", "title", "message");
 
 la.App = class App extends la.Base
 {
@@ -154,13 +172,56 @@ la.App = class App extends la.Base
 		return "<la.App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 
-	insert(values)
+	insert(values={})
 	{
-		return this.globals.handler.insert(this, values);
+		let record = this.__call__(values);
+		this.globals.handler.save(this);
+		return record;
+	}
+
+	__call__(values={})
+	{
+		let record = new la.Record(this);
+		if (ul4._ismap(values))
+		{
+			for (let [key, value] of values.entries())
+			{
+				if (!record.fields.has(key))
+					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
+				record.fields.get(key).value = value;
+			}
+		}
+		else if (ul4._isobject(values))
+		{
+			for (let key in values)
+			{
+				if (!record.fields.has(key))
+					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
+				record.fields.get(key).value = values[key];
+			}
+		}
+		else
+			throw new ul4.TypeError("values must be an object or a Map");
+		return record;
+	}
+
+	__getattr__(name)
+	{
+		if (name.startsWith("c_"))
+		{
+			if (!this.controls.has(name.substr(2)))
+				throw new ul4.AttributeError(this, name);
+			return this.controls.get(name.substr(2));
+		}
+		else
+			return super.__getattr__(name);
 	}
 };
 
 la.App.prototype._ul4onattrs = ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier"];
+la.App.prototype._ul4attrs = ul4._makeset("id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "owner", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert");
+ul4.expose(la.App.prototype.__call__, ["**values"], {"needsobject": true});
+ul4.expose(la.App.prototype.insert, ["**values"], {"needsobject": true});
 
 la.View = class View extends la.Base
 {
@@ -171,10 +232,10 @@ la.View = class View extends la.Base
 };
 
 la.View.prototype._ul4onattrs = ["id", "name", "app", "order", "width", "height", "start", "end"];
+la.View.prototype._ul4attrs = ul4._makeset("id", "name", "app", "order", "width", "height", "start", "end");
 
 la.DataSource = class DataSource extends la.Base
 {
-
 	__repr__()
 	{
 		return "<la.DataSource id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
@@ -182,9 +243,29 @@ la.DataSource = class DataSource extends la.Base
 };
 
 la.DataSource.prototype._ul4onattrs = ["id", "identifier", "app", "apps"];
+la.DataSource.prototype._ul4attrs = ul4._makeset("id", "identifier", "app", "apps");
 
 la.Record = class Record extends la.Base
 {
+	constructor(app)
+	{
+		super();
+		this.id = null;
+		this.app = app;
+		this.createdat = null;
+		this.createdby = null;
+		this.updatedat = null;
+		this.updatedby = null;
+		this.updatecount = 0;
+		this._sparsevalues = new Map();
+		this._values = null;
+		this._fields = null;
+		this.children = new Map();
+		this.attachments = null;
+		this.errors = [];
+		this._is_deleted = false;
+	}
+
 	__repr__()
 	{
 		let v = ["<la.Record id=", ul4._repr(this.id)];
@@ -192,7 +273,7 @@ la.Record = class Record extends la.Base
 		{
 			if (field.control.priority)
 			{
-				v.push(" ");
+				v.push(" v_");
 				v.push(field.control.identifier);
 				v.push("=");
 				v.push(ul4._repr(field.value)); // FIXME: This might lead to infinite recursions
@@ -202,14 +283,94 @@ la.Record = class Record extends la.Base
 		return v.join("");
 	}
 
+	get values()
+	{
+		if (this._values === null)
+		{
+			this._values = ul4._havemap ? new Map() : {};
+			for (let [identifier, control] of this.app.controls.entries())
+			{
+				let fieldvalue = this._sparsevalues.get(identifier);
+				if (typeof(fieldvalue) === "undefined")
+					fieldvalue = null;
+				this._values.set(identifier, fieldvalue);
+			}
+		}
+		return this._values;
+	}
+
+	get fields()
+	{
+		if (this._fields === null)
+		{
+			this._fields = ul4._havemap ? new Map() : {};
+			for (let [identifier, value] of this.values.entries())
+			{
+				let field = new la.Field(this.app.controls.get(identifier), this, value);
+				this._fields.set(identifier, field);
+			}
+		}
+		return this._fields;
+	}
+
+	is_dirty()
+	{
+		if (this.id === null)
+			return true;
+		for (let field of this.fields.values())
+		{
+			if (field.is_dirty())
+				return true;
+		}
+		return false;
+	}
+
+	has_errors()
+	{
+		if (this.errors.length !== 0)
+			return true;
+		for (let field of this.fields.values())
+		{
+			if (field.has_errors())
+				return true;
+		}
+		return false;
+	}
+
 	delete()
 	{
 		return this.app.globals.handler.delete(this);
 	}
 
-	update(values)
+	save()
 	{
-		return this.app.globals.handler.update(this, values);
+		this.app.globals.handler.save(this);
+	}
+
+	update(values={})
+	{
+		if (ul4._ismap(values))
+		{
+			for (let [key, value] of values.entries())
+			{
+				if (!record.fields.has(key))
+					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
+				fields.get(key).value = value;
+			}
+		}
+		else if (ul4._isobject(values))
+		{
+			for (let key in values)
+			{
+				if (!record.fields.has(key))
+					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
+				record.fields.get(key).value = values[key];
+			}
+		}
+		else
+			throw new ul4.TypeError("values must be an object or a Map");
+
+		this.app.globals.handler.save(this);
 	}
 
 	search(search)
@@ -245,43 +406,37 @@ la.Record = class Record extends la.Base
 		else
 			this[name] = value;
 	}
+
+	__getattr__(name)
+	{
+		if (name.startsWith("c_"))
+			return this.children.get(name.substr(2))
+		else if (name.startsWith("f_"))
+			return this.fields.get(name.substr(2))
+		else if (name.startsWith("v_"))
+			return this.values.get(name.substr(2))
+		else
+			return this[name];
+	}
+
+	__setattr__(name, value)
+	{
+		if (name.startsWith("c_"))
+			this.children[name.substr(2)] = value;
+		else if (name.startsWith("v_"))
+			this.fields.get(name.substr(2)).value = value;
+		else
+			throw new ul4.AttributeError(this, name);
+	}
 };
 
 la.Record.prototype._ul4onattrs = ["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"];
-
-Object.defineProperty(la.Record.prototype, "values", {
-	get: function()
-	{
-		if (this._values === null)
-		{
-			this._values = ul4._havemap ? new Map() : {};
-			for (let [identifier, control] of this.app.controls.entries())
-			{
-				let fieldvalue = self._sparsevalues.get(identifier);
-				if (typeof(fieldvalue) === "undefined")
-					fieldvalue = null;
-				this._values.set(identifier, fieldvalue);
-			}
-		}
-		return this._values;
-	}
-});
-
-Object.defineProperty(la.Record.prototype, "fields", {
-	get: function()
-	{
-		if (this._fields === null)
-		{
-			this._fields = ul4._havemap ? new Map() : {};
-			for (let [identifier, value] of this.values.entries())
-			{
-				let field = new la.Field(this.app.controls.get(identifier), this, value);
-				this._fields.set(identifier, field);
-			}
-		}
-		return this._fields;
-	}
-});
+la.Record.prototype._ul4attrs = ul4._makeset("id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children");
+ul4.expose(la.Record.prototype.is_dirty, []);
+ul4.expose(la.Record.prototype.has_errors, []);
+ul4.expose(la.Record.prototype.delete, []);
+ul4.expose(la.Record.prototype.save, []);
+ul4.expose(la.Record.prototype.update, ["**values"], {"needsobject": true});
 
 la.Control = class Control extends la.Base
 {
@@ -308,6 +463,7 @@ la.Control = class Control extends la.Base
 la.Control.prototype.type = null;
 la.Control.prototype.subtype = null;
 la.Control.prototype._ul4onattrs = ["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"];
+la.Control.prototype._ul4attrs = ul4._makeset("id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure");
 
 la.BoolControl = class BoolControl extends la.Control
 {
@@ -415,6 +571,7 @@ la.TextAreaControl = class TextAreaControl extends la.StringControl
 
 la.TextAreaControl.prototype.subtype = "textarea";
 la.TextAreaControl.prototype._ul4onattrs = la.StringControl.prototype._ul4onattrs.concat(["encrypted"]);
+la.TextAreaControl.prototype._ul4onattrs = ul4._makeset(...la.StringControl.prototype._ul4attrs, "encrypted");
 
 la.DateControl = class DateControl extends la.Control
 {
@@ -505,6 +662,7 @@ la.LookupControl = class LookupControl extends la.Control
 
 la.LookupControl.prototype.type = "lookup";
 la.LookupControl.prototype._ul4onattrs = la.Control.prototype._ul4onattrs.concat(["lookupdata"]);
+la.LookupControl.prototype._ul4onattrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupdata");
 
 la.LookupSelectControl = class LookupSelectControl extends la.LookupControl
 {
@@ -538,6 +696,7 @@ la.AppLookupControl = class AppLookupControl extends la.Control
 
 la.AppLookupControl.prototype.type = "applookup";
 la.AppLookupControl.prototype._ul4onattrs = la.Control.prototype._ul4onattrs.concat(["lookupapp", "lookupcontrols"]);
+la.AppLookupControl.prototype._ul4onattrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupapp", "lookupcontrols");
 
 la.AppLookupSelectControl = class AppLookupSelectControl extends la.AppLookupControl
 {
@@ -659,7 +818,41 @@ la.Field = class Field extends la.Base
 		super();
 		this.control = control;
 		this.record = record;
-		this.value = value;
+		this._value = value;
+		this._dirty = false;
+		this.errors = [];
+	}
+
+	get value()
+	{
+		return this._value;
+	}
+
+	set value(value)
+	{
+		let oldvalue = this._value;
+
+		if (ul4._ne(oldvalue, value))
+		{
+			this.record.values.set(this.control.identifier, value);
+			this._value = value;
+			this._dirty = true;
+		}
+	}
+
+	is_empty()
+	{
+		return this._value === null || (ul4._islist(this._value) && this._value.length === 0);
+	}
+
+	is_dirty()
+	{
+		return this._dirty;
+	}
+
+	has_errors()
+	{
+		return this.errors.length !== 0;
 	}
 
 	search(searchvalue)
@@ -669,7 +862,14 @@ la.Field = class Field extends la.Base
 
 	__repr__()
 	{
-		return "<la.Field>";
+		let s = "<la.Field identifier=";
+		s += ul4._repr(this.control.identifier)
+		if (this._dirty)
+			s += " is_dirty()=True";
+		if (this.errors.length !== 0)
+			s += " has_errors()=True";
+		s += ">"
+		return s;
 	}
 };
 
@@ -682,6 +882,7 @@ la.LookupItem = class LookupItem extends la.Base
 };
 
 la.LookupItem.prototype._ul4onattrs = ["key", "label"];
+la.LookupItem.prototype._ul4attrs = ul4._makeset("key", "label");
 
 la.User = class User extends la.Base
 {
@@ -692,6 +893,7 @@ la.User = class User extends la.Base
 };
 
 la.User.prototype._ul4onattrs = ["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"];
+la.User.prototype._ul4attrs = ul4._makeset("_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews");
 
 la.File = class File extends la.Base
 {
@@ -702,6 +904,7 @@ la.File = class File extends la.Base
 };
 
 la.File.prototype._ul4onattrs = ["id", "url", "filename", "mimetype", "width", "height"];
+la.File.prototype._ul4attrs = ul4._makeset("id", "url", "filename", "mimetype", "width", "height");
 
 la.Geo = class Geo extends la.Base
 {
@@ -720,6 +923,7 @@ la.Geo = class Geo extends la.Base
 };
 
 la.Geo.prototype._ul4onattrs = ["lat", "long", "info"];
+la.Geo.prototype._ul4attrs = ul4._makeset("lat", "long", "info");
 
 la.Attachment = class Attachment extends la.Base
 {
@@ -730,6 +934,7 @@ la.Attachment = class Attachment extends la.Base
 };
 
 la.Attachment.prototype._ul4onattrs = ["id", "record", "label", "active"];
+la.Attachment.prototype._ul4attrs = ul4._makeset("id", "record", "label", "active");
 
 la.NoteAttachment = class NoteAttachment extends la.Attachment
 {
@@ -737,6 +942,7 @@ la.NoteAttachment = class NoteAttachment extends la.Attachment
 
 la.NoteAttachment.prototype.type = "noteattachment";
 la.NoteAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
+la.NoteAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
 
 la.URLAttachment = class URLAttachment extends la.Attachment
 {
@@ -744,6 +950,7 @@ la.URLAttachment = class URLAttachment extends la.Attachment
 
 la.URLAttachment.prototype.type = "urlattachment";
 la.URLAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
+la.URLAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
 
 la.FileAttachment = class FileAttachment extends la.Attachment
 {
@@ -751,6 +958,7 @@ la.FileAttachment = class FileAttachment extends la.Attachment
 
 la.FileAttachment.prototype.type = "fileattachment";
 la.FileAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
+la.FileAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
 
 la.ImageAttachment = class ImageAttachment extends la.Attachment
 {
@@ -758,6 +966,7 @@ la.ImageAttachment = class ImageAttachment extends la.Attachment
 
 la.ImageAttachment.prototype.type = "imageattachment";
 la.ImageAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["original", "thumb", "small", "medium", "large"]);
+la.ImageAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large");
 
 la.JSONAttachment = class JSONAttachment extends la.Attachment
 {
@@ -780,6 +989,7 @@ la.JSONAttachment = class JSONAttachment extends la.Attachment
 
 la.JSONAttachment.prototype.type = "jsonattachment";
 la.JSONAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
+la.JSONAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
 
 la.Installation = class Installation extends la.Base
 {
@@ -790,6 +1000,7 @@ la.Installation = class Installation extends la.Base
 };
 
 la.Installation.prototype._ul4onattrs = ["id", "name"];
+la.Installation.prototype._ul4attrs = ul4._makeset("id", "name");
 
 la.Category = class Category extends la.Base
 {
@@ -807,6 +1018,7 @@ la.Category = class Category extends la.Base
 };
 
 la.Category.prototype._ul4onattrs = ["id", "identifier", "name", "order", "parent", "children", "apps"];
+la.Category.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "order", "parent", "children", "apps");
 
 la.KeyView = class KeyView extends la.Base
 {
@@ -817,6 +1029,7 @@ la.KeyView = class KeyView extends la.Base
 };
 
 la.KeyView.prototype._ul4onattrs = ["id", "identifier", "name", "key", "user"];
+la.KeyView.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "key", "user");
 
 la.AppParameter = class AppParameter extends la.Base
 {
@@ -827,63 +1040,66 @@ la.AppParameter = class AppParameter extends la.Base
 };
 
 la.AppParameter.prototype._ul4onattrs = ["id", "app", "identifier", "description", "value"];
+la.AppParameter.prototype._ul4attrs = ul4._makeset("id", "app", "identifier", "description", "value");
 
 let classes = [
-	"Globals",
-	"App",
-	"View",
-	"DataSource",
-	"Record",
-	"BoolControl",
-	"IntControl",
-	"NumberControl",
-	"TextControl",
-	"EmailControl",
-	"URLControl",
-	"TelControl",
-	"PasswordControl",
-	"TextAreaControl",
-	"DateControl",
-	"DatetimeMinuteControl",
-	"DatetimeSecondControl",
-	"LookupControl",
-	"LookupSelectControl",
-	"LookupRadioControl",
-	"LookupChoiceControl",
-	"AppLookupControl",
-	"AppLookupSelectControl",
-	"AppLookupRadioControl",
-	"AppLookupChoiceControl",
-	"MultipleLookupControl",
-	"MultipleLookupSelectControl",
-	"MultipleLookupCheckboxControl",
-	"MultipleAppLookupControl",
-	"MultipleAppLookupSelectControl",
-	"MultipleAppLookupCheckboxControl",
-	"MultipleAppLookupChoiceControl",
-	"GeoControl",
-	"FileControl",
-	"ButtonControl",
-	"Field",
-	"LookupItem",
-	"User",
-	"File",
-	"Geo",
-	"NoteAttachment",
-	"URLAttachment",
-	"FileAttachment",
-	"ImageAttachment",
-	"JSONAttachment",
-	"Installation",
-	"Category",
-	"KeyView",
-	"AppParameter"
+	la.Globals,
+	la.App,
+	la.View,
+	la.DataSource,
+	la.Record,
+	la.BoolControl,
+	la.IntControl,
+	la.NumberControl,
+	la.TextControl,
+	la.EmailControl,
+	la.URLControl,
+	la.TelControl,
+	la.PasswordControl,
+	la.TextAreaControl,
+	la.DateControl,
+	la.DatetimeMinuteControl,
+	la.DatetimeSecondControl,
+	la.LookupControl,
+	la.LookupSelectControl,
+	la.LookupRadioControl,
+	la.LookupChoiceControl,
+	la.AppLookupControl,
+	la.AppLookupSelectControl,
+	la.AppLookupRadioControl,
+	la.AppLookupChoiceControl,
+	la.MultipleLookupControl,
+	la.MultipleLookupSelectControl,
+	la.MultipleLookupCheckboxControl,
+	la.MultipleAppLookupControl,
+	la.MultipleAppLookupSelectControl,
+	la.MultipleAppLookupCheckboxControl,
+	la.MultipleAppLookupChoiceControl,
+	la.GeoControl,
+	la.FileControl,
+	la.ButtonControl,
+	la.Field,
+	la.LookupItem,
+	la.User,
+	la.File,
+	la.Geo,
+	la.NoteAttachment,
+	la.URLAttachment,
+	la.FileAttachment,
+	la.ImageAttachment,
+	la.JSONAttachment,
+	la.Installation,
+	la.Category,
+	la.KeyView,
+	la.AppParameter
 ];
 
-for (let name of classes)
+for (let constructor of classes)
 {
-	var constructor = la[name];
-	ul4.register("de.livingapps.livingapi." + name.toLowerCase(), constructor);
+	// Register under the old name
+	ul4.register("de.livingapps.appdd." + constructor.name.toLowerCase(), constructor);
+	// Register under the new name
+	ul4.register("de.livinglogic.livingapi." + constructor.name.toLowerCase(), constructor);
 }
 
 })();
