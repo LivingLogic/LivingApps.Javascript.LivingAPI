@@ -8,7 +8,7 @@
 		"url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
 	},
 	"scripts": {
-		"build": "node_modules/babel-cli/bin/babel.js src --source-maps=true --out-dir dist"
+		"build": "npx babel src --source-maps=true --out-dir dist"
 	},
 	"author": "Walter Dörwald",
 	"license": "MIT",
