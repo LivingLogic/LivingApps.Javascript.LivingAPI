@@ -571,7 +571,7 @@ la.TextAreaControl = class TextAreaControl extends la.StringControl
 
 la.TextAreaControl.prototype.subtype = "textarea";
 la.TextAreaControl.prototype._ul4onattrs = la.StringControl.prototype._ul4onattrs.concat(["encrypted"]);
-la.TextAreaControl.prototype._ul4onattrs = ul4._makeset(...la.StringControl.prototype._ul4attrs, "encrypted");
+la.TextAreaControl.prototype._ul4attrs = ul4._makeset(...la.StringControl.prototype._ul4attrs, "encrypted");
 
 la.DateControl = class DateControl extends la.Control
 {
@@ -662,7 +662,7 @@ la.LookupControl = class LookupControl extends la.Control
 
 la.LookupControl.prototype.type = "lookup";
 la.LookupControl.prototype._ul4onattrs = la.Control.prototype._ul4onattrs.concat(["lookupdata"]);
-la.LookupControl.prototype._ul4onattrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupdata");
+la.LookupControl.prototype._ul4attrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupdata");
 
 la.LookupSelectControl = class LookupSelectControl extends la.LookupControl
 {
@@ -696,7 +696,7 @@ la.AppLookupControl = class AppLookupControl extends la.Control
 
 la.AppLookupControl.prototype.type = "applookup";
 la.AppLookupControl.prototype._ul4onattrs = la.Control.prototype._ul4onattrs.concat(["lookupapp", "lookupcontrols"]);
-la.AppLookupControl.prototype._ul4onattrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupapp", "lookupcontrols");
+la.AppLookupControl.prototype._ul4attrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupapp", "lookupcontrols");
 
 la.AppLookupSelectControl = class AppLookupSelectControl extends la.AppLookupControl
 {
