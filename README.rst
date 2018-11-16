@@ -26,3 +26,5 @@ Authors
 - René Schwarzinger (milleniumfrog): modifications in ``livingapi.js``
 
 - Walter Dörwald <walter@livinglogic.de>: ``ul4.js`` and ``livingapi.js``
+
+- Peter Böker <peter@livinglogic.de>: ``livingapi.js``
