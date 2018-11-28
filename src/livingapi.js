@@ -102,6 +102,21 @@ la.Handler = class Handler
 	delete(record)
 	{
 	}
+};
+
+la.Globals = class Globals extends la.Base
+{
+	constructor()
+	{
+		super();
+		this.version = null;
+		this.platform = null;
+		this.user = null;
+		this.maxdbactions = null;
+		this.maxtemplateruntime = null;
+		this.flashmessages = null;
+		this.handler = new la.Handler();
+	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
 	static geodist(geo1, geo2)
@@ -128,21 +143,6 @@ la.Handler = class Handler
 		const H2 = (3*T+1)/(2*S);
 		const s = D * (1 + flat * H1 * sqsin(F) * sqcos(G) - flat * H2 * sqcos(F) * sqsin(G));
 		return s;
-	}
-};
-
-la.Globals = class Globals extends la.Base
-{
-	constructor()
-	{
-		super();
-		this.version = null;
-		this.platform = null;
-		this.user = null;
-		this.maxdbactions = null;
-		this.maxtemplateruntime = null;
-		this.flashmessages = null;
-		this.handler = new la.Handler();
 	}
 
 	__repr__()
