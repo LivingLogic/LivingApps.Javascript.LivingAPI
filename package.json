@@ -1,6 +1,6 @@
 {
 	"name": "livingapi",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Javascript version of the LivingAPI classes of LivingApps",
 	"main": "src/livingapi.js",
 	"repository": {
