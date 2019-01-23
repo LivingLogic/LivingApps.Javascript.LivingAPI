@@ -749,6 +749,12 @@ la.MultipleLookupCheckboxControl = class MultipleLookupCheckboxControl extends l
 
 la.MultipleLookupCheckboxControl.prototype.subtype = "checkbox";
 
+la.MultipleLookupChoiceControl = class MultipleLookupChoiceControl extends la.MultipleLookupControl
+{
+};
+
+la.MultipleLookupChoiceControl.prototype.subtype = "choice";
+
 la.MultipleAppLookupControl = class MultipleAppLookupControl extends la.AppLookupControl
 {
 	// ``search.value`` must be an object containing the search criteria for the referenced record
