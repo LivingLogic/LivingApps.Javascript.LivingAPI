@@ -1077,6 +1077,7 @@ let classes = [
 	la.MultipleLookupControl,
 	la.MultipleLookupSelectControl,
 	la.MultipleLookupCheckboxControl,
+	la.MultipleLookupChoiceControl,
 	la.MultipleAppLookupControl,
 	la.MultipleAppLookupSelectControl,
 	la.MultipleAppLookupCheckboxControl,
