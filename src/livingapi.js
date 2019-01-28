@@ -909,8 +909,8 @@ la.File = class File extends la.Base
 	}
 };
 
-la.File.prototype._ul4onattrs = ["id", "url", "filename", "mimetype", "width", "height"];
-la.File.prototype._ul4attrs = ul4._makeset("id", "url", "filename", "mimetype", "width", "height");
+la.File.prototype._ul4onattrs = ["id", "url", "filename", "mimetype", "width", "height", "internalid", "createdat"];
+la.File.prototype._ul4attrs = ul4._makeset("id", "url", "filename", "mimetype", "width", "height", "createdat");
 
 la.Geo = class Geo extends la.Base
 {
