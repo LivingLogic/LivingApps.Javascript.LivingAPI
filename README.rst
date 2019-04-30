@@ -1,8 +1,8 @@
 LivingAPI
-=========
+#########
 
 The Javascript SDK for LivingApps
----------------------------------
+=================================
 
 This package provides a Javascript API for the LivingApps system (see
 `http://www.living-apps.de/ <http://www.living-apps.de/>`__) or
@@ -20,8 +20,20 @@ For more info about LivingApps and this Javascript SDK, see
 https://my.living-apps.de/docs/JavascriptSDK.html (in german).
 
 
+Changes
+=======
+
+0.6.0 (2019/04/24)
+------------------
+
+Registered ``FlashMessage`` with the UL4ON machinery (this shouldn't be
+necessary as flash messages should be consumed by the HTML page itself). Moving
+them over to Javascript might make sense for reactive frameworks but currently
+this doesn't clear the list of flash messages in the server.
+
+
 Authors
--------
+=======
 
 - Walter Dörwald <walter@livinglogic.de>: ``ul4.js`` and ``livingapi.js``
 

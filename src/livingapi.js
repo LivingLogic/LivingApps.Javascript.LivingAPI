@@ -1050,6 +1050,7 @@ la.AppParameter.prototype._ul4attrs = ul4._makeset("id", "app", "identifier", "d
 
 let classes = [
 	la.Globals,
+	la.FlashMessage,
 	la.App,
 	la.View,
 	la.DataSource,
