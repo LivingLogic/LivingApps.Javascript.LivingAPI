@@ -234,16 +234,16 @@ la.View = class View extends la.Base
 la.View.prototype._ul4onattrs = ["id", "name", "app", "order", "width", "height", "start", "end"];
 la.View.prototype._ul4attrs = ul4._makeset("id", "name", "app", "order", "width", "height", "start", "end");
 
-la.DataSource = class DataSource extends la.Base
+la.DataSourceData = class DataSourceData extends la.Base
 {
 	__repr__()
 	{
-		return "<la.DataSource id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<la.DataSource.Data id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-la.DataSource.prototype._ul4onattrs = ["id", "identifier", "app", "apps"];
-la.DataSource.prototype._ul4attrs = ul4._makeset("id", "identifier", "app", "apps");
+la.DataSourceData.prototype._ul4onattrs = ["id", "identifier", "app", "apps"];
+la.DataSourceData.prototype._ul4attrs = ul4._makeset("id", "identifier", "app", "apps");
 
 la.Record = class Record extends la.Base
 {
@@ -1053,7 +1053,7 @@ let classes = [
 	la.FlashMessage,
 	la.App,
 	la.View,
-	la.DataSource,
+	la.DataSourceData,
 	la.Record,
 	la.BoolControl,
 	la.IntControl,
