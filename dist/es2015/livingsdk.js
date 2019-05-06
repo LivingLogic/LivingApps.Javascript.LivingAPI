@@ -83,7 +83,7 @@ export class LivingSDK {
                 return {
                     HTTPstatusCode: res.status,
                     recordid: res.data.id,
-                    Record: livingApi.Record.create({
+                    Record: new livingApi.Record({
                         id: res.data.id,
                         createdat: new Date(Date.now()),
                         updatedat: null,
