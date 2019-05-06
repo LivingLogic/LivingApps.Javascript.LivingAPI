@@ -336,7 +336,7 @@ la.Record = class Record extends la.Base
 			{
 				if (!this.fields.has(key))
 					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
-				fields.get(key).value = value;
+				this.fields.get(key).value = value;
 			}
 		}
 		else if (ul4._isobject(values))
@@ -345,7 +345,7 @@ la.Record = class Record extends la.Base
 			{
 				if (!this.fields.has(key))
 					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
-				record.fields.get(key).value = values[key];
+				this.fields.get(key).value = values[key];
 			}
 		}
 		else

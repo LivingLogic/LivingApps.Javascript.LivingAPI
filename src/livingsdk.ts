@@ -93,7 +93,7 @@ export class LivingSDK {
 				if (!app.controls.has(ident)) {
 					throw new Error(`insert() got an unexpected keyword argument ${ident}`);
 				}
-
+				
 				fields[ident] = app.controls.get(ident).asjson(values[ident]);
 			}
 			let data: any = {}; {
@@ -114,7 +114,7 @@ export class LivingSDK {
 					return {
 						HTTPstatusCode: res.status,
 						recordid: res.data.id,
-						Record: livingApi.Record.create({
+						Record: new livingApi.Record({
 							id: res.data.id,
 							createdat: new Date(Date.now()),
 							updatedat: null,
