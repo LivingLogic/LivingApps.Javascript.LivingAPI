@@ -1,6 +1,6 @@
 import axios from 'axios';
 import livingApi from './modules/livingapi';
-import { ul4on } from './modules/ul4';
+import { ul4 } from './modules/ul4';
 import * as https from 'https';
 let commonjs = (typeof module === 'object' && module.exports);
 export class LivingSDK {
@@ -49,7 +49,7 @@ export class LivingSDK {
             })
                 .then((res) => {
                 let dump;
-                dump = ul4on.loads(res.data);
+                dump = ul4.loads(res.data);
                 dump.get('globals').Login = this;
                 return dump;
             });

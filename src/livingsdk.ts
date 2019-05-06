@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 ///@ts-ignore
 import livingApi from './modules/livingapi';
 ///@ts-ignore
-import { ul4, ul4on } from './modules/ul4';
+import { ul4 } from './modules/ul4';
 import * as https from 'https';
 
 export type Auth_Token = string;
@@ -77,7 +77,7 @@ export class LivingSDK {
 				})
 				.then((res: AxiosResponse) => {
 					let dump: any;
-					dump = ul4on.loads(res.data);
+					dump = ul4.loads(res.data);
 					dump.get('globals').Login = this;
 					return <LivingApi>dump;
 				});

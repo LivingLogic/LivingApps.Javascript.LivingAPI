@@ -9,7 +9,7 @@
     "url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
   },
   "scripts": {
-    "test": "sh shellscripts/build.sh && mocha dist/test/**/*.test.js",
+    "test": "sh shellscripts/build.sh && mocha -r source-map-support/register dist/test/**/*.test.js",
     "build": "sh shellscripts/build.sh",
     "karma": "sh shellscripts/build.sh && karma start"
   },
@@ -39,6 +39,7 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-uglify": "^5.0.2",
+    "source-map-support": "^0.5.12",
     "ts-node": "^6.1.0",
     "typescript": "^2.9.1"
   }
