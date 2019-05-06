@@ -154,8 +154,7 @@ la.App = class App extends la.Base
 	{
 		let record = this.__call__(values);
 		this.globals.handler.save(this);
-		this.globals.Login._insert(this, values);
-		return record;
+		return this.globals.Login._insert(this, values);
 	}
 
 	__call__(values={})
@@ -352,6 +351,7 @@ la.Record = class Record extends la.Base
 			throw new ul4.TypeError("values must be an object or a Map");
 
 		this.app.globals.handler.save(this);
+		return this.app.globals.Login._update(this, values);
 	}
 
 	search(search)
@@ -431,6 +431,11 @@ la.Control = class Control extends la.Base
 		//console.log("Searching for " + ul4._repr(search.value) + " in " + ul4._repr(this) + " with operator " + search.operator + " in value " + ul4._repr(value));
 	}
 
+
+	asjson(value) {
+		return value;
+	}
+
 	// base implemntation, always returns ``false`` (i.e. "not found")
 	// ``value`` is the value of the field
 	// ``search`` is an object with information what we're searching for
@@ -499,6 +504,11 @@ la.NumberControl.prototype.type = "number";
 
 la.StringControl = class StringControl extends la.Control
 {
+
+	asjson(value) {
+		return value;
+	}
+
 	search(value, search)
 	{
 		this._logsearch(value, search);
@@ -564,6 +574,10 @@ la.DateControl = class DateControl extends la.Control
 			return "%d.%m.%Y";
 		else
 			return "%m/%d/%Y";
+	}
+
+	asjson(value) {
+		return value;
 	}
 
 	// searchvalue must be ``null``, a ``Date`` object or a string
@@ -782,6 +796,11 @@ la.MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 
 la.GeoControl = class GeoControl extends la.Control
 {
+	asjson (value) {
+		if (value instanceof la.Geo)
+			value = `${value.lat}, ${value.long}, ${value.info}`;
+		return value;
+	}
 };
 
 la.GeoControl.prototype.type = "geo";
