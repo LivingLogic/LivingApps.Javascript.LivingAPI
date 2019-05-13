@@ -1,31 +1,11 @@
-;(function(){
-let root = this, la = {}, ul4;
+// Version of this Javascipt package
+import { version } from '../package.json';
 
-let isamd = typeof(define) === "function" && define.amd;
-let iscommon = typeof(module) === "object" && module.exports;
+export { version };
 
-if (isamd)
-{
-	// AMD
-	define([], function()
-	{
-		return la;
-	});
-}
-else if (iscommon)
-{
-	// COMMONJS
-	ul4 = require('./ul4.js');
-	module.exports.la = la;
-}
-else
-{
-	// DEFAULT
-	ul4 = root.ul4;
-	root.la = la;
-}
+import * as ul4 from 'ul4';
 
-la.Base = class Base extends ul4.Proto
+export class Base extends ul4.Proto
 {
 	constructor()
 	{
@@ -89,11 +69,11 @@ la.Base = class Base extends ul4.Proto
 
 	__repr__()
 	{
-		return "<la." + this.constructor.name + ">";
+		return "<" + this.constructor.name + ">";
 	}
 };
 
-la.Handler = class Handler
+export class Handler
 {
 	save(record)
 	{
@@ -104,7 +84,7 @@ la.Handler = class Handler
 	}
 };
 
-la.Globals = class Globals extends la.Base
+export class Globals extends Base
 {
 	constructor()
 	{
@@ -115,7 +95,7 @@ la.Globals = class Globals extends la.Base
 		this.maxdbactions = null;
 		this.maxtemplateruntime = null;
 		this.flashmessages = null;
-		this.handler = new la.Handler();
+		this.handler = new Handler();
 	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
@@ -147,29 +127,29 @@ la.Globals = class Globals extends la.Base
 
 	__repr__()
 	{
-		return "<la.Globals version=" + ul4._repr(this.version) + ">";
+		return "<Globals version=" + ul4._repr(this.version) + ">";
 	}
 };
 
-la.Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages"];
-la.Globals.prototype._ul4attrs = ul4._makeset("version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages");
+Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages"];
+Globals.prototype._ul4attrs = ul4._makeset("version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages");
 
-la.FlashMessage = class FlashMessage extends la.Base
+export class FlashMessage extends Base
 {
 	__repr__()
 	{
-		return "<la.FlashMessage type=" + ul4._repr(this.type) + " title=" + ul4._repr(this.title) + ">";
+		return "<FlashMessage type=" + ul4._repr(this.type) + " title=" + ul4._repr(this.title) + ">";
 	}
 };
 
-la.FlashMessage.prototype._ul4onattrs = ["timestamp", "type", "title", "message"];
-la.FlashMessage.prototype._ul4attrs = ul4._makeset("timestamp", "type", "title", "message");
+FlashMessage.prototype._ul4onattrs = ["timestamp", "type", "title", "message"];
+FlashMessage.prototype._ul4attrs = ul4._makeset("timestamp", "type", "title", "message");
 
-la.App = class App extends la.Base
+export class App extends Base
 {
 	__repr__()
 	{
-		return "<la.App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
+		return "<App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 
 	insert(values={})
@@ -181,7 +161,7 @@ la.App = class App extends la.Base
 
 	__call__(values={})
 	{
-		let record = new la.Record(this);
+		let record = new Record(this);
 		if (ul4._ismap(values))
 		{
 			for (let [key, value] of values.entries())
@@ -218,34 +198,34 @@ la.App = class App extends la.Base
 	}
 };
 
-la.App.prototype._ul4onattrs = ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby"];
-la.App.prototype._ul4attrs = ul4._makeset("id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert");
-ul4.expose(la.App.prototype.__call__, ["**values"], {"needsobject": true});
-ul4.expose(la.App.prototype.insert, ["**values"], {"needsobject": true});
+App.prototype._ul4onattrs = ["id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby"];
+App.prototype._ul4attrs = ul4._makeset("id", "globals", "name", "description", "language", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert");
+ul4.expose(App.prototype.__call__, ["**values"], {"needsobject": true});
+ul4.expose(App.prototype.insert, ["**values"], {"needsobject": true});
 
-la.View = class View extends la.Base
+export class View extends Base
 {
 	__repr__()
 	{
-		return "<la.View id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
+		return "<View id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 };
 
-la.View.prototype._ul4onattrs = ["id", "name", "app", "order", "width", "height", "start", "end"];
-la.View.prototype._ul4attrs = ul4._makeset("id", "name", "app", "order", "width", "height", "start", "end");
+View.prototype._ul4onattrs = ["id", "name", "app", "order", "width", "height", "start", "end"];
+View.prototype._ul4attrs = ul4._makeset("id", "name", "app", "order", "width", "height", "start", "end");
 
-la.DataSourceData = class DataSourceData extends la.Base
+export class DataSourceData extends Base
 {
 	__repr__()
 	{
-		return "<la.DataSource.Data id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<DataSource.Data id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-la.DataSourceData.prototype._ul4onattrs = ["id", "identifier", "app", "apps"];
-la.DataSourceData.prototype._ul4attrs = ul4._makeset("id", "identifier", "app", "apps");
+DataSourceData.prototype._ul4onattrs = ["id", "identifier", "app", "apps"];
+DataSourceData.prototype._ul4attrs = ul4._makeset("id", "identifier", "app", "apps");
 
-la.Record = class Record extends la.Base
+export class Record extends Base
 {
 	constructor(app)
 	{
@@ -268,7 +248,7 @@ la.Record = class Record extends la.Base
 
 	__repr__()
 	{
-		let v = ["<la.Record id=", ul4._repr(this.id)];
+		let v = ["<Record id=", ul4._repr(this.id)];
 		for (let field of this.fields.values())
 		{
 			if (field.control.priority)
@@ -306,7 +286,7 @@ la.Record = class Record extends la.Base
 			this._fields = ul4._havemap ? new Map() : {};
 			for (let [identifier, value] of this.values.entries())
 			{
-				let field = new la.Field(this.app.controls.get(identifier), this, value);
+				let field = new Field(this.app.controls.get(identifier), this, value);
 				this._fields.set(identifier, field);
 			}
 		}
@@ -353,7 +333,7 @@ la.Record = class Record extends la.Base
 		{
 			for (let [key, value] of values.entries())
 			{
-				if (!record.fields.has(key))
+				if (!this.fields.has(key))
 					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
 				fields.get(key).value = value;
 			}
@@ -362,7 +342,7 @@ la.Record = class Record extends la.Base
 		{
 			for (let key in values)
 			{
-				if (!record.fields.has(key))
+				if (!this.fields.has(key))
 					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
 				record.fields.get(key).value = values[key];
 			}
@@ -430,19 +410,19 @@ la.Record = class Record extends la.Base
 	}
 };
 
-la.Record.prototype._ul4onattrs = ["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"];
-la.Record.prototype._ul4attrs = ul4._makeset("id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children");
-ul4.expose(la.Record.prototype.is_dirty, []);
-ul4.expose(la.Record.prototype.has_errors, []);
-ul4.expose(la.Record.prototype.delete, []);
-ul4.expose(la.Record.prototype.save, []);
-ul4.expose(la.Record.prototype.update, ["**values"], {"needsobject": true});
+Record.prototype._ul4onattrs = ["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"];
+Record.prototype._ul4attrs = ul4._makeset("id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children");
+ul4.expose(Record.prototype.is_dirty, []);
+ul4.expose(Record.prototype.has_errors, []);
+ul4.expose(Record.prototype.delete, []);
+ul4.expose(Record.prototype.save, []);
+ul4.expose(Record.prototype.update, ["**values"], {"needsobject": true});
 
-la.Control = class Control extends la.Base
+export class Control extends Base
 {
 	__repr__()
 	{
-		return "<la." + this.__type__ + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<" + this.__type__ + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 
 	_logsearch(value, search)
@@ -460,12 +440,12 @@ la.Control = class Control extends la.Base
 	}
 };
 
-la.Control.prototype.type = null;
-la.Control.prototype.subtype = null;
-la.Control.prototype._ul4onattrs = ["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"];
-la.Control.prototype._ul4attrs = ul4._makeset("id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure");
+Control.prototype.type = null;
+Control.prototype.subtype = null;
+Control.prototype._ul4onattrs = ["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"];
+Control.prototype._ul4attrs = ul4._makeset("id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure");
 
-la.BoolControl = class BoolControl extends la.Control
+export class BoolControl extends Control
 {
 	// ``search`` must by ``null``, ``false`` or ``true``
 	search(value, search)
@@ -478,9 +458,9 @@ la.BoolControl = class BoolControl extends la.Control
 	}
 };
 
-la.BoolControl.prototype.type = "bool";
+BoolControl.prototype.type = "bool";
 
-la.IntControl = class IntControl extends la.Control
+export class IntControl extends Control
 {
 	// ``search.value`` must by ``null`` or an integer
 	search(value, search)
@@ -493,9 +473,9 @@ la.IntControl = class IntControl extends la.Control
 	}
 };
 
-la.IntControl.prototype.type = "int";
+IntControl.prototype.type = "int";
 
-la.NumberControl = class NumberControl extends la.Control
+export class NumberControl extends Control
 {
 	// ``search.value`` must by ``null`` or an integer
 	search(value, search)
@@ -514,9 +494,9 @@ la.NumberControl = class NumberControl extends la.Control
 	}
 };
 
-la.NumberControl.prototype.type = "number";
+NumberControl.prototype.type = "number";
 
-la.StringControl = class StringControl extends la.Control
+export class StringControl extends Control
 {
 	search(value, search)
 	{
@@ -533,47 +513,47 @@ la.StringControl = class StringControl extends la.Control
 	}
 };
 
-la.StringControl.prototype.type = "string";
+StringControl.prototype.type = "string";
 
-la.TextControl = class TextControl extends la.StringControl
+export class TextControl extends StringControl
 {
 };
 
-la.TextControl.prototype.subtype = "text";
+TextControl.prototype.subtype = "text";
 
-la.EmailControl = class EmailControl extends la.StringControl
+export class EmailControl extends StringControl
 {
 };
 
-la.EmailControl.prototype.subtype = "email";
+EmailControl.prototype.subtype = "email";
 
-la.URLControl = class URLControl extends la.StringControl
+export class URLControl extends StringControl
 {
 };
 
-la.URLControl.prototype.subtype = "url";
+URLControl.prototype.subtype = "url";
 
-la.TelControl = class TelControl extends la.StringControl
+export class TelControl extends StringControl
 {
 };
 
-la.TelControl.prototype.subtype = "tel";
+TelControl.prototype.subtype = "tel";
 
-la.PasswordControl = class PasswordControl extends la.StringControl
+export class PasswordControl extends StringControl
 {
 };
 
-la.PasswordControl.prototype.subtype = "password";
+PasswordControl.prototype.subtype = "password";
 
-la.TextAreaControl = class TextAreaControl extends la.StringControl
+export class TextAreaControl extends StringControl
 {
 };
 
-la.TextAreaControl.prototype.subtype = "textarea";
-la.TextAreaControl.prototype._ul4onattrs = la.StringControl.prototype._ul4onattrs.concat(["encrypted"]);
-la.TextAreaControl.prototype._ul4attrs = ul4._makeset(...la.StringControl.prototype._ul4attrs, "encrypted");
+TextAreaControl.prototype.subtype = "textarea";
+TextAreaControl.prototype._ul4onattrs = StringControl.prototype._ul4onattrs.concat(["encrypted"]);
+TextAreaControl.prototype._ul4attrs = ul4._makeset(...StringControl.prototype._ul4attrs, "encrypted");
 
-la.DateControl = class DateControl extends la.Control
+export class DateControl extends Control
 {
 	formatstring(language)
 	{
@@ -610,10 +590,10 @@ la.DateControl = class DateControl extends la.Control
 	}
 };
 
-la.DateControl.prototype.type = "date";
-la.DateControl.prototype.subtype = "date";
+DateControl.prototype.type = "date";
+DateControl.prototype.subtype = "date";
 
-la.DatetimeMinuteControl = class DatetimeMinuteControl extends la.DateControl
+export class DatetimeMinuteControl extends DateControl
 {
 	formatstring(language)
 	{
@@ -626,9 +606,9 @@ la.DatetimeMinuteControl = class DatetimeMinuteControl extends la.DateControl
 	}
 };
 
-la.DatetimeMinuteControl.prototype.subtype = "datetimeminute";
+DatetimeMinuteControl.prototype.subtype = "datetimeminute";
 
-la.DatetimeSecondControl = class DatetimeSecondControl extends la.DateControl
+export class DatetimeSecondControl extends DateControl
 {
 	formatstring(language)
 	{
@@ -641,9 +621,9 @@ la.DatetimeSecondControl = class DatetimeSecondControl extends la.DateControl
 	}
 };
 
-la.DatetimeSecondControl.prototype.subtype = "datetimesecond";
+DatetimeSecondControl.prototype.subtype = "datetimesecond";
 
-la.LookupControl = class LookupControl extends la.Control
+export class LookupControl extends Control
 {
 	// ``search.value`` must be ``null`` or a ``LookupItem`` key
 	search(value, search)
@@ -660,29 +640,29 @@ la.LookupControl = class LookupControl extends la.Control
 	}
 };
 
-la.LookupControl.prototype.type = "lookup";
-la.LookupControl.prototype._ul4onattrs = la.Control.prototype._ul4onattrs.concat(["lookupdata"]);
-la.LookupControl.prototype._ul4attrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupdata");
+LookupControl.prototype.type = "lookup";
+LookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookupdata"]);
+LookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4attrs, "lookupdata");
 
-la.LookupSelectControl = class LookupSelectControl extends la.LookupControl
+export class LookupSelectControl extends LookupControl
 {
 };
 
-la.LookupSelectControl.prototype.subtype = "select";
+LookupSelectControl.prototype.subtype = "select";
 
-la.LookupRadioControl = class LookupRadioControl extends la.LookupControl
+export class LookupRadioControl extends LookupControl
 {
 };
 
-la.LookupRadioControl.prototype.subtype = "radio";
+LookupRadioControl.prototype.subtype = "radio";
 
-la.LookupChoiceControl = class LookupChoiceControl extends la.LookupControl
+export class LookupChoiceControl extends LookupControl
 {
 };
 
-la.LookupChoiceControl.prototype.subtype = "choice";
+LookupChoiceControl.prototype.subtype = "choice";
 
-la.AppLookupControl = class AppLookupControl extends la.Control
+export class AppLookupControl extends Control
 {
 	// ``search.value`` must be an object containing the search criteria for the referenced record
 	search(value, search)
@@ -694,29 +674,29 @@ la.AppLookupControl = class AppLookupControl extends la.Control
 	}
 };
 
-la.AppLookupControl.prototype.type = "applookup";
-la.AppLookupControl.prototype._ul4onattrs = la.Control.prototype._ul4onattrs.concat(["lookupapp", "lookupcontrols"]);
-la.AppLookupControl.prototype._ul4attrs = ul4._makeset(...la.Control.prototype._ul4attrs, "lookupapp", "lookupcontrols");
+AppLookupControl.prototype.type = "applookup";
+AppLookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookupapp", "lookupcontrols"]);
+AppLookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4attrs, "lookupapp", "lookupcontrols");
 
-la.AppLookupSelectControl = class AppLookupSelectControl extends la.AppLookupControl
+export class AppLookupSelectControl extends AppLookupControl
 {
 };
 
-la.AppLookupSelectControl.prototype.subtype = "select";
+AppLookupSelectControl.prototype.subtype = "select";
 
-la.AppLookupRadioControl = class AppLookupRadioControl extends la.AppLookupControl
+export class AppLookupRadioControl extends AppLookupControl
 {
 };
 
-la.AppLookupRadioControl.prototype.subtype = "radio";
+AppLookupRadioControl.prototype.subtype = "radio";
 
-la.AppLookupChoiceControl = class AppLookupChoiceControl extends la.AppLookupControl
+export class AppLookupChoiceControl extends AppLookupControl
 {
 };
 
-la.AppLookupChoiceControl.prototype.subtype = "choice";
+AppLookupChoiceControl.prototype.subtype = "choice";
 
-la.MultipleLookupControl = class MultipleLookupControl extends la.LookupControl
+export class MultipleLookupControl extends LookupControl
 {
 	// search.value must be ``null`` or a ``LookupItem`` key
 	search(value, search)
@@ -735,27 +715,27 @@ la.MultipleLookupControl = class MultipleLookupControl extends la.LookupControl
 	}
 };
 
-la.MultipleLookupControl.prototype.subtype = "multiplelookup";
+MultipleLookupControl.prototype.subtype = "multiplelookup";
 
-la.MultipleLookupSelectControl = class MultipleLookupSelectControl extends la.MultipleLookupControl
+export class MultipleLookupSelectControl extends MultipleLookupControl
 {
 };
 
-la.MultipleLookupSelectControl.prototype.subtype = "select";
+MultipleLookupSelectControl.prototype.subtype = "select";
 
-la.MultipleLookupCheckboxControl = class MultipleLookupCheckboxControl extends la.MultipleLookupControl
+export class MultipleLookupCheckboxControl extends MultipleLookupControl
 {
 };
 
-la.MultipleLookupCheckboxControl.prototype.subtype = "checkbox";
+MultipleLookupCheckboxControl.prototype.subtype = "checkbox";
 
-la.MultipleLookupChoiceControl = class MultipleLookupChoiceControl extends la.MultipleLookupControl
+export class MultipleLookupChoiceControl extends MultipleLookupControl
 {
 };
 
-la.MultipleLookupChoiceControl.prototype.subtype = "choice";
+MultipleLookupChoiceControl.prototype.subtype = "choice";
 
-la.MultipleAppLookupControl = class MultipleAppLookupControl extends la.AppLookupControl
+export class MultipleAppLookupControl extends AppLookupControl
 {
 	// ``search.value`` must be an object containing the search criteria for the referenced record
 	search(value, search)
@@ -779,45 +759,45 @@ la.MultipleAppLookupControl = class MultipleAppLookupControl extends la.AppLooku
 	}
 };
 
-la.MultipleAppLookupControl.prototype.type = "multipleapplookup";
+MultipleAppLookupControl.prototype.type = "multipleapplookup";
 
-la.MultipleAppLookupSelectControl = class MultipleAppLookupSelectControl extends la.MultipleAppLookupControl
+export class MultipleAppLookupSelectControl extends MultipleAppLookupControl
 {
 };
 
-la.MultipleAppLookupSelectControl.prototype.subtype = "select";
+MultipleAppLookupSelectControl.prototype.subtype = "select";
 
-la.MultipleAppLookupCheckboxControl = class MultipleAppLookupCheckboxControl extends la.MultipleAppLookupControl
+export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
 {
 };
 
-la.MultipleAppLookupCheckboxControl.prototype.subtype = "checkbox";
+MultipleAppLookupCheckboxControl.prototype.subtype = "checkbox";
 
-la.MultipleAppLookupChoiceControl = class MultipleAppLookupChoiceControl extends la.MultipleAppLookupControl
+export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 {
 };
 
-la.MultipleAppLookupChoiceControl.prototype.subtype = "choice";
+MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 
-la.GeoControl = class GeoControl extends la.Control
+export class GeoControl extends Control
 {
 };
 
-la.GeoControl.prototype.type = "geo";
+GeoControl.prototype.type = "geo";
 
-la.FileControl = class FileControl extends la.Control
+export class FileControl extends Control
 {
 };
 
-la.FileControl.prototype.type = "file";
+FileControl.prototype.type = "file";
 
-la.ButtonControl = class ButtonControl extends la.Control
+export class ButtonControl extends Control
 {
 };
 
-la.ButtonControl.prototype.type = "button";
+ButtonControl.prototype.type = "button";
 
-la.Field = class Field extends la.Base
+export class Field extends Base
 {
 	constructor(control, record, value)
 	{
@@ -868,7 +848,7 @@ la.Field = class Field extends la.Base
 
 	__repr__()
 	{
-		let s = "<la.Field identifier=";
+		let s = "<Field identifier=";
 		s += ul4._repr(this.control.identifier)
 		if (this._dirty)
 			s += " is_dirty()=True";
@@ -879,40 +859,40 @@ la.Field = class Field extends la.Base
 	}
 };
 
-la.LookupItem = class LookupItem extends la.Base
+export class LookupItem extends Base
 {
 	__repr__()
 	{
-		return "<la.LookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label) + ">";
+		return "<LookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label) + ">";
 	}
 };
 
-la.LookupItem.prototype._ul4onattrs = ["key", "label"];
-la.LookupItem.prototype._ul4attrs = ul4._makeset("key", "label");
+LookupItem.prototype._ul4onattrs = ["key", "label"];
+LookupItem.prototype._ul4attrs = ul4._makeset("key", "label");
 
-la.User = class User extends la.Base
+export class User extends Base
 {
 	__repr__()
 	{
-		return "<la.User id=" + ul4._repr(this.id) + " firstname=" + ul4._repr(this.firstname) + " surname=" + ul4._repr(this.surname) + " email=" + ul4._repr(this.email) + ">";
+		return "<User id=" + ul4._repr(this.id) + " firstname=" + ul4._repr(this.firstname) + " surname=" + ul4._repr(this.surname) + " email=" + ul4._repr(this.email) + ">";
 	}
 };
 
-la.User.prototype._ul4onattrs = ["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"];
-la.User.prototype._ul4attrs = ul4._makeset("_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews");
+User.prototype._ul4onattrs = ["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"];
+User.prototype._ul4attrs = ul4._makeset("_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews");
 
-la.File = class File extends la.Base
+export class File extends Base
 {
 	__repr__()
 	{
-		return "<la.File id=" + ul4._repr(this.id) + " url=" + ul4._repr(this.url) + " filename=" + ul4._repr(this.filename) + ">";
+		return "<File id=" + ul4._repr(this.id) + " url=" + ul4._repr(this.url) + " filename=" + ul4._repr(this.filename) + ">";
 	}
 };
 
-la.File.prototype._ul4onattrs = ["id", "url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size"];
-la.File.prototype._ul4attrs = ul4._makeset("id", "url", "filename", "mimetype", "width", "height", "size", "createdat");
+File.prototype._ul4onattrs = ["id", "url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size"];
+File.prototype._ul4attrs = ul4._makeset("id", "url", "filename", "mimetype", "width", "height", "size", "createdat");
 
-la.Geo = class Geo extends la.Base
+export class Geo extends Base
 {
 	constructor(lat, long, info)
 	{
@@ -924,57 +904,57 @@ la.Geo = class Geo extends la.Base
 
 	__repr__()
 	{
-		return "<la.Geo lat=" + ul4._repr(this.lat) + " long=" + ul4._repr(this.long) + " info=" + ul4._repr(this.info) + ">";
+		return "<Geo lat=" + ul4._repr(this.lat) + " long=" + ul4._repr(this.long) + " info=" + ul4._repr(this.info) + ">";
 	}
 };
 
-la.Geo.prototype._ul4onattrs = ["lat", "long", "info"];
-la.Geo.prototype._ul4attrs = ul4._makeset("lat", "long", "info");
+Geo.prototype._ul4onattrs = ["lat", "long", "info"];
+Geo.prototype._ul4attrs = ul4._makeset("lat", "long", "info");
 
-la.Attachment = class Attachment extends la.Base
+export class Attachment extends Base
 {
 	__repr__()
 	{
-		return "<la." + this.__type__ + " id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + ">";
+		return "<" + this.__type__ + " id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + ">";
 	}
 };
 
-la.Attachment.prototype._ul4onattrs = ["id", "record", "label", "active"];
-la.Attachment.prototype._ul4attrs = ul4._makeset("id", "record", "label", "active");
+Attachment.prototype._ul4onattrs = ["id", "record", "label", "active"];
+Attachment.prototype._ul4attrs = ul4._makeset("id", "record", "label", "active");
 
-la.NoteAttachment = class NoteAttachment extends la.Attachment
+export class NoteAttachment extends Attachment
 {
 };
 
-la.NoteAttachment.prototype.type = "noteattachment";
-la.NoteAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
-la.NoteAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
+NoteAttachment.prototype.type = "noteattachment";
+NoteAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+NoteAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
 
-la.URLAttachment = class URLAttachment extends la.Attachment
+export class URLAttachment extends Attachment
 {
 };
 
-la.URLAttachment.prototype.type = "urlattachment";
-la.URLAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
-la.URLAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
+URLAttachment.prototype.type = "urlattachment";
+URLAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+URLAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
 
-la.FileAttachment = class FileAttachment extends la.Attachment
+export class FileAttachment extends Attachment
 {
 };
 
-la.FileAttachment.prototype.type = "fileattachment";
-la.FileAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
-la.FileAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
+FileAttachment.prototype.type = "fileattachment";
+FileAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+FileAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
 
-la.ImageAttachment = class ImageAttachment extends la.Attachment
+export class ImageAttachment extends Attachment
 {
 };
 
-la.ImageAttachment.prototype.type = "imageattachment";
-la.ImageAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["original", "thumb", "small", "medium", "large"]);
-la.ImageAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large");
+ImageAttachment.prototype.type = "imageattachment";
+ImageAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["original", "thumb", "small", "medium", "large"]);
+ImageAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large");
 
-la.JSONAttachment = class JSONAttachment extends la.Attachment
+export class JSONAttachment extends Attachment
 {
 	_dumpUL4ONAttr(name)
 	{
@@ -993,22 +973,22 @@ la.JSONAttachment = class JSONAttachment extends la.Attachment
 	}
 };
 
-la.JSONAttachment.prototype.type = "jsonattachment";
-la.JSONAttachment.prototype._ul4onattrs = la.Attachment.prototype._ul4onattrs.concat(["value"]);
-la.JSONAttachment.prototype._ul4attrs = ul4._makeset(...la.Attachment.prototype._ul4onattrs, "value");
+JSONAttachment.prototype.type = "jsonattachment";
+JSONAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+JSONAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
 
-la.Installation = class Installation extends la.Base
+export class Installation extends Base
 {
 	__repr__()
 	{
-		return "<la.Installation id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
+		return "<Installation id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 };
 
-la.Installation.prototype._ul4onattrs = ["id", "name"];
-la.Installation.prototype._ul4attrs = ul4._makeset("id", "name");
+Installation.prototype._ul4onattrs = ["id", "name"];
+Installation.prototype._ul4attrs = ul4._makeset("id", "name");
 
-la.Category = class Category extends la.Base
+export class Category extends Base
 {
 	__repr__()
 	{
@@ -1019,94 +999,90 @@ la.Category = class Category extends la.Base
 			v.splice(0, 0, category.identifier);
 			category = category.parent;
 		}
-		return "<la.Category id=" + ul4._repr(this.id) + " identifierpath=" + ul4._repr(v.join("/")) +  + " name=" + ul4._repr(this.name) + ">";
+		return "<Category id=" + ul4._repr(this.id) + " identifierpath=" + ul4._repr(v.join("/")) +  + " name=" + ul4._repr(this.name) + ">";
 	}
 };
 
-la.Category.prototype._ul4onattrs = ["id", "identifier", "name", "order", "parent", "children", "apps"];
-la.Category.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "order", "parent", "children", "apps");
+Category.prototype._ul4onattrs = ["id", "identifier", "name", "order", "parent", "children", "apps"];
+Category.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "order", "parent", "children", "apps");
 
-la.KeyView = class KeyView extends la.Base
+export class KeyView extends Base
 {
 	__repr__()
 	{
-		return "<la.KeyView id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<KeyView id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-la.KeyView.prototype._ul4onattrs = ["id", "identifier", "name", "key", "user"];
-la.KeyView.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "key", "user");
+KeyView.prototype._ul4onattrs = ["id", "identifier", "name", "key", "user"];
+KeyView.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "key", "user");
 
-la.AppParameter = class AppParameter extends la.Base
+export class AppParameter extends Base
 {
 	__repr__()
 	{
-		return "<la.AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-la.AppParameter.prototype._ul4onattrs = ["id", "app", "identifier", "description", "value"];
-la.AppParameter.prototype._ul4attrs = ul4._makeset("id", "app", "identifier", "description", "value");
+AppParameter.prototype._ul4onattrs = ["id", "app", "identifier", "description", "value"];
+AppParameter.prototype._ul4attrs = ul4._makeset("id", "app", "identifier", "description", "value");
 
 let classes = [
-	la.Globals,
-	la.App,
-	la.View,
-	la.DataSourceData,
-	la.Record,
-	la.BoolControl,
-	la.IntControl,
-	la.NumberControl,
-	la.TextControl,
-	la.EmailControl,
-	la.URLControl,
-	la.TelControl,
-	la.PasswordControl,
-	la.TextAreaControl,
-	la.DateControl,
-	la.DatetimeMinuteControl,
-	la.DatetimeSecondControl,
-	la.LookupControl,
-	la.LookupSelectControl,
-	la.LookupRadioControl,
-	la.LookupChoiceControl,
-	la.AppLookupControl,
-	la.AppLookupSelectControl,
-	la.AppLookupRadioControl,
-	la.AppLookupChoiceControl,
-	la.MultipleLookupControl,
-	la.MultipleLookupSelectControl,
-	la.MultipleLookupCheckboxControl,
-	la.MultipleLookupChoiceControl,
-	la.MultipleAppLookupControl,
-	la.MultipleAppLookupSelectControl,
-	la.MultipleAppLookupCheckboxControl,
-	la.MultipleAppLookupChoiceControl,
-	la.GeoControl,
-	la.FileControl,
-	la.ButtonControl,
-	la.Field,
-	la.LookupItem,
-	la.User,
-	la.File,
-	la.Geo,
-	la.NoteAttachment,
-	la.URLAttachment,
-	la.FileAttachment,
-	la.ImageAttachment,
-	la.JSONAttachment,
-	la.Installation,
-	la.Category,
-	la.KeyView,
-	la.AppParameter
+	Globals,
+	FlashMessage,
+	App,
+	View,
+	DataSourceData,
+	Record,
+	BoolControl,
+	IntControl,
+	NumberControl,
+	TextControl,
+	EmailControl,
+	URLControl,
+	TelControl,
+	PasswordControl,
+	TextAreaControl,
+	DateControl,
+	DatetimeMinuteControl,
+	DatetimeSecondControl,
+	LookupControl,
+	LookupSelectControl,
+	LookupRadioControl,
+	LookupChoiceControl,
+	AppLookupControl,
+	AppLookupSelectControl,
+	AppLookupRadioControl,
+	AppLookupChoiceControl,
+	MultipleLookupControl,
+	MultipleLookupSelectControl,
+	MultipleLookupCheckboxControl,
+	MultipleLookupChoiceControl,
+	MultipleAppLookupControl,
+	MultipleAppLookupSelectControl,
+	MultipleAppLookupCheckboxControl,
+	MultipleAppLookupChoiceControl,
+	GeoControl,
+	FileControl,
+	ButtonControl,
+	Field,
+	LookupItem,
+	User,
+	File,
+	Geo,
+	NoteAttachment,
+	URLAttachment,
+	FileAttachment,
+	ImageAttachment,
+	JSONAttachment,
+	Installation,
+	Category,
+	KeyView,
+	AppParameter
 ];
 
 for (let constructor of classes)
 {
-	// Register under the old name
-	ul4.register("de.livingapps.appdd." + constructor.name.toLowerCase(), constructor);
-	// Register under the new name
 	ul4.register("de.livinglogic.livingapi." + constructor.name.toLowerCase(), constructor);
 }
-
-})();
