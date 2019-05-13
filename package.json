@@ -1,34 +1,33 @@
 {
 	"name": "livingapi",
-	"version": "0.6.0",
+	"version": "0.8.0",
 	"description": "Javascript version of the LivingAPI classes of LivingApps",
-	"main": "src/livingapi.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
 	},
-	"scripts": {
-		"build": "npx babel src --source-maps=true --out-dir dist"
-	},
 	"author": "Walter Dörwald",
 	"license": "MIT",
+	"scripts": {
+		"build": "npx rollup -c"
+	},
+	"main": "dist/esm-node/livingapi.js",
+	"module": "dist/esm-node/livingapi.js",
+	"browser": "dist/umd/livingapi.js",
 	"dependencies": {
-		"ul4": "git+https://github.com/LivingLogic/LivingLogic.Javascript.ul4.git"
+		"@livinglogic/ul4": "^1.0.0"
 	},
 	"devDependencies": {
-		"babel": "^6.23.0",
-		"babel-cli": "^6.26.0",
-		"babel-plugin-minify-dead-code-elimination": "^0.5.0",
-		"babel-plugin-syntax-object-rest-spread": "^6.13.0",
-		"babel-plugin-transform-async-to-generator": "^6.24.1",
-		"babel-plugin-transform-es2015-block-scoping": "^6.26.0",
-		"babel-plugin-transform-es2015-classes": "^6.24.1",
-		"babel-plugin-transform-es2015-destructuring": "^6.23.0",
-		"babel-plugin-transform-es2015-for-of": "^6.23.0",
-		"babel-plugin-transform-es2015-literals": "^6.22.0",
-		"babel-plugin-transform-es2015-parameters": "^6.24.1",
-		"babel-plugin-transform-es2015-shorthand-properties": "^6.24.1",
-		"babel-plugin-transform-es2015-spread": "^6.22.0",
-		"babel-plugin-transform-object-rest-spread": "^6.26.0"
+		"@babel/core": "^7.4.4",
+		"@babel/preset-env": "^7.4.4",
+		"rollup": "^1.11.3",
+		"rollup-plugin-babel": "^4.3.2",
+		"rollup-plugin-commonjs": "^9.3.4",
+		"rollup-plugin-json": "^4.0.0",
+		"rollup-plugin-node-resolve": "^4.2.3",
+		"rollup-plugin-sourcemaps": "^0.4.2",
+		"rollup-plugin-terser": "^4.0.4",
+		"rollup-plugin-uglify": "^6.0.2",
+		"source-map-support": "^0.5.12"
 	}
 }
