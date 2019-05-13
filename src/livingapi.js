@@ -3,7 +3,7 @@ import { version } from '../package.json';
 
 export { version };
 
-import * as ul4 from 'ul4';
+import * as ul4 from '@livinglogic/ul4';
 
 export class Base extends ul4.Proto
 {

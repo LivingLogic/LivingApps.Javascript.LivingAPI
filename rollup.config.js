@@ -30,27 +30,27 @@ export default [
 				format: 'umd',
 				name: 'la',
 				sourcemap: true,
-				globals: {"ul4": "ul4"}
+				globals: {"@livinglogic/ul4": "ul4"}
 			},
 			{
 				file: './dist/esm-node/livingapi.js',
 				format: 'esm',
 				name: 'la',
 				sourcemap: true,
-				globals: {"ul4": "ul4"}
+				globals: {"@livinglogic/ul4": "ul4"}
 			},
 			{
 				file: './dist/esm-static/livingapi.js',
 				format: 'esm',
 				name: 'la',
 				sourcemap: true,
-				globals: {"ul4": "ul4"},
+				globals: {"@livinglogic/ul4": "ul4"},
 				paths: {
-					ul4: '/static/ul4/1.0.0/dist/esm/ul4.js'
+					"@livinglogic/ul4": '/static/ul4/1.1.0/dist/esm/ul4.js'
 				}
 			}
 		],
 		plugins: plugins,
-		external: ["ul4"],
+		external: ["@livinglogic/ul4"],
 	}
 ];

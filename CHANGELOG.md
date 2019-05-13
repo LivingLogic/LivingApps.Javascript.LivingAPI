@@ -1,6 +1,13 @@
 # Changes
 
 
+## 0.10.0 (2019-05-13)
+
+The UMD version is the default now (i.e. in `package.json/main`).
+
+Update to UL4 1.1.0 (which has the same change).
+
+
 ## 0.9.1 (2019-05-13)
 
 Removed test file.
