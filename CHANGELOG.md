@@ -1,6 +1,11 @@
 # Changes
 
 
+## 0.9.0 (2019-05-13)
+
+Fixed the package name in `package.json`.
+
+
 ## 0.8.0 (2019-05-13)
 
 The LivingAPI source is a Javascript module now. However the default babeled
