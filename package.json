@@ -6,6 +6,9 @@
 		"type": "git",
 		"url": "https://github.com/LivingLogic/LivingApps.Javascript.LivingAPI.git"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"author": "Walter Dörwald",
 	"license": "MIT",
 	"scripts": {
