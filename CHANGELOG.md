@@ -3,7 +3,8 @@
 
 ## 0.11.0 (2019-07-24)
 
-Add support for the following attributes of the ``globals`` objects: ``lang``, ``datasources`` and ``hostname``
+Add support for the following attributes of the ``globals`` objects: ``lang``,
+``datasources`` and ``hostname``.
 
 
 ## 0.10.0 (2019-05-13)
