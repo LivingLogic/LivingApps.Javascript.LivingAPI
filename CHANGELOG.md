@@ -1,6 +1,11 @@
 # Changes
 
 
+## 0.11.1 (2020-04-06)
+
+Updated dependencies.
+
+
 ## 0.11.0 (2019-07-24)
 
 Add support for the following attributes of the ``globals`` objects: ``lang``,
