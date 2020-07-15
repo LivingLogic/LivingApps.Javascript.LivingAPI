@@ -1,6 +1,11 @@
 # Changes
 
 
+## HEAD (2020-07-??)
+
+Added classes FileSignatureControl and HTMLControl.
+
+
 ## 0.11.1 (2020-04-06)
 
 Updated dependencies.

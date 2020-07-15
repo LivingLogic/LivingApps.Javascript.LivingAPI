@@ -583,6 +583,12 @@ TextAreaControl.prototype.subtype = "textarea";
 TextAreaControl.prototype._ul4onattrs = StringControl.prototype._ul4onattrs.concat(["encrypted"]);
 TextAreaControl.prototype._ul4attrs = ul4._makeset(...StringControl.prototype._ul4attrs, "encrypted");
 
+export class HTMLControl extends StringControl
+{
+};
+
+HTMLControl.prototype.subtype = "html";
+
 export class DateControl extends Control
 {
 	formatstring(language)
@@ -820,6 +826,12 @@ export class FileControl extends Control
 };
 
 FileControl.prototype.type = "file";
+
+export class FileSignatureControl extends FileControl
+{
+};
+
+FileSignatureControl.prototype.subtype = "signature";
 
 export class ButtonControl extends Control
 {
