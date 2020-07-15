@@ -3,7 +3,9 @@
 
 ## HEAD (2020-07-??)
 
-Added classes FileSignatureControl and HTMLControl.
+Added classes `FileSignatureControl` and `HTMLControl`.
+
+Added attributes `Globals.app` and `Globals.record`.
 
 
 ## 0.11.1 (2020-04-06)
