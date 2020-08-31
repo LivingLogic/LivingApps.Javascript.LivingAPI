@@ -1,6 +1,13 @@
 # Changes
 
 
+## 0.12.0 (2020-08-31)
+
+Added classes `FileSignatureControl` and `HTMLControl`.
+
+Added attributes `Globals.app` and `Globals.record`.
+
+
 ## 0.11.1 (2020-04-06)
 
 Updated dependencies.

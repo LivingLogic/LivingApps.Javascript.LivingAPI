@@ -122,6 +122,8 @@ export class Globals extends Base
 		this.platform = null;
 		this.user = null;
 		this.lang = null;
+		this.app = null;
+		this.record = null;
 		this.maxdbactions = null;
 		this.maxtemplateruntime = null;
 		this.flashmessages = null;
@@ -161,8 +163,8 @@ export class Globals extends Base
 	}
 };
 
-Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname"];
-Globals.prototype._ul4attrs = ul4._makeset("version", "hostname", "platform", "user", "lang", "maxdbactions", "maxtemplateruntime", "flashmessages");
+Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record"];
+Globals.prototype._ul4attrs = ul4._makeset("version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages");
 
 export class FlashMessage extends Base
 {
@@ -583,6 +585,12 @@ TextAreaControl.prototype.subtype = "textarea";
 TextAreaControl.prototype._ul4onattrs = StringControl.prototype._ul4onattrs.concat(["encrypted"]);
 TextAreaControl.prototype._ul4attrs = ul4._makeset(...StringControl.prototype._ul4attrs, "encrypted");
 
+export class HTMLControl extends StringControl
+{
+};
+
+HTMLControl.prototype.subtype = "html";
+
 export class DateControl extends Control
 {
 	formatstring(language)
@@ -820,6 +828,12 @@ export class FileControl extends Control
 };
 
 FileControl.prototype.type = "file";
+
+export class FileSignatureControl extends FileControl
+{
+};
+
+FileSignatureControl.prototype.subtype = "signature";
 
 export class ButtonControl extends Control
 {
