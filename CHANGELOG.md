@@ -1,7 +1,7 @@
 # Changes
 
 
-## HEAD (2020-07-??)
+## 0.12.0 (2020-08-31)
 
 Added classes `FileSignatureControl` and `HTMLControl`.
 
