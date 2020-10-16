@@ -6,6 +6,9 @@
 Renamed `AppLookupControl.lookupapp` to `lookup_app` and
 `AppLookupControl.lookupcontrols` to `lookup_controls`.
 
+Add the following attributes for hierarchical applookup to ``AppLookupControl``:
+``local_master_control``, ``local_detail_controls`` and ``remote_master_control``.
+
 
 ## 0.12.0 (2020-08-31)
 

@@ -713,8 +713,8 @@ export class AppLookupControl extends Control
 };
 
 AppLookupControl.prototype.type = "applookup";
-AppLookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookup_app", "lookup_controls"]);
-AppLookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4attrs, "lookup_app", "lookup_controls");
+AppLookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
+AppLookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control");
 
 export class AppLookupSelectControl extends AppLookupControl
 {
