@@ -1,6 +1,11 @@
 # Changes
 
 
+## HEAD (2020-10-??)
+
+Renamed `AppLookupControl.lookupapp` to `lookup_app` and
+`AppLookupControl.lookupcontrols` to `lookup_controls`.
+
 ## 0.12.0 (2020-08-31)
 
 Added classes `FileSignatureControl` and `HTMLControl`.
