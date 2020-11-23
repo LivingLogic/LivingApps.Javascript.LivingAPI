@@ -9,6 +9,9 @@ Renamed `AppLookupControl.lookupapp` to `lookup_app` and
 Add the following attributes for hierarchical applookup to ``AppLookupControl``:
 ``local_master_control``, ``local_detail_controls`` and ``remote_master_control``.
 
+Add attribute `favorite` to `App` and expose it to UL4. Expose `superid` to
+UL4ON.
+
 
 ## 0.12.0 (2020-08-31)
 
