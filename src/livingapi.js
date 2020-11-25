@@ -454,7 +454,7 @@ export class Control extends Base
 {
 	__repr__()
 	{
-		return "<" + this.__type__ + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 
 	_logsearch(value, search)
