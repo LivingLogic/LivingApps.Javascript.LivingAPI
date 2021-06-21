@@ -114,6 +114,8 @@ export class Handler
 
 export class Globals extends Base
 {
+	static classdoc = "Global information";
+
 	constructor()
 	{
 		super();
@@ -168,6 +170,8 @@ Globals.prototype._ul4attrs = ul4._makeset("version", "hostname", "platform", "u
 
 export class FlashMessage extends Base
 {
+	static classdoc = "A flash message in a web page";
+
 	__repr__()
 	{
 		return "<FlashMessage type=" + ul4._repr(this.type) + " title=" + ul4._repr(this.title) + ">";
@@ -179,6 +183,8 @@ FlashMessage.prototype._ul4attrs = ul4._makeset("timestamp", "type", "title", "m
 
 export class App extends Base
 {
+	static classdoc = "A LivingApps application";
+
 	__repr__()
 	{
 		return "<App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
@@ -237,6 +243,8 @@ ul4.expose(App.prototype.insert, ["**values"], {"needsobject": true});
 
 export class View extends Base
 {
+	static classdoc = "An input form for a LivingApps application";
+
 	__repr__()
 	{
 		return "<View id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
@@ -248,6 +256,8 @@ View.prototype._ul4attrs = ul4._makeset("id", "name", "app", "order", "width", "
 
 export class DataSourceData extends Base
 {
+	static classdoc = "The data resulting from a data source configuration";
+
 	__repr__()
 	{
 		return "<DataSource.Data id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
@@ -259,6 +269,8 @@ DataSourceData.prototype._ul4attrs = ul4._makeset("id", "identifier", "app", "ap
 
 export class Record extends Base
 {
+	static classdoc = "A record of a LivingApp application";
+
 	constructor(app)
 	{
 		super();
@@ -479,6 +491,8 @@ Control.prototype._ul4attrs = ul4._makeset("id", "identifier", "field", "app", "
 
 export class BoolControl extends Control
 {
+	static classdoc = "A LivingApps boolean field (type 'bool')";
+
 	// ``search`` must by ``null``, ``false`` or ``true``
 	search(value, search)
 	{
@@ -494,6 +508,8 @@ BoolControl.prototype.type = "bool";
 
 export class IntControl extends Control
 {
+	static classdoc = "A LivingApps integer field (type 'int')";
+
 	// ``search.value`` must by ``null`` or an integer
 	search(value, search)
 	{
@@ -509,6 +525,8 @@ IntControl.prototype.type = "int";
 
 export class NumberControl extends Control
 {
+	static classdoc = "A LivingApps number field (type 'number')";
+
 	// ``search.value`` must by ``null`` or an integer
 	search(value, search)
 	{
@@ -549,36 +567,48 @@ StringControl.prototype.type = "string";
 
 export class TextControl extends StringControl
 {
+	static classdoc = "A LivingApps text field (type 'string/text')";
+
 };
 
 TextControl.prototype.subtype = "text";
 
 export class EmailControl extends StringControl
 {
+	static classdoc = "A LivingApps email field (type 'string/email')";
+
 };
 
 EmailControl.prototype.subtype = "email";
 
 export class URLControl extends StringControl
 {
+	static classdoc = "A LivingApps URL field (type 'string/url')";
+
 };
 
 URLControl.prototype.subtype = "url";
 
 export class TelControl extends StringControl
 {
+	static classdoc = "A LivingApps phone number field (type 'string/tel')";
+
 };
 
 TelControl.prototype.subtype = "tel";
 
 export class PasswordControl extends StringControl
 {
+	static classdoc = "A LivingApps email field (type 'string/email')";
+
 };
 
 PasswordControl.prototype.subtype = "password";
 
 export class TextAreaControl extends StringControl
 {
+	static classdoc = "A LivingApps textarea field (type 'string/textarea')";
+
 };
 
 TextAreaControl.prototype.subtype = "textarea";
@@ -587,12 +617,16 @@ TextAreaControl.prototype._ul4attrs = ul4._makeset(...StringControl.prototype._u
 
 export class HTMLControl extends StringControl
 {
+	static classdoc = "A LivingApps HTML field (type 'string/html')";
+
 };
 
 HTMLControl.prototype.subtype = "html";
 
 export class DateControl extends Control
 {
+	static classdoc = "A LivingApps date field (type 'date/date')";
+
 	formatstring(language)
 	{
 		language = language || this.app.language;
@@ -633,6 +667,8 @@ DateControl.prototype.subtype = "date";
 
 export class DatetimeMinuteControl extends DateControl
 {
+	static classdoc = "A LivingApps date field (type 'date/datetimeminute')";
+
 	formatstring(language)
 	{
 		language = language || this.app.language;
@@ -648,6 +684,8 @@ DatetimeMinuteControl.prototype.subtype = "datetimeminute";
 
 export class DatetimeSecondControl extends DateControl
 {
+	static classdoc = "A LivingApps date field (type 'date/datetimesecond')";
+
 	formatstring(language)
 	{
 		language = language || this.app.language;
@@ -684,18 +722,24 @@ LookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4attrs,
 
 export class LookupSelectControl extends LookupControl
 {
+	static classdoc = "A LivingApps lookup field (type 'lookup/select')";
+
 };
 
 LookupSelectControl.prototype.subtype = "select";
 
 export class LookupRadioControl extends LookupControl
 {
+	static classdoc = "A LivingApps lookup field (type 'lookup/radio')";
+
 };
 
 LookupRadioControl.prototype.subtype = "radio";
 
 export class LookupChoiceControl extends LookupControl
 {
+	static classdoc = "A LivingApps lookup field (type 'lookup/choice')";
+
 };
 
 LookupChoiceControl.prototype.subtype = "choice";
@@ -718,18 +762,24 @@ AppLookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4att
 
 export class AppLookupSelectControl extends AppLookupControl
 {
+	static classdoc = "A LivingApps applookup field (type 'applookup/select')";
+
 };
 
 AppLookupSelectControl.prototype.subtype = "select";
 
 export class AppLookupRadioControl extends AppLookupControl
 {
+	static classdoc = "A LivingApps applookup field (type 'applookup/radio')";
+
 };
 
 AppLookupRadioControl.prototype.subtype = "radio";
 
 export class AppLookupChoiceControl extends AppLookupControl
 {
+	static classdoc = "A LivingApps applookup field (type 'applookup/choice')";
+
 };
 
 AppLookupChoiceControl.prototype.subtype = "choice";
@@ -757,18 +807,24 @@ MultipleLookupControl.prototype.subtype = "multiplelookup";
 
 export class MultipleLookupSelectControl extends MultipleLookupControl
 {
+	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/select')";
+
 };
 
 MultipleLookupSelectControl.prototype.subtype = "select";
 
 export class MultipleLookupCheckboxControl extends MultipleLookupControl
 {
+	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/checkbox')";
+
 };
 
 MultipleLookupCheckboxControl.prototype.subtype = "checkbox";
 
 export class MultipleLookupChoiceControl extends MultipleLookupControl
 {
+	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/choice')";
+
 };
 
 MultipleLookupChoiceControl.prototype.subtype = "choice";
@@ -801,36 +857,48 @@ MultipleAppLookupControl.prototype.type = "multipleapplookup";
 
 export class MultipleAppLookupSelectControl extends MultipleAppLookupControl
 {
+	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/select')";
+
 };
 
 MultipleAppLookupSelectControl.prototype.subtype = "select";
 
 export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
 {
+	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/checkbox')";
+
 };
 
 MultipleAppLookupCheckboxControl.prototype.subtype = "checkbox";
 
 export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 {
+	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/choice')";
+
 };
 
 MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 
 export class GeoControl extends Control
 {
+	static classdoc = "A LivingApps geo field (type 'geo')";
+
 };
 
 GeoControl.prototype.type = "geo";
 
 export class FileControl extends Control
 {
+	static classdoc = "A LivingApps upload field (type 'file')";
+
 };
 
 FileControl.prototype.type = "file";
 
 export class FileSignatureControl extends FileControl
 {
+	static classdoc = "A LivingApps signature image field (type 'file/signature')";
+
 };
 
 FileSignatureControl.prototype.subtype = "signature";
@@ -905,6 +973,8 @@ export class Field extends Base
 
 export class LookupItem extends Base
 {
+	static classdoc = "An option in a lookup control/field";
+
 	__repr__()
 	{
 		return "<LookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label) + ">";
@@ -916,6 +986,8 @@ LookupItem.prototype._ul4attrs = ul4._makeset("key", "label");
 
 export class User extends Base
 {
+	static classdoc = "A LivingApps user/account";
+
 	__repr__()
 	{
 		return "<User id=" + ul4._repr(this.id) + " firstname=" + ul4._repr(this.firstname) + " surname=" + ul4._repr(this.surname) + " email=" + ul4._repr(this.email) + ">";
@@ -927,6 +999,8 @@ User.prototype._ul4attrs = ul4._makeset("_id", "id", "gender", "firstname", "sur
 
 export class File extends Base
 {
+	static classdoc = "An uploaded file";
+
 	__repr__()
 	{
 		return "<File id=" + ul4._repr(this.id) + " url=" + ul4._repr(this.url) + " filename=" + ul4._repr(this.filename) + ">";
@@ -938,6 +1012,8 @@ File.prototype._ul4attrs = ul4._makeset("id", "url", "filename", "mimetype", "wi
 
 export class Geo extends Base
 {
+	static classdoc = "Geographical coordinates and location information";
+
 	constructor(lat, long, info)
 	{
 		super();
@@ -968,6 +1044,8 @@ Attachment.prototype._ul4attrs = ul4._makeset("id", "record", "label", "active")
 
 export class NoteAttachment extends Attachment
 {
+	static classdoc = "A note attachment of a record";
+
 };
 
 NoteAttachment.prototype.type = "noteattachment";
@@ -976,6 +1054,8 @@ NoteAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4on
 
 export class URLAttachment extends Attachment
 {
+	static classdoc = "A URL attachment of a record";
+
 };
 
 URLAttachment.prototype.type = "urlattachment";
@@ -984,6 +1064,8 @@ URLAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4ona
 
 export class FileAttachment extends Attachment
 {
+	static classdoc = "A file attachment of a record";
+
 };
 
 FileAttachment.prototype.type = "fileattachment";
@@ -992,6 +1074,8 @@ FileAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4on
 
 export class ImageAttachment extends Attachment
 {
+	static classdoc = "An image attachment of a record";
+
 };
 
 ImageAttachment.prototype.type = "imageattachment";
@@ -1000,6 +1084,8 @@ ImageAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4o
 
 export class JSONAttachment extends Attachment
 {
+	static classdoc = "A JSON attachment of a record";
+
 	_dumpUL4ONAttr(name)
 	{
 		if (name === "value")
@@ -1023,6 +1109,8 @@ JSONAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4on
 
 export class Installation extends Base
 {
+	static classdoc = "The installation that created an app";
+
 	__repr__()
 	{
 		return "<Installation id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
@@ -1034,6 +1122,8 @@ Installation.prototype._ul4attrs = ul4._makeset("id", "name");
 
 export class Category extends Base
 {
+	static classdoc = "A navigation category";
+
 	__repr__()
 	{
 		let v = [];
@@ -1052,6 +1142,8 @@ Category.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "order",
 
 export class KeyView extends Base
 {
+	static classdoc = "Object granting access to a view template";
+
 	__repr__()
 	{
 		return "<KeyView id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
@@ -1063,6 +1155,8 @@ KeyView.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "key", "u
 
 export class AppParameter extends Base
 {
+	static classdoc = "A parameter of a LivingApps application";
+
 	__repr__()
 	{
 		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
