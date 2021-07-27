@@ -981,8 +981,8 @@ export class LookupItem extends Base
 	}
 };
 
-LookupItem.prototype._ul4onattrs = ["key", "label"];
-LookupItem.prototype._ul4attrs = ul4._makeset("key", "label");
+LookupItem.prototype._ul4onattrs = ["id", "key", "label"];
+LookupItem.prototype._ul4attrs = ul4._makeset("id", "key", "label");
 
 export class User extends Base
 {
