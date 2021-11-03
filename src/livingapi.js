@@ -35,9 +35,15 @@ import * as ul4 from '@livinglogic/ul4';
 
 export class Base extends ul4.Proto
 {
-	constructor()
+	constructor(id)
 	{
 		super();
+		this.id = id;
+	}
+
+	get ul4onid()
+	{
+		return this.id;
 	}
 
 	ul4ondump(encoder)
@@ -76,7 +82,7 @@ export class Base extends ul4.Proto
 		this[name] = null;
 	}
 
-	__getattr__(name)
+	[ul4.symbols.getattr](name)
 	{
 		if (this._ul4attrs.has(name))
 		{
@@ -95,7 +101,7 @@ export class Base extends ul4.Proto
 		throw new ul4.AttributeError(this, name);
 	}
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<" + this.constructor.name + ">";
 	}
@@ -116,9 +122,9 @@ export class Globals extends Base
 {
 	static classdoc = "Global information";
 
-	constructor()
+	constructor(id)
 	{
-		super();
+		super(id);
 		this.version = null;
 		this.hostname = null;
 		this.platform = null;
@@ -159,20 +165,77 @@ export class Globals extends Base
 		return s;
 	}
 
-	__repr__()
+	scaledURL(url, width, height, type="fill", enlarge=true, gravity="sm", quality=null, rotate=null, blur=null, sharpen=null, format=null, cache=true)
+	{
+		let filename = null;
+
+		if (url instanceof File)
+		{
+			url = "https://" + this.hostname + url.url;
+			filename = encodeURIComponent(url.filename);
+			if (filename != url.filename)
+				filename = null;
+		}
+
+		let result = "";
+
+		if (cache)
+			result += "/imgproxycache/insecure";
+		else
+			result += "/imgproxy/insecure";
+
+		if (type !== "fit")
+			result += "/rt:" + type;
+
+		if (width !== null && width !== undefined)
+			result += "/w:" + width;
+
+		if (height !== null && height !== undefined)
+			result += "/h:" + height;
+
+		if (enlarge)
+			result += "/el:1";
+
+		if (gravity !== null && gravity !== undefined)
+			result += "/g:" + gravity;
+
+		if (quality !== null && quality !== undefined)
+			result += "/q:" + quality;
+
+		if (rotate !== null && rotate % 360 != 0)
+			result += "/rot:" + rotatet;
+
+		if (blur !== null && blur !== undefined)
+			result += "/bl:" + blur;
+
+		if (sharpen !== null && sharpen !== undefined)
+			result += "/sh:" + sharpen;
+
+		if (format !== null && format !== undefined)
+			result += "/f:" + format;
+
+		if (filename !== null && filename !== undefined)
+			result += "/fn:" + filename;
+
+		result += "/plain/" + encodeURIComponent(url);
+
+		return result;
+	}
+
+	[ul4.symbols.repr]()
 	{
 		return "<Globals version=" + ul4._repr(this.version) + ">";
 	}
 };
 
-Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages"]);
+Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record", "google_api_key", "mode", "view_template_id", "email_template_id", "view_id"];
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode"]);
 
 export class FlashMessage extends Base
 {
 	static classdoc = "A flash message in a web page";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<FlashMessage type=" + ul4._repr(this.type) + " title=" + ul4._repr(this.title) + ">";
 	}
@@ -185,19 +248,26 @@ export class App extends Base
 {
 	static classdoc = "A LivingApps application";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 
 	insert(values={})
 	{
-		let record = this.__call__(values);
+		let record = this[ul4.symbols.call](values);
 		this.globals.handler.save(this);
 		return record;
 	}
 
-	__call__(values={})
+	get layout_controls()
+	{
+		if (this.active_view === null)
+			return new Map();
+		return this.active_view.layout_controls;
+	}
+
+	[ul4.symbols.call](values={})
 	{
 		let record = new Record(this);
 		if (ul4._ismap(values))
@@ -223,7 +293,7 @@ export class App extends Base
 		return record;
 	}
 
-	__getattr__(name)
+	[ul4.symbols.getattr](name)
 	{
 		if (name.startsWith("c_"))
 		{
@@ -232,49 +302,79 @@ export class App extends Base
 			return this.controls.get(name.substr(2));
 		}
 		else
-			return super.__getattr__(name);
+			return super[ul4.symbols.getattr](name);
+	}
+
+	get active_view()
+	{
+		return this._active_view;
+	}
+
+	set active_view(view)
+	{
+		if (view === null)
+			;
+		else if (typeof(view) === "string")
+		{
+			if (this.views !== null && this.views.has(view))
+				view = this.views.get(view);
+			else
+				throw new ul4.ValueError("View " + ul4._repr(view) + " not found!");
+		}
+		else if (view instanceof View)
+		{
+			if (view.app === this)
+				;
+			else
+				throw new ul4.ValueError("View " + ul4._repr(view) + " belongs to the wrong app!");
+		}
+		else
+		{
+			throw new ul4.TypeError(ul4._repr(view) + " is not a view!");
+		}
+
+		this._active_view = view;
 	}
 };
 
-App.prototype._ul4onattrs = ["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite"]);
-ul4.expose(App.prototype.__call__, ["**values"], {"needsobject": true});
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite", "_active_view"]);
+ul4.expose(App.prototype[ul4.symbols.call], ["**values"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["**values"], {"needsobject": true});
 
 export class View extends Base
 {
 	static classdoc = "An input form for a LivingApps application";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<View id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 };
 
-View.prototype._ul4onattrs = ["id", "name", "app", "order", "width", "height", "start", "end"];
-View.prototype._ul4attrs = new Set(["id", "name", "app", "order", "width", "height", "start", "end"]);
+View.prototype._ul4onattrs = ["name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"];
+View.prototype._ul4attrs = new Set(["id", "name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"]);
 
 export class DataSourceData extends Base
 {
 	static classdoc = "The data resulting from a data source configuration";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<DataSource.Data id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-DataSourceData.prototype._ul4onattrs = ["id", "identifier", "app", "apps"];
+DataSourceData.prototype._ul4onattrs = ["identifier", "app", "apps"];
 DataSourceData.prototype._ul4attrs = new Set(["id", "identifier", "app", "apps"]);
 
 export class Record extends Base
 {
 	static classdoc = "A record of a LivingApp application";
 
-	constructor(app)
+	constructor(id, app)
 	{
-		super();
-		this.id = null;
+		super(id);
 		this.app = app;
 		this.createdat = null;
 		this.createdby = null;
@@ -287,15 +387,18 @@ export class Record extends Base
 		this.children = new Map();
 		this.attachments = null;
 		this.errors = [];
+		this._sparsefielderrors = null;
+		this._sparsefieldlookupdata = null;
 		this._is_deleted = false;
+		this._is_new = true;
 	}
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		let v = ["<Record id=", ul4._repr(this.id)];
 		for (let field of this.fields.values())
 		{
-			if (field.control.priority)
+			if (field.control.priority && !field.is_empty())
 			{
 				v.push(" v_");
 				v.push(field.control.identifier);
@@ -303,15 +406,29 @@ export class Record extends Base
 				v.push(ul4._repr(field.value)); // FIXME: This might lead to infinite recursions
 			}
 		}
-		v.push(">")
+		v.push(" state=");
+		v.push(this.state);
+		v.push(">");
 		return v.join("");
+	}
+
+	get state()
+	{
+		if (this._is_deleted)
+			return "deleted";
+		else if (this._is_new)
+			return "new";
+		else if (this.is_dirty())
+			return "dirty";
+		else
+			return "saved";
 	}
 
 	get values()
 	{
 		if (this._values === null)
 		{
-			this._values = ul4._havemap ? new Map() : {};
+			this._values = new Map();
 			for (let [identifier, control] of this.app.controls.entries())
 			{
 				let fieldvalue = this._sparsevalues.get(identifier);
@@ -327,7 +444,7 @@ export class Record extends Base
 	{
 		if (this._fields === null)
 		{
-			this._fields = ul4._havemap ? new Map() : {};
+			this._fields = new Map();
 			for (let [identifier, value] of this.values.entries())
 			{
 				let field = new Field(this.app.controls.get(identifier), this, value);
@@ -363,7 +480,9 @@ export class Record extends Base
 
 	delete()
 	{
-		return this.app.globals.handler.delete(this);
+		let result = this.app.globals.handler.delete(this);
+		this._is_deleted = true;
+		return result;
 	}
 
 	save()
@@ -411,6 +530,12 @@ export class Record extends Base
 		return true;
 	}
 
+	ul4onload(decoder)
+	{
+		super.ul4onload(decoder);
+		this._is_new = false;
+	}
+
 	_dumpUL4ONAttr(name)
 	{
 		if (name === "values")
@@ -431,7 +556,7 @@ export class Record extends Base
 			this[name] = value;
 	}
 
-	__getattr__(name)
+	[ul4.symbols.getattr](name)
 	{
 		if (name.startsWith("c_"))
 			return this.children.get(name.substr(2))
@@ -443,7 +568,7 @@ export class Record extends Base
 			return this[name];
 	}
 
-	__setattr__(name, value)
+	[ul4.symbols.setattr](name, value)
 	{
 		if (name.startsWith("c_"))
 			this.children[name.substr(2)] = value;
@@ -454,8 +579,8 @@ export class Record extends Base
 	}
 };
 
-Record.prototype._ul4onattrs = ["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"];
-Record.prototype._ul4attrs = new Set(["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"]);
+Record.prototype._ul4onattrs = ["app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "_sparsevalues", "attachments", "children", "errors", "_sparsefielderrors", "_sparsefieldlookupdata"];
+Record.prototype._ul4attrs = new Set(["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children", "errors"]);
 ul4.expose(Record.prototype.is_dirty, []);
 ul4.expose(Record.prototype.has_errors, []);
 ul4.expose(Record.prototype.delete, []);
@@ -464,9 +589,104 @@ ul4.expose(Record.prototype.update, ["**values"], {"needsobject": true});
 
 export class Control extends Base
 {
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+	}
+
+	get fulltype()
+	{
+		return this.subtype ? this.type + "/" + this.subtype : this.type;
+	}
+
+	get label()
+	{
+		let view_control = this._view_control();
+		if (view_control === null)
+			return this._label;
+		let label = view_control.label;
+		if (label === null)
+			return this._label;
+		return label;
+	}
+
+	set label(value)
+	{
+		this._label = value;
+	}
+
+	get top()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.top : null;
+	}
+
+	get left()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.left : null;
+	}
+
+	get width()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.width : null;
+	}
+
+	get height()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.height : null;
+	}
+
+	get liveupdate()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.liveupdate : false;
+	}
+
+	get tabindex()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.tabindex : null;
+	}
+
+	get required()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.required : false;
+	}
+
+	get mode()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.mode : "edit";
+	}
+
+	get labelpos()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.labelpos : "left";
+	}
+
+	get autoalign()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.autoalign : true;
+	}
+
+	get in_active_view()
+	{
+		let view_control = this._view_control();
+		return view_control !== null;
+	}
+
+	_view_control()
+	{
+		if (this.app._active_view === null)
+			return null;
+		let view_control = this.app._active_view.controls.get(this.identifier);
+		return view_control !== undefined ? view_control : null;
 	}
 
 	_logsearch(value, search)
@@ -486,8 +706,8 @@ export class Control extends Base
 
 Control.prototype.type = null;
 Control.prototype.subtype = null;
-Control.prototype._ul4onattrs = ["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = new Set(["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"]);
+Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"];
+Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 
 export class BoolControl extends Control
 {
@@ -612,7 +832,7 @@ export class TextAreaControl extends StringControl
 };
 
 TextAreaControl.prototype.subtype = "textarea";
-TextAreaControl.prototype._ul4onattrs = StringControl.prototype._ul4onattrs.concat(["encrypted"]);
+TextAreaControl.prototype._ul4onattrs = [...StringControl.prototype._ul4onattrs, "encrypted"];
 TextAreaControl.prototype._ul4attrs = new Set([...StringControl.prototype._ul4attrs, "encrypted"]);
 
 export class HTMLControl extends StringControl
@@ -717,7 +937,7 @@ export class LookupControl extends Control
 };
 
 LookupControl.prototype.type = "lookup";
-LookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookupdata"]);
+LookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "lookupdata"];
 LookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookupdata"]);
 
 export class LookupSelectControl extends LookupControl
@@ -757,7 +977,7 @@ export class AppLookupControl extends Control
 };
 
 AppLookupControl.prototype.type = "applookup";
-AppLookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
+AppLookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"];
 AppLookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
 
 export class AppLookupSelectControl extends AppLookupControl
@@ -913,9 +1133,10 @@ export class Field extends Base
 {
 	constructor(control, record, value)
 	{
-		super();
+		super(null);
 		this.control = control;
 		this.record = record;
+		this._label = null;
 		this._value = value;
 		this._dirty = false;
 		this.errors = [];
@@ -938,6 +1159,18 @@ export class Field extends Base
 		}
 	}
 
+	get label()
+	{
+		if (this._label !== null)
+			return this._label;
+		return this.control.label;
+	}
+
+	set label(value)
+	{
+		this._label = value;
+	}
+
 	is_empty()
 	{
 		return this._value === null || (ul4._islist(this._value) && this._value.length === 0);
@@ -958,7 +1191,7 @@ export class Field extends Base
 		return this.control.search(this.value, searchvalue);
 	}
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		let s = "<Field identifier=";
 		s += ul4._repr(this.control.identifier)
@@ -971,43 +1204,93 @@ export class Field extends Base
 	}
 };
 
+Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "enabled", "writable", "visible"];
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "enabled", "writable", "visible"]);
+
+
 export class LookupItem extends Base
 {
 	static classdoc = "An option in a lookup control/field";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<LookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label) + ">";
 	}
 };
 
-LookupItem.prototype._ul4onattrs = ["id", "key", "label"];
-LookupItem.prototype._ul4attrs = new Set(["id", "key", "label"]);
+LookupItem.prototype._ul4onattrs = ["control", "key", "label"];
+LookupItem.prototype._ul4attrs = new Set(["id", "control", "key", "label"]);
+
+export class LayoutControl extends Base
+{
+	static classdoc = "A decoration in an input form";
+
+	[ul4.symbols.repr]()
+	{
+		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+	}
+};
+
+LayoutControl.prototype._ul4onattrs = ["label", "identifier", "view", "top", "left", "width", "height"];
+LayoutControl.prototype._ul4attrs = new Set(["id", "label", "identifier", "view", "top", "left", "width", "height"]);
+
+
+export class HTMLLayoutControl extends LayoutControl
+{
+	static classdoc = "An HTML decoration in an input form";
+};
+
+HTMLLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "value"];
+HTMLLayoutControl.prototype._ul4attrs = new Set([LayoutControl.prototype._ul4attrs, "value"]);
+
+
+export class ImageLayoutControl extends LayoutControl
+{
+	static classdoc = "An image decoration in an input form";
+};
+
+ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "original", "scaled"];
+ImageLayoutControl.prototype._ul4attrs = new Set([LayoutControl.prototype._ul4attrs, "original", "scaled"]);
+
+
+export class ViewControl extends Base
+{
+	static classdoc = "Contains view specific information aboutn a control";
+
+	get mode()
+	{
+		return this._mode ? "display" : "edit";
+	}
+};
+
+ViewControl.prototype._ul4onattrs = ["view", "control", "top", "left", "width", "height", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "_mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"];
+ViewControl.prototype._ul4attrs = new Set(["id", "view", "control", "top", "left", "width", "height", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"]);
+
 
 export class User extends Base
 {
 	static classdoc = "A LivingApps user/account";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<User id=" + ul4._repr(this.id) + " firstname=" + ul4._repr(this.firstname) + " surname=" + ul4._repr(this.surname) + " email=" + ul4._repr(this.email) + ">";
 	}
 };
 
-User.prototype._ul4onattrs = ["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"];
-User.prototype._ul4attrs = new Set(["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"]);
+User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"];
+User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
 
 export class File extends Base
 {
 	static classdoc = "An uploaded file";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<File id=" + ul4._repr(this.id) + " url=" + ul4._repr(this.url) + " filename=" + ul4._repr(this.filename) + ">";
 	}
 };
 
-File.prototype._ul4onattrs = ["id", "url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size"];
+File.prototype._ul4onattrs = ["url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size"];
 File.prototype._ul4attrs = new Set(["id", "url", "filename", "mimetype", "width", "height", "size", "createdat"]);
 
 export class Geo extends Base
@@ -1016,13 +1299,13 @@ export class Geo extends Base
 
 	constructor(lat, long, info)
 	{
-		super();
+		super(null);
 		this.lat = lat;
 		this.long = long;
 		this.info = info;
 	}
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<Geo lat=" + ul4._repr(this.lat) + " long=" + ul4._repr(this.long) + " info=" + ul4._repr(this.info) + ">";
 	}
@@ -1033,13 +1316,13 @@ Geo.prototype._ul4attrs = new Set(["lat", "long", "info"]);
 
 export class Attachment extends Base
 {
-	__repr__()
+	[ul4.symbols.repr]()
 	{
-		return "<" + this.__type__ + " id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + ">";
+		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + ">";
 	}
 };
 
-Attachment.prototype._ul4onattrs = ["id", "record", "label", "active"];
+Attachment.prototype._ul4onattrs = ["record", "label", "active"];
 Attachment.prototype._ul4attrs = new Set(["id", "record", "label", "active"]);
 
 export class NoteAttachment extends Attachment
@@ -1049,7 +1332,7 @@ export class NoteAttachment extends Attachment
 };
 
 NoteAttachment.prototype.type = "noteattachment";
-NoteAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+NoteAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 NoteAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class URLAttachment extends Attachment
@@ -1059,7 +1342,7 @@ export class URLAttachment extends Attachment
 };
 
 URLAttachment.prototype.type = "urlattachment";
-URLAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+URLAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 URLAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class FileAttachment extends Attachment
@@ -1069,7 +1352,7 @@ export class FileAttachment extends Attachment
 };
 
 FileAttachment.prototype.type = "fileattachment";
-FileAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+FileAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 FileAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class ImageAttachment extends Attachment
@@ -1079,7 +1362,7 @@ export class ImageAttachment extends Attachment
 };
 
 ImageAttachment.prototype.type = "imageattachment";
-ImageAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["original", "thumb", "small", "medium", "large"]);
+ImageAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium","large"];
 ImageAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large"]);
 
 export class JSONAttachment extends Attachment
@@ -1104,27 +1387,27 @@ export class JSONAttachment extends Attachment
 };
 
 JSONAttachment.prototype.type = "jsonattachment";
-JSONAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
+JSONAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 JSONAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class Installation extends Base
 {
 	static classdoc = "The installation that created an app";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<Installation id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 };
 
-Installation.prototype._ul4onattrs = ["id", "name"];
+Installation.prototype._ul4onattrs = ["name"];
 Installation.prototype._ul4attrs = new Set(["id", "name"]);
 
 export class Category extends Base
 {
 	static classdoc = "A navigation category";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		let v = [];
 		let category = this;
@@ -1137,33 +1420,33 @@ export class Category extends Base
 	}
 };
 
-Category.prototype._ul4onattrs = ["id", "identifier", "name", "order", "parent", "children", "apps"];
+Category.prototype._ul4onattrs = ["identifier", "name", "order", "parent", "children", "apps"];
 Category.prototype._ul4attrs = new Set(["id", "identifier", "name", "order", "parent", "children", "apps"]);
 
 export class KeyView extends Base
 {
 	static classdoc = "Object granting access to a view template";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<KeyView id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-KeyView.prototype._ul4onattrs = ["id", "identifier", "name", "key", "user"];
+KeyView.prototype._ul4onattrs = ["identifier", "name", "key", "user"];
 KeyView.prototype._ul4attrs = new Set(["id", "identifier", "name", "key", "user"]);
 
 export class AppParameter extends Base
 {
 	static classdoc = "A parameter of a LivingApps application";
 
-	__repr__()
+	[ul4.symbols.repr]()
 	{
 		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-AppParameter.prototype._ul4onattrs = ["id", "app", "identifier", "description", "value"];
+AppParameter.prototype._ul4onattrs = ["app", "identifier", "description", "value"];
 AppParameter.prototype._ul4attrs = new Set(["id", "app", "identifier", "description", "value"]);
 
 let classes = [
@@ -1206,6 +1489,10 @@ let classes = [
 	ButtonControl,
 	Field,
 	LookupItem,
+	LayoutControl,
+	HTMLLayoutControl,
+	ImageLayoutControl,
+	ViewControl,
 	User,
 	File,
 	Geo,
