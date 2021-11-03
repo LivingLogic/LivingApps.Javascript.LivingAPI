@@ -166,7 +166,7 @@ export class Globals extends Base
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record"];
-Globals.prototype._ul4attrs = ul4._makeset("version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages");
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages"]);
 
 export class FlashMessage extends Base
 {
@@ -179,7 +179,7 @@ export class FlashMessage extends Base
 };
 
 FlashMessage.prototype._ul4onattrs = ["timestamp", "type", "title", "message"];
-FlashMessage.prototype._ul4attrs = ul4._makeset("timestamp", "type", "title", "message");
+FlashMessage.prototype._ul4attrs = new Set(["timestamp", "type", "title", "message"]);
 
 export class App extends Base
 {
@@ -237,7 +237,7 @@ export class App extends Base
 };
 
 App.prototype._ul4onattrs = ["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite"];
-App.prototype._ul4attrs = ul4._makeset("id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite");
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite"]);
 ul4.expose(App.prototype.__call__, ["**values"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["**values"], {"needsobject": true});
 
@@ -252,7 +252,7 @@ export class View extends Base
 };
 
 View.prototype._ul4onattrs = ["id", "name", "app", "order", "width", "height", "start", "end"];
-View.prototype._ul4attrs = ul4._makeset("id", "name", "app", "order", "width", "height", "start", "end");
+View.prototype._ul4attrs = new Set(["id", "name", "app", "order", "width", "height", "start", "end"]);
 
 export class DataSourceData extends Base
 {
@@ -265,7 +265,7 @@ export class DataSourceData extends Base
 };
 
 DataSourceData.prototype._ul4onattrs = ["id", "identifier", "app", "apps"];
-DataSourceData.prototype._ul4attrs = ul4._makeset("id", "identifier", "app", "apps");
+DataSourceData.prototype._ul4attrs = new Set(["id", "identifier", "app", "apps"]);
 
 export class Record extends Base
 {
@@ -455,7 +455,7 @@ export class Record extends Base
 };
 
 Record.prototype._ul4onattrs = ["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"];
-Record.prototype._ul4attrs = ul4._makeset("id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children");
+Record.prototype._ul4attrs = new Set(["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "attachments", "children"]);
 ul4.expose(Record.prototype.is_dirty, []);
 ul4.expose(Record.prototype.has_errors, []);
 ul4.expose(Record.prototype.delete, []);
@@ -487,7 +487,7 @@ export class Control extends Base
 Control.prototype.type = null;
 Control.prototype.subtype = null;
 Control.prototype._ul4onattrs = ["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = ul4._makeset("id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure");
+Control.prototype._ul4attrs = new Set(["id", "identifier", "field", "app", "label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"]);
 
 export class BoolControl extends Control
 {
@@ -613,7 +613,7 @@ export class TextAreaControl extends StringControl
 
 TextAreaControl.prototype.subtype = "textarea";
 TextAreaControl.prototype._ul4onattrs = StringControl.prototype._ul4onattrs.concat(["encrypted"]);
-TextAreaControl.prototype._ul4attrs = ul4._makeset(...StringControl.prototype._ul4attrs, "encrypted");
+TextAreaControl.prototype._ul4attrs = new Set([...StringControl.prototype._ul4attrs, "encrypted"]);
 
 export class HTMLControl extends StringControl
 {
@@ -718,7 +718,7 @@ export class LookupControl extends Control
 
 LookupControl.prototype.type = "lookup";
 LookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookupdata"]);
-LookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4attrs, "lookupdata");
+LookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookupdata"]);
 
 export class LookupSelectControl extends LookupControl
 {
@@ -758,7 +758,7 @@ export class AppLookupControl extends Control
 
 AppLookupControl.prototype.type = "applookup";
 AppLookupControl.prototype._ul4onattrs = Control.prototype._ul4onattrs.concat(["lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
-AppLookupControl.prototype._ul4attrs = ul4._makeset(...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control");
+AppLookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
 
 export class AppLookupSelectControl extends AppLookupControl
 {
@@ -982,7 +982,7 @@ export class LookupItem extends Base
 };
 
 LookupItem.prototype._ul4onattrs = ["id", "key", "label"];
-LookupItem.prototype._ul4attrs = ul4._makeset("id", "key", "label");
+LookupItem.prototype._ul4attrs = new Set(["id", "key", "label"]);
 
 export class User extends Base
 {
@@ -995,7 +995,7 @@ export class User extends Base
 };
 
 User.prototype._ul4onattrs = ["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"];
-User.prototype._ul4attrs = ul4._makeset("_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews");
+User.prototype._ul4attrs = new Set(["_id", "id", "gender", "firstname", "surname", "initials", "email", "language", "avatarsmall", "avatarlarge", "keyviews"]);
 
 export class File extends Base
 {
@@ -1008,7 +1008,7 @@ export class File extends Base
 };
 
 File.prototype._ul4onattrs = ["id", "url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size"];
-File.prototype._ul4attrs = ul4._makeset("id", "url", "filename", "mimetype", "width", "height", "size", "createdat");
+File.prototype._ul4attrs = new Set(["id", "url", "filename", "mimetype", "width", "height", "size", "createdat"]);
 
 export class Geo extends Base
 {
@@ -1029,7 +1029,7 @@ export class Geo extends Base
 };
 
 Geo.prototype._ul4onattrs = ["lat", "long", "info"];
-Geo.prototype._ul4attrs = ul4._makeset("lat", "long", "info");
+Geo.prototype._ul4attrs = new Set(["lat", "long", "info"]);
 
 export class Attachment extends Base
 {
@@ -1040,7 +1040,7 @@ export class Attachment extends Base
 };
 
 Attachment.prototype._ul4onattrs = ["id", "record", "label", "active"];
-Attachment.prototype._ul4attrs = ul4._makeset("id", "record", "label", "active");
+Attachment.prototype._ul4attrs = new Set(["id", "record", "label", "active"]);
 
 export class NoteAttachment extends Attachment
 {
@@ -1050,7 +1050,7 @@ export class NoteAttachment extends Attachment
 
 NoteAttachment.prototype.type = "noteattachment";
 NoteAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
-NoteAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
+NoteAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class URLAttachment extends Attachment
 {
@@ -1060,7 +1060,7 @@ export class URLAttachment extends Attachment
 
 URLAttachment.prototype.type = "urlattachment";
 URLAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
-URLAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
+URLAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class FileAttachment extends Attachment
 {
@@ -1070,7 +1070,7 @@ export class FileAttachment extends Attachment
 
 FileAttachment.prototype.type = "fileattachment";
 FileAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
-FileAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
+FileAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class ImageAttachment extends Attachment
 {
@@ -1080,7 +1080,7 @@ export class ImageAttachment extends Attachment
 
 ImageAttachment.prototype.type = "imageattachment";
 ImageAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["original", "thumb", "small", "medium", "large"]);
-ImageAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large");
+ImageAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large"]);
 
 export class JSONAttachment extends Attachment
 {
@@ -1105,7 +1105,7 @@ export class JSONAttachment extends Attachment
 
 JSONAttachment.prototype.type = "jsonattachment";
 JSONAttachment.prototype._ul4onattrs = Attachment.prototype._ul4onattrs.concat(["value"]);
-JSONAttachment.prototype._ul4attrs = ul4._makeset(...Attachment.prototype._ul4onattrs, "value");
+JSONAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 export class Installation extends Base
 {
@@ -1118,7 +1118,7 @@ export class Installation extends Base
 };
 
 Installation.prototype._ul4onattrs = ["id", "name"];
-Installation.prototype._ul4attrs = ul4._makeset("id", "name");
+Installation.prototype._ul4attrs = new Set(["id", "name"]);
 
 export class Category extends Base
 {
@@ -1138,7 +1138,7 @@ export class Category extends Base
 };
 
 Category.prototype._ul4onattrs = ["id", "identifier", "name", "order", "parent", "children", "apps"];
-Category.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "order", "parent", "children", "apps");
+Category.prototype._ul4attrs = new Set(["id", "identifier", "name", "order", "parent", "children", "apps"]);
 
 export class KeyView extends Base
 {
@@ -1151,7 +1151,7 @@ export class KeyView extends Base
 };
 
 KeyView.prototype._ul4onattrs = ["id", "identifier", "name", "key", "user"];
-KeyView.prototype._ul4attrs = ul4._makeset("id", "identifier", "name", "key", "user");
+KeyView.prototype._ul4attrs = new Set(["id", "identifier", "name", "key", "user"]);
 
 export class AppParameter extends Base
 {
@@ -1164,7 +1164,7 @@ export class AppParameter extends Base
 };
 
 AppParameter.prototype._ul4onattrs = ["id", "app", "identifier", "description", "value"];
-AppParameter.prototype._ul4attrs = ul4._makeset("id", "app", "identifier", "description", "value");
+AppParameter.prototype._ul4attrs = new Set(["id", "app", "identifier", "description", "value"]);
 
 let classes = [
 	Globals,
