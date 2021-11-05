@@ -105,6 +105,11 @@ export class Base extends ul4.Proto
 	{
 		return "<" + this.constructor.name + ">";
 	}
+
+	toString()
+	{
+		return this[ul4.symbols.repr]();
+	}
 };
 
 export class Handler
@@ -448,6 +453,10 @@ export class Record extends Base
 			for (let [identifier, value] of this.values.entries())
 			{
 				let field = new Field(this.app.controls.get(identifier), this, value);
+				if (this._sparsefielderrors !== null && this._sparsefielderrors.has(identifier))
+					field.errors = this._sparsefielderrors.get(identifier);
+				if (this._sparsefieldlookupdata !== null && this._sparsefieldlookupdata.has(identifier))
+					field.lookupdata = this._sparsefieldlookupdata.get(identifier);
 				this._fields.set(identifier, field);
 			}
 		}
@@ -1139,6 +1148,7 @@ export class Field extends Base
 		this._label = null;
 		this._value = value;
 		this._dirty = false;
+		this._lookupdate = null;
 		this.errors = [];
 	}
 
@@ -1169,6 +1179,25 @@ export class Field extends Base
 	set label(value)
 	{
 		this._label = value;
+	}
+
+	get lookupdata()
+	{
+		if (this._lookupdate !== null)
+			return this._lookupdate;
+		if (this.control instanceof LookupControl)
+			return this.control.lookupdata;
+		else if (this.control instanceof AppLookupControl)
+		{
+			if (this.control.lookup_app.records !== null)
+				return this.control.lookup_app.records;
+		}
+		return new Map();
+	}
+
+	set lookupdata(value)
+	{
+		this._lookupdate = value;
 	}
 
 	is_empty()
@@ -1212,14 +1241,75 @@ export class LookupItem extends Base
 {
 	static classdoc = "An option in a lookup control/field";
 
+	get label()
+	{
+		if (this.control === null)
+			return this._label;
+		let view_lookupitem = this._view_lookupitem();
+		if (view_lookupitem === null)
+			return this._label;
+		let label = view_lookupitem.label;
+		if (label === null)
+			return this._label;
+		return label;
+	}
+
+	get visible()
+	{
+		if (this.control === null)
+			return true;
+		let view_lookupitem = this._view_lookupitem();
+		if (view_lookupitem === null)
+			return true;
+		return view_lookupitem.visible;
+	}
+
+	_view_lookupitem()
+	{
+		let identifier = this.control.identifier;
+		let active_view = this.control.app.active_view;
+		if (active_view !== null && active_view.controls !== null)
+		{
+			let view_control = active_view.controls.get(identifier);
+			if (view_control !== undefined && view_control.lookupdata !== undefined && view_control.lookupdata !== null)
+			{
+				let view_lookupitem = view_control.lookupdata.get(this.key);
+				if (view_lookupitem !== undefined)
+					return view_lookupitem;
+			}
+		}
+		return null;
+	}
+
 	[ul4.symbols.repr]()
 	{
-		return "<LookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label) + ">";
+		let repr = "<LookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label);
+		if (!this.visible)
+			repr += "visible=False"
+		return repr + ">";
 	}
 };
 
-LookupItem.prototype._ul4onattrs = ["control", "key", "label"];
+LookupItem.prototype._ul4onattrs = ["control", "key", "_label"];
 LookupItem.prototype._ul4attrs = new Set(["id", "control", "key", "label"]);
+
+
+export class ViewLookupItem extends Base
+{
+	static classdoc = "View specific information about a lookup item";
+
+	[ul4.symbols.repr]()
+	{
+		let repr = "<ViewLookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label);
+		if (!this.visible)
+			repr += " visible=False"
+		return repr + ">";
+	}
+};
+
+ViewLookupItem.prototype._ul4onattrs = ["key", "label", "visible"];
+ViewLookupItem.prototype._ul4attrs = new Set(["key", "label", "visible"]);
+
 
 export class LayoutControl extends Base
 {
@@ -1486,9 +1576,11 @@ let classes = [
 	MultipleAppLookupChoiceControl,
 	GeoControl,
 	FileControl,
+	FileSignatureControl,
 	ButtonControl,
 	Field,
 	LookupItem,
+	ViewLookupItem,
 	LayoutControl,
 	HTMLLayoutControl,
 	ImageLayoutControl,
