@@ -412,7 +412,7 @@ export class Record extends Base
 			}
 		}
 		v.push(" state=");
-		v.push(this.state);
+		v.push(ul4._repr(this.state));
 		v.push(">");
 		return v.join("");
 	}
