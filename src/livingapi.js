@@ -33,6 +33,7 @@ export { version };
 
 import * as ul4 from '@livinglogic/ul4';
 
+
 export class Base extends ul4.Proto
 {
 	constructor(id)
@@ -112,6 +113,7 @@ export class Base extends ul4.Proto
 	}
 };
 
+
 export class Handler
 {
 	save(record)
@@ -122,6 +124,7 @@ export class Handler
 	{
 	}
 };
+
 
 export class Globals extends Base
 {
@@ -236,6 +239,7 @@ export class Globals extends Base
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record", "google_api_key", "mode", "view_template_id", "email_template_id", "view_id"];
 Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode"]);
 
+
 export class FlashMessage extends Base
 {
 	static classdoc = "A flash message in a web page";
@@ -248,6 +252,7 @@ export class FlashMessage extends Base
 
 FlashMessage.prototype._ul4onattrs = ["timestamp", "type", "title", "message"];
 FlashMessage.prototype._ul4attrs = new Set(["timestamp", "type", "title", "message"]);
+
 
 export class App extends Base
 {
@@ -342,10 +347,12 @@ export class App extends Base
 	}
 };
 
+
 App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view"];
 App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite", "_active_view"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["**values"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["**values"], {"needsobject": true});
+
 
 export class View extends Base
 {
@@ -360,6 +367,7 @@ export class View extends Base
 View.prototype._ul4onattrs = ["name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"];
 View.prototype._ul4attrs = new Set(["id", "name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"]);
 
+
 export class DataSourceData extends Base
 {
 	static classdoc = "The data resulting from a data source configuration";
@@ -372,6 +380,7 @@ export class DataSourceData extends Base
 
 DataSourceData.prototype._ul4onattrs = ["identifier", "app", "apps"];
 DataSourceData.prototype._ul4attrs = new Set(["id", "identifier", "app", "apps"]);
+
 
 export class Record extends Base
 {
@@ -452,7 +461,9 @@ export class Record extends Base
 			this._fields = new Map();
 			for (let [identifier, value] of this.values.entries())
 			{
-				let field = new Field(this.app.controls.get(identifier), this, value);
+				let control = this.app.controls.get(identifier);
+				let field = new control.fieldtype(control, this, null);
+				field.value = value;
 				if (this._sparsefielderrors !== null && this._sparsefielderrors.has(identifier))
 					field.errors = this._sparsefielderrors.get(identifier);
 				if (this._sparsefieldlookupdata !== null && this._sparsefieldlookupdata.has(identifier))
@@ -596,6 +607,246 @@ ul4.expose(Record.prototype.delete, []);
 ul4.expose(Record.prototype.save, []);
 ul4.expose(Record.prototype.update, ["**values"], {"needsobject": true});
 
+
+export class Field extends Base
+{
+	static classdoc = "Holds the value of a field of a record (and related information)";
+
+	constructor(control, record, value)
+	{
+		super(null);
+		this.control = control;
+		this.record = record;
+		this._label = null;
+		this._value = value;
+		this._dirty = false;
+		this._lookupdate = null;
+		this.errors = [];
+	}
+
+	get value()
+	{
+		return this._value;
+	}
+
+	set value(value)
+	{
+		let oldvalue = this._value;
+
+		if (ul4._ne(oldvalue, value))
+		{
+			this.record.values.set(this.control.identifier, value);
+			this._value = value;
+			this._dirty = true;
+		}
+	}
+
+	get label()
+	{
+		if (this._label !== null)
+			return this._label;
+		return this.control.label;
+	}
+
+	set label(value)
+	{
+		this._label = value;
+	}
+
+	get lookupdata()
+	{
+		if (this._lookupdate !== null)
+			return this._lookupdate;
+		if (this.control instanceof LookupControl)
+			return this.control.lookupdata;
+		else if (this.control instanceof AppLookupControl)
+		{
+			if (this.control.lookup_app.records !== null)
+				return this.control.lookup_app.records;
+		}
+		return new Map();
+	}
+
+	set lookupdata(value)
+	{
+		this._lookupdate = value;
+	}
+
+	is_empty()
+	{
+		return this._value === null || (ul4._islist(this._value) && this._value.length === 0);
+	}
+
+	is_dirty()
+	{
+		return this._dirty;
+	}
+
+	has_errors()
+	{
+		return this.errors.length !== 0;
+	}
+
+	search(searchvalue)
+	{
+		return this.control.search(this.value, searchvalue);
+	}
+
+	[ul4.symbols.repr]()
+	{
+		let s = "<Field identifier=";
+		s += ul4._repr(this.control.identifier)
+		if (this._dirty)
+			s += " is_dirty()=True";
+		if (this.errors.length !== 0)
+			s += " has_errors()=True";
+		s += ">"
+		return s;
+	}
+};
+
+Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "enabled", "writable", "visible"];
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "enabled", "writable", "visible"]);
+
+
+export class BoolField extends Field
+{
+	static classdoc = "Holds the value of a bool field of a record (and related information)";
+};
+
+
+export class StringField extends Field
+{
+	static classdoc = "Holds the value of a string field of a record (and related information)";
+};
+
+
+export class EmailField extends StringField
+{
+	static classdoc = "Holds the value of a string/email field of a record (and related information)";
+};
+
+
+export class URLField extends StringField
+{
+	static classdoc = "Holds the value of a string/url field of a record (and related information)";
+};
+
+
+export class TelField extends StringField
+{
+	static classdoc = "Holds the value of a string/tel field of a record (and related information)";
+};
+
+
+export class PasswordField extends StringField
+{
+	static classdoc = "Holds the value of a string/password field of a record (and related information)";
+};
+
+
+export class TextAreaField extends StringField
+{
+	static classdoc = "Holds the value of a string/textarea field of a record (and related information)";
+};
+
+
+export class HTMLField extends StringField
+{
+	static classdoc = "Holds the value of a string/html field of a record (and related information)";
+};
+
+
+export class IntField extends Field
+{
+	static classdoc = "Holds the value of an int field of a record (and related information)";
+};
+
+
+export class NumberField extends Field
+{
+	static classdoc = "Holds the value of a number field of a record (and related information)";
+};
+
+
+export class GeoField extends Field
+{
+	static classdoc = "Holds the value of a geo field of a record (and related information)";
+};
+
+
+export class FileField extends Field
+{
+	static classdoc = "Holds the value of a file field of a record (and related information)";
+};
+
+
+export class FileSignatureField extends FileField
+{
+	static classdoc = "Holds the value of a file/signature field of a record (and related information)";
+};
+
+
+export class DateFieldBase extends Field
+{
+	static classdoc = "Holds the value of a date field of a record (and related information)";
+};
+
+
+export class DateField extends DateFieldBase
+{
+	static classdoc = "Holds the value of a date/date field of a record (and related information)";
+};
+
+
+export class DatetimeMinuteField extends DateFieldBase
+{
+	static classdoc = "Holds the value of a date/datetimeminute field of a record (and related information)";
+};
+
+
+export class DatetimeSecondField extends DateFieldBase
+{
+	static classdoc = "Holds the value of a date/datetimesecond field of a record (and related information)";
+};
+
+
+export class LookupFieldBase extends Field
+{
+	static classdoc = "Base type of LookupField and MultipleLookupField";
+};
+
+
+export class LookupField extends LookupFieldBase
+{
+	static classdoc = "Holds the value of a lookup field of a record (and related information)";
+};
+
+
+export class MultipleLookupField extends LookupFieldBase
+{
+	static classdoc = "Holds the value of a multiple lookup field of a record (and related information)";
+};
+
+
+export class AppLookupFieldBase extends Field
+{
+	static classdoc = "Base type of AppLookupField and MultipleAppLookupField";
+};
+
+
+export class AppLookupField extends AppLookupFieldBase
+{
+	static classdoc = "Holds the value of a applookup field of a record (and related information)";
+};
+
+
+export class MultipleAppLookupField extends AppLookupFieldBase
+{
+	static classdoc = "Holds the value of a multiple applookup field of a record (and related information)";
+};
+
+
 export class Control extends Base
 {
 	[ul4.symbols.repr]()
@@ -724,6 +975,7 @@ Control.prototype.subtype = null;
 Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure"];
 Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "default", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 
+
 export class BoolControl extends Control
 {
 	static classdoc = "A LivingApps boolean field (type 'bool')";
@@ -740,6 +992,8 @@ export class BoolControl extends Control
 };
 
 BoolControl.prototype.type = "bool";
+BoolControl.prototype.fieldtype = BoolField;
+
 
 export class IntControl extends Control
 {
@@ -757,6 +1011,8 @@ export class IntControl extends Control
 };
 
 IntControl.prototype.type = "int";
+IntControl.prototype.fieldtype = IntField;
+
 
 class PlaceholderControl extends Control
 {
@@ -772,6 +1028,7 @@ class PlaceholderControl extends Control
 };
 
 PlaceholderControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "placeholder"]);
+
 
 export class NumberControl extends PlaceholderControl
 {
@@ -795,6 +1052,8 @@ export class NumberControl extends PlaceholderControl
 };
 
 NumberControl.prototype.type = "number";
+NumberControl.prototype.fieldtype = NumberField;
+
 
 export class StringControl extends PlaceholderControl
 {
@@ -839,45 +1098,51 @@ export class StringControl extends PlaceholderControl
 
 StringControl.prototype.type = "string";
 
+
 export class TextControl extends StringControl
 {
 	static classdoc = "A LivingApps text field (type 'string/text')";
-
 };
 
 TextControl.prototype.subtype = "text";
+TextControl.prototype.fieldtype = StringField;
+
 
 export class EmailControl extends StringControl
 {
 	static classdoc = "A LivingApps email field (type 'string/email')";
-
 };
 
 EmailControl.prototype.subtype = "email";
+EmailControl.prototype.fieldtype = EmailField;
+
 
 export class URLControl extends StringControl
 {
 	static classdoc = "A LivingApps URL field (type 'string/url')";
-
 };
 
 URLControl.prototype.subtype = "url";
+URLControl.prototype.fieldtype = URLField;
+
 
 export class TelControl extends StringControl
 {
 	static classdoc = "A LivingApps phone number field (type 'string/tel')";
-
 };
 
 TelControl.prototype.subtype = "tel";
+TelControl.prototype.fieldtype = TelField;
+
 
 export class PasswordControl extends StringControl
 {
-	static classdoc = "A LivingApps email field (type 'string/email')";
-
+	static classdoc = "A LivingApps password field (type 'string/password')";
 };
 
 PasswordControl.prototype.subtype = "password";
+PasswordControl.prototype.fieldtype = PasswordField;
+
 
 export class TextAreaControl extends StringControl
 {
@@ -900,16 +1165,19 @@ export class TextAreaControl extends StringControl
 };
 
 TextAreaControl.prototype.subtype = "textarea";
+TextAreaControl.prototype.fieldtype = TextAreaField;
 TextAreaControl.prototype._ul4onattrs = [...StringControl.prototype._ul4onattrs, "encrypted"];
 TextAreaControl.prototype._ul4attrs = new Set([...StringControl.prototype._ul4attrs, "encrypted"]);
+
 
 export class HTMLControl extends StringControl
 {
 	static classdoc = "A LivingApps HTML field (type 'string/html')";
-
 };
 
 HTMLControl.prototype.subtype = "html";
+HTMLControl.prototype.fieldtype = HTMLField;
+
 
 export class DateControl extends PlaceholderControl
 {
@@ -952,6 +1220,8 @@ export class DateControl extends PlaceholderControl
 
 DateControl.prototype.type = "date";
 DateControl.prototype.subtype = "date";
+DateControl.prototype.fieldtype = DateField;
+
 
 export class DatetimeMinuteControl extends DateControl
 {
@@ -969,6 +1239,8 @@ export class DatetimeMinuteControl extends DateControl
 };
 
 DatetimeMinuteControl.prototype.subtype = "datetimeminute";
+DatetimeMinuteControl.prototype.fieldtype = DatetimeMinuteField;
+
 
 export class DatetimeSecondControl extends DateControl
 {
@@ -986,6 +1258,8 @@ export class DatetimeSecondControl extends DateControl
 };
 
 DatetimeSecondControl.prototype.subtype = "datetimesecond";
+DatetimeSecondControl.prototype.fieldtype = DatetimeSecondField;
+
 
 export class LookupControl extends Control
 {
@@ -1029,8 +1303,10 @@ export class LookupControl extends Control
 };
 
 LookupControl.prototype.type = "lookup";
+LookupControl.prototype.fieldtype = LookupField;
 LookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "lookupdata"];
 LookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookupdata"]);
+
 
 export class LookupSelectControl extends LookupControl
 {
@@ -1040,6 +1316,7 @@ export class LookupSelectControl extends LookupControl
 
 LookupSelectControl.prototype.subtype = "select";
 
+
 export class LookupRadioControl extends LookupControl
 {
 	static classdoc = "A LivingApps lookup field (type 'lookup/radio')";
@@ -1048,6 +1325,7 @@ export class LookupRadioControl extends LookupControl
 
 LookupRadioControl.prototype.subtype = "radio";
 
+
 export class LookupChoiceControl extends LookupControl
 {
 	static classdoc = "A LivingApps lookup field (type 'lookup/choice')";
@@ -1055,6 +1333,7 @@ export class LookupChoiceControl extends LookupControl
 };
 
 LookupChoiceControl.prototype.subtype = "choice";
+
 
 export class AppLookupControl extends Control
 {
@@ -1069,8 +1348,10 @@ export class AppLookupControl extends Control
 };
 
 AppLookupControl.prototype.type = "applookup";
+AppLookupControl.prototype.fieldtype = AppLookupField;
 AppLookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"];
 AppLookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
+
 
 export class AppLookupSelectControl extends AppLookupControl
 {
@@ -1080,6 +1361,7 @@ export class AppLookupSelectControl extends AppLookupControl
 
 AppLookupSelectControl.prototype.subtype = "select";
 
+
 export class AppLookupRadioControl extends AppLookupControl
 {
 	static classdoc = "A LivingApps applookup field (type 'applookup/radio')";
@@ -1088,6 +1370,7 @@ export class AppLookupRadioControl extends AppLookupControl
 
 AppLookupRadioControl.prototype.subtype = "radio";
 
+
 export class AppLookupChoiceControl extends AppLookupControl
 {
 	static classdoc = "A LivingApps applookup field (type 'applookup/choice')";
@@ -1095,6 +1378,7 @@ export class AppLookupChoiceControl extends AppLookupControl
 };
 
 AppLookupChoiceControl.prototype.subtype = "choice";
+
 
 export class MultipleLookupControl extends LookupControl
 {
@@ -1116,6 +1400,8 @@ export class MultipleLookupControl extends LookupControl
 };
 
 MultipleLookupControl.prototype.subtype = "multiplelookup";
+MultipleLookupControl.prototype.fieldtype = MultipleLookupField;
+
 
 export class MultipleLookupSelectControl extends MultipleLookupControl
 {
@@ -1125,6 +1411,7 @@ export class MultipleLookupSelectControl extends MultipleLookupControl
 
 MultipleLookupSelectControl.prototype.subtype = "select";
 
+
 export class MultipleLookupCheckboxControl extends MultipleLookupControl
 {
 	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/checkbox')";
@@ -1133,6 +1420,7 @@ export class MultipleLookupCheckboxControl extends MultipleLookupControl
 
 MultipleLookupCheckboxControl.prototype.subtype = "checkbox";
 
+
 export class MultipleLookupChoiceControl extends MultipleLookupControl
 {
 	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/choice')";
@@ -1140,6 +1428,7 @@ export class MultipleLookupChoiceControl extends MultipleLookupControl
 };
 
 MultipleLookupChoiceControl.prototype.subtype = "choice";
+
 
 export class MultipleAppLookupControl extends AppLookupControl
 {
@@ -1166,6 +1455,8 @@ export class MultipleAppLookupControl extends AppLookupControl
 };
 
 MultipleAppLookupControl.prototype.type = "multipleapplookup";
+MultipleAppLookupControl.prototype.fieldtype = MultipleAppLookupField;
+
 
 export class MultipleAppLookupSelectControl extends MultipleAppLookupControl
 {
@@ -1175,6 +1466,7 @@ export class MultipleAppLookupSelectControl extends MultipleAppLookupControl
 
 MultipleAppLookupSelectControl.prototype.subtype = "select";
 
+
 export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
 {
 	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/checkbox')";
@@ -1183,141 +1475,47 @@ export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
 
 MultipleAppLookupCheckboxControl.prototype.subtype = "checkbox";
 
+
 export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 {
 	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/choice')";
-
 };
 
 MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 
+
 export class GeoControl extends Control
 {
 	static classdoc = "A LivingApps geo field (type 'geo')";
-
 };
 
 GeoControl.prototype.type = "geo";
+GeoControl.prototype.fieldtype = GeoField;
+
 
 export class FileControl extends Control
 {
 	static classdoc = "A LivingApps upload field (type 'file')";
-
 };
 
 FileControl.prototype.type = "file";
+FileControl.prototype.fieldtype = FileField;
+
 
 export class FileSignatureControl extends FileControl
 {
 	static classdoc = "A LivingApps signature image field (type 'file/signature')";
-
 };
 
 FileSignatureControl.prototype.subtype = "signature";
+FileSignatureControl.prototype.fieldtype = FileSignatureField;
+
 
 export class ButtonControl extends Control
 {
 };
 
 ButtonControl.prototype.type = "button";
-
-export class Field extends Base
-{
-	constructor(control, record, value)
-	{
-		super(null);
-		this.control = control;
-		this.record = record;
-		this._label = null;
-		this._value = value;
-		this._dirty = false;
-		this._lookupdate = null;
-		this.errors = [];
-	}
-
-	get value()
-	{
-		return this._value;
-	}
-
-	set value(value)
-	{
-		let oldvalue = this._value;
-
-		if (ul4._ne(oldvalue, value))
-		{
-			this.record.values.set(this.control.identifier, value);
-			this._value = value;
-			this._dirty = true;
-		}
-	}
-
-	get label()
-	{
-		if (this._label !== null)
-			return this._label;
-		return this.control.label;
-	}
-
-	set label(value)
-	{
-		this._label = value;
-	}
-
-	get lookupdata()
-	{
-		if (this._lookupdate !== null)
-			return this._lookupdate;
-		if (this.control instanceof LookupControl)
-			return this.control.lookupdata;
-		else if (this.control instanceof AppLookupControl)
-		{
-			if (this.control.lookup_app.records !== null)
-				return this.control.lookup_app.records;
-		}
-		return new Map();
-	}
-
-	set lookupdata(value)
-	{
-		this._lookupdate = value;
-	}
-
-	is_empty()
-	{
-		return this._value === null || (ul4._islist(this._value) && this._value.length === 0);
-	}
-
-	is_dirty()
-	{
-		return this._dirty;
-	}
-
-	has_errors()
-	{
-		return this.errors.length !== 0;
-	}
-
-	search(searchvalue)
-	{
-		return this.control.search(this.value, searchvalue);
-	}
-
-	[ul4.symbols.repr]()
-	{
-		let s = "<Field identifier=";
-		s += ul4._repr(this.control.identifier)
-		if (this._dirty)
-			s += " is_dirty()=True";
-		if (this.errors.length !== 0)
-			s += " has_errors()=True";
-		s += ">"
-		return s;
-	}
-};
-
-Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "enabled", "writable", "visible"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "enabled", "writable", "visible"]);
 
 
 export class LookupItem extends Base
@@ -1453,6 +1651,7 @@ export class User extends Base
 User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"];
 User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
 
+
 export class File extends Base
 {
 	static classdoc = "An uploaded file";
@@ -1465,6 +1664,7 @@ export class File extends Base
 
 File.prototype._ul4onattrs = ["url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size"];
 File.prototype._ul4attrs = new Set(["id", "url", "filename", "mimetype", "width", "height", "size", "createdat"]);
+
 
 export class Geo extends Base
 {
@@ -1487,6 +1687,7 @@ export class Geo extends Base
 Geo.prototype._ul4onattrs = ["lat", "long", "info"];
 Geo.prototype._ul4attrs = new Set(["lat", "long", "info"]);
 
+
 export class Attachment extends Base
 {
 	[ul4.symbols.repr]()
@@ -1498,6 +1699,7 @@ export class Attachment extends Base
 Attachment.prototype._ul4onattrs = ["record", "label", "active"];
 Attachment.prototype._ul4attrs = new Set(["id", "record", "label", "active"]);
 
+
 export class NoteAttachment extends Attachment
 {
 	static classdoc = "A note attachment of a record";
@@ -1507,6 +1709,7 @@ export class NoteAttachment extends Attachment
 NoteAttachment.prototype.type = "noteattachment";
 NoteAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 NoteAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
+
 
 export class URLAttachment extends Attachment
 {
@@ -1518,6 +1721,7 @@ URLAttachment.prototype.type = "urlattachment";
 URLAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 URLAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
+
 export class FileAttachment extends Attachment
 {
 	static classdoc = "A file attachment of a record";
@@ -1528,6 +1732,7 @@ FileAttachment.prototype.type = "fileattachment";
 FileAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 FileAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
+
 export class ImageAttachment extends Attachment
 {
 	static classdoc = "An image attachment of a record";
@@ -1537,6 +1742,7 @@ export class ImageAttachment extends Attachment
 ImageAttachment.prototype.type = "imageattachment";
 ImageAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium","large"];
 ImageAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large"]);
+
 
 export class JSONAttachment extends Attachment
 {
@@ -1563,6 +1769,7 @@ JSONAttachment.prototype.type = "jsonattachment";
 JSONAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 JSONAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
+
 export class Installation extends Base
 {
 	static classdoc = "The installation that created an app";
@@ -1575,6 +1782,7 @@ export class Installation extends Base
 
 Installation.prototype._ul4onattrs = ["name"];
 Installation.prototype._ul4attrs = new Set(["id", "name"]);
+
 
 export class Category extends Base
 {
@@ -1596,6 +1804,7 @@ export class Category extends Base
 Category.prototype._ul4onattrs = ["identifier", "name", "order", "parent", "children", "apps"];
 Category.prototype._ul4attrs = new Set(["id", "identifier", "name", "order", "parent", "children", "apps"]);
 
+
 export class KeyView extends Base
 {
 	static classdoc = "Object granting access to a view template";
@@ -1609,6 +1818,7 @@ export class KeyView extends Base
 KeyView.prototype._ul4onattrs = ["identifier", "name", "key", "user"];
 KeyView.prototype._ul4attrs = new Set(["id", "identifier", "name", "key", "user"]);
 
+
 export class AppParameter extends Base
 {
 	static classdoc = "A parameter of a LivingApps application";
@@ -1621,6 +1831,7 @@ export class AppParameter extends Base
 
 AppParameter.prototype._ul4onattrs = ["app", "identifier", "description", "value"];
 AppParameter.prototype._ul4attrs = new Set(["id", "app", "identifier", "description", "value"]);
+
 
 let classes = [
 	Globals,
@@ -1662,6 +1873,29 @@ let classes = [
 	FileSignatureControl,
 	ButtonControl,
 	Field,
+	BoolField,
+	StringField,
+	EmailField,
+	URLField,
+	TelField,
+	PasswordField,
+	TextAreaField,
+	HTMLField,
+	IntField,
+	NumberField,
+	GeoField,
+	FileField,
+	FileSignatureField,
+	DateFieldBase,
+	DateField,
+	DatetimeMinuteField,
+	DatetimeSecondField,
+	LookupFieldBase,
+	LookupField,
+	MultipleLookupField,
+	AppLookupFieldBase,
+	AppLookupField,
+	MultipleAppLookupField,
 	LookupItem,
 	ViewLookupItem,
 	LayoutControl,
