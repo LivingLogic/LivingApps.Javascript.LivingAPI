@@ -678,6 +678,12 @@ export class Control extends Base
 		return view_control !== null ? view_control.labelpos : "left";
 	}
 
+	get labelwidth()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.labelwidth : null;
+	}
+
 	get autoalign()
 	{
 		let view_control = this._view_control();
@@ -752,7 +758,22 @@ export class IntControl extends Control
 
 IntControl.prototype.type = "int";
 
-export class NumberControl extends Control
+class PlaceholderControl extends Control
+{
+	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/select')";
+
+	get placeholder()
+	{
+		let view_control = this._view_control();
+		if (view_control === null)
+			return null;
+		return view_control.placeholder;
+	}
+};
+
+PlaceholderControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "placeholder"]);
+
+export class NumberControl extends PlaceholderControl
 {
 	static classdoc = "A LivingApps number field (type 'number')";
 
@@ -775,8 +796,32 @@ export class NumberControl extends Control
 
 NumberControl.prototype.type = "number";
 
-export class StringControl extends Control
+export class StringControl extends PlaceholderControl
 {
+	get minlength()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return 0;
+		let minlength = view_control.minlength;
+		if (minlength === null || minlength < 0)
+			return 0;
+		return minlength;
+	}
+
+	get maxlength()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return 4000;
+		let maxlength = view_control.maxlength;
+		if (maxlength === null || maxlength < 0 || maxlength > 4000)
+			return 4000;
+		return maxlength;
+	}
+
 	search(value, search)
 	{
 		this._logsearch(value, search);
@@ -838,6 +883,20 @@ export class TextAreaControl extends StringControl
 {
 	static classdoc = "A LivingApps textarea field (type 'string/textarea')";
 
+	get maxlength()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return null;
+		// We only get the encrypted text in encryption mode, so we can't check its length
+		if (this.encrypted !== null)
+			return null;
+		let maxlength = view_control.maxlength;
+		if (maxlength < 0)
+			return null;
+		return maxlength;
+	}
 };
 
 TextAreaControl.prototype.subtype = "textarea";
@@ -852,7 +911,7 @@ export class HTMLControl extends StringControl
 
 HTMLControl.prototype.subtype = "html";
 
-export class DateControl extends Control
+export class DateControl extends PlaceholderControl
 {
 	static classdoc = "A LivingApps date field (type 'date/date')";
 
@@ -930,6 +989,30 @@ DatetimeSecondControl.prototype.subtype = "datetimesecond";
 
 export class LookupControl extends Control
 {
+	get autoexpandable()
+	{
+		let view_control = this._view_control();
+		if (view_control === null)
+			return false;
+		return view_control.autoexpandable;
+	}
+
+	get nonekey()
+	{
+		let view_control = this._view_control();
+		if (view_control === null)
+			return null;
+		return view_control.lookupnonekey;
+	}
+
+	get nonelabel()
+	{
+		let view_control = this._view_control();
+		if (view_control === null)
+			return null;
+		return view_control.lookupnonelabel;
+	}
+
 	// ``search.value`` must be ``null`` or a ``LookupItem`` key
 	search(value, search)
 	{
