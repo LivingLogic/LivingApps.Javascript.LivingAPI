@@ -464,6 +464,7 @@ export class Record extends Base
 				let control = this.app.controls.get(identifier);
 				let field = new control.fieldtype(control, this, null);
 				field.value = value;
+				field._dirty = false;
 				if (this._sparsefielderrors !== null && this._sparsefielderrors.has(identifier))
 					field.errors = this._sparsefielderrors.get(identifier);
 				if (this._sparsefieldlookupdata !== null && this._sparsefieldlookupdata.has(identifier))
