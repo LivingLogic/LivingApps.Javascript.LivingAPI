@@ -634,12 +634,21 @@ export class Field extends Base
 	{
 		let oldvalue = this._value;
 
-		if (ul4._ne(oldvalue, value))
+		let change = {value: value, errors: []};
+		this._validate(change);
+
+		if (ul4._ne(oldvalue, change.value))
 		{
-			this.record.values.set(this.control.identifier, value);
-			this._value = value;
+			this.record.values.set(this.control.identifier, change.value);
+			this._value = change.value;
 			this._dirty = true;
 		}
+		this.errors = change.errors;
+	}
+
+	_validate(change)
+	{
+		// Do nothing, i.e. accept the value unchanged and without errors
 	}
 
 	get label()
@@ -654,23 +663,9 @@ export class Field extends Base
 		this._label = value;
 	}
 
-	get lookupdata()
+	get globals()
 	{
-		if (this._lookupdate !== null)
-			return this._lookupdate;
-		if (this.control instanceof LookupControl)
-			return this.control.lookupdata;
-		else if (this.control instanceof AppLookupControl)
-		{
-			if (this.control.lookup_app.records !== null)
-				return this.control.lookup_app.records;
-		}
-		return new Map();
-	}
-
-	set lookupdata(value)
-	{
-		this._lookupdate = value;
+		return this.control.globals;
 	}
 
 	is_empty()
@@ -693,13 +688,84 @@ export class Field extends Base
 		return this.control.search(this.value, searchvalue);
 	}
 
+	msg_field_required(value)
+	{
+		switch (this.globals.lang)
+		{
+			case "de":
+				return `"${this.label}" wird benötigt!`;
+			default:
+				return `"${this.label}" is required!`;
+		}
+	}
+
+	msg_field_wrong_type(value)
+	{
+		return `"${this.label}" doesn't support the type ${ul4._type(value).name}!`;
+	}
+
+	msg_bool_truerequired(value)
+	{
+		return `"${this.label}" only accepts "Yes"!`;
+	}
+
+	msg_string_tooshort(value)
+	{
+		return `"${this.label}" is too short. Tou must use at least ${this.control.minlength} characters!`;
+	}
+
+	msg_string_toolong(value)
+	{
+		return `"${this.label}" is too long. You may use at most ${this.control.maxlength} characters!`;
+	}
+
+	msg_email_format(value)
+	{
+		return `"${this.label}" must be a valid email address!`;
+	}
+
+	msg_url_format(value)
+	{
+		return `"${this.label}" must be a valid URL!`;
+	}
+
+	msg_tel_format(value)
+	{
+		return `"${this.label}" must be a valid phone number!`;
+	}
+
+	msg_date_format(value)
+	{
+		return `"${this.label}" doesn't support this date format!`;
+	}
+
+	msg_lookup_wrongitem(value)
+	{
+		return `The option ${ul4._repr(value)} for "${this.label}" doesn't belong to this lookup!`;
+	}
+
+	msg_lookup_unknownkey(value)
+	{
+		return `The option ${ul4._repr(value)} for "${this.label}" is unknown!`;
+	}
+
+	msg_applookup_wrongrecord(value)
+	{
+		return `The record ${ul4._repr(value)} for "${this.label}" doesn't belong to the correct app!`;
+	}
+
+	msg_applookup_unknownkey(value)
+	{
+		return `The record ${ul4._repr(value)} for "${this.label}" can't be found!`;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		let s = "<Field identifier=";
 		s += ul4._repr(this.control.identifier)
 		if (this._dirty)
 			s += " is_dirty()=True";
-		if (this.errors.length !== 0)
+		if (this.errors.length > 0)
 			s += " has_errors()=True";
 		s += ">"
 		return s;
@@ -713,36 +779,155 @@ Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "err
 export class BoolField extends Field
 {
 	static classdoc = "Holds the value of a bool field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (change.value === null)
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(change.value));
+		}
+		else if (typeof(change.value) === "boolean")
+		{
+			if (this.control.required && !change.value)
+				change.errors.push(this.msg_bool_truerequired(change.value));
+		}
+		else
+		{
+			change.errors.push(this.msg_field_wrong_type(change.value));
+			change.value = null;
+		}
+	}
+};
+
+
+export class IntField extends Field
+{
+	static classdoc = "Holds the value of an int field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (change.value === null)
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(change.value));
+		}
+		else if (typeof(change.value) !== "number" || Math.round(change.value) !== change.value)
+		{
+			change.errors.push(this.msg_field_wrong_type(change.value));
+		}
+	}
+};
+
+
+export class NumberField extends Field
+{
+	static classdoc = "Holds the value of a number field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (change.value === null || change.value === "")
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(change.value));
+			change.value = null;
+		}
+		else if (typeof(change.value) !== "number")
+		{
+			change.errors.push(this.msg_field_wrong_type(change.value));
+		}
+	}
 };
 
 
 export class StringField extends Field
 {
 	static classdoc = "Holds the value of a string field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (change.value === null || change.value === "")
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(change.value));
+			change.value = null;
+		}
+		else if (typeof(change.value) === "string")
+		{
+			let minlength = this.control.minlength;
+			let maxlength = this.control.maxlength;
+			if (minlength !== null && change.value.length < minlength)
+				change.errors.push(this.msg_string_tooshort(change.value))
+			if (maxlength !== null && change.value.length > maxlength)
+				change.errors.push(this.msg_string_toolong(change.value))
+		}
+		else
+		{
+			change.errors.push(this.msg_field_wrong_type(change.value));
+			change.value = null;
+		}
+	}
 };
 
 
 export class EmailField extends StringField
 {
 	static classdoc = "Holds the value of a string/email field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (typeof(change.value) === "string" && change.value.length > 0)
+		{
+			const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
+			if (!re.test(change.value))
+				change.errors.push(this.msg_email_format(change.value));
+		}
+		super._validate(change);
+	}
 };
 
 
 export class URLField extends StringField
 {
 	static classdoc = "Holds the value of a string/url field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (typeof(change.value) === "string" && change.value.length > 0)
+		{
+			let url = null;
+			try
+			{
+				url = new URL(change.value);
+			}
+			catch (exc)
+			{
+				change.errors.push(this.msg_url_format(change.value));
+			}
+			if (url !== null && url.protocol !== "http:" && url.protocol !== "https:")
+			{
+				change.errors.push(this.msg_url_format(change.value));
+			}
+		}
+		super._validate(change);
+	}
 };
 
 
 export class TelField extends StringField
 {
 	static classdoc = "Holds the value of a string/tel field of a record (and related information)";
-};
 
-
-export class PasswordField extends StringField
-{
-	static classdoc = "Holds the value of a string/password field of a record (and related information)";
+	_validate(change)
+	{
+		if (typeof(change.value) === "string" && change.value.length > 0)
+		{
+			const re = /^\\+?[0-9 /()-]+$/;
+			if (!re.test(change.value))
+				change.errors.push(this.msg_tel_format(change.value));
+		}
+		super._validate(change);
+	}
 };
 
 
@@ -758,93 +943,382 @@ export class HTMLField extends StringField
 };
 
 
-export class IntField extends Field
-{
-	static classdoc = "Holds the value of an int field of a record (and related information)";
-};
-
-
-export class NumberField extends Field
-{
-	static classdoc = "Holds the value of a number field of a record (and related information)";
-};
-
-
 export class GeoField extends Field
 {
 	static classdoc = "Holds the value of a geo field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (change.value === null || change.value === "")
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(change.value));
+			change.value = null;
+		}
+		else if (!(change.value instanceof Geo))
+		{
+			change.errors.push(this.msg_field_wrong_type(change.value));
+			change.value = null;
+		}
+	}
 };
 
 
 export class FileField extends Field
 {
 	static classdoc = "Holds the value of a file field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (change.value === null || change.value === "")
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(change.value));
+			change.value = null;
+		}
+		else if (!(change.value instanceof File))
+		{
+			change.errors.push(this.msg_field_wrong_type(change.value));
+			change.value = null;
+		}
+	}
 };
 
 
 export class FileSignatureField extends FileField
 {
 	static classdoc = "Holds the value of a file/signature field of a record (and related information)";
+
+	_validate(change)
+	{
+		// FIXME: Implement handling of data URLs.
+		super._validate(change);
+	}
 };
 
 
 export class DateFieldBase extends Field
 {
 	static classdoc = "Holds the value of a date field of a record (and related information)";
+
+	_validate(change)
+	{
+		if (change.value === null || change.value === "")
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(change.value));
+			change.value = null;
+		}
+		else if (change.value instanceof Date)
+		{
+			change.value = this._convert(new Date(change.value.getTime()));
+		}
+		else if (typeof(change.value) === "string")
+		{
+			let value = null;
+			if (change.value.length === 10)
+				value = new Date(change.value + "T00:00:00");
+			else if (change.value.length === 16)
+				value = new Date(change.value + ":00");
+			else if (change.value.length === 19)
+				value = new Date(change.value);
+
+			if (value === null || Number.isNaN(value.getYear()))
+			{
+				change.errors.push(this.msg_date_format(change.value));
+				// Keep original invalid string
+			}
+			else
+			{
+				change.value = this._convert(value);
+			}
+		}
+		else
+		{
+			change.errors.push(this.msg_field_wrong_type(change.value));
+			change.value = null;
+		}
+	}
 };
 
 
 export class DateField extends DateFieldBase
 {
 	static classdoc = "Holds the value of a date/date field of a record (and related information)";
+
+	_convert(date)
+	{
+		return new ul4.Date_(date.getFullYear(), date.getMonth()+1, date.getDate());
+	}
 };
 
 
 export class DatetimeMinuteField extends DateFieldBase
 {
 	static classdoc = "Holds the value of a date/datetimeminute field of a record (and related information)";
+
+	_convert(date)
+	{
+		// Get rid of seconds and milliseconds
+		date.setSeconds(0);
+		date.setMilliseconds(0);
+		return date;
+	}
 };
 
 
 export class DatetimeSecondField extends DateFieldBase
 {
 	static classdoc = "Holds the value of a date/datetimesecond field of a record (and related information)";
+
+	_convert(date)
+	{
+		// Get rid of milliseconds
+		date.setMilliseconds(0);
+		return date;
+	}
 };
 
 
 export class LookupFieldBase extends Field
 {
 	static classdoc = "Base type of LookupField and MultipleLookupField";
+
+	get lookupdata()
+	{
+		if (this._lookupdate !== null)
+			return this._lookupdate;
+		else
+			return this.control.lookupdata;
+	}
+
+	set lookupdata(value)
+	{
+		this._lookupdate = value;
+	}
+
+	_find_lookupitem(change)
+	{
+		let v = change.value;
+		if (typeof(v) === "string")
+		{
+			// If `lookupdata`} is `null`, this is probably an interface,
+			// so we can't validate anything (note that interfaces will however go
+			// away in the future)
+			if (this.lookupdata === null)
+				return;
+			let lookupitem = this.lookupdata.get(v);
+			if (lookupitem === undefined)
+			{
+				// If the lookup control is auto expandable,
+				// the user may have given us a label
+				if (this.control.autoexpandable)
+				{
+					// Search for the LookupItem with that label
+					for (let search_lookupitem of this.lookupdata.values())
+					{
+						if (v === search_lookupitem.label)
+						{
+							change.value = search_lookupitem;
+							return;
+						}
+					}
+					// If we couldn't find the label, keep the label as it is.
+				}
+				else
+				{
+					change.errors.push(this.msg_lookup_unknownkey(v))
+					change.value = null;
+				}
+			}
+			else
+			{
+				change.value = lookupitem;
+			}
+		}
+		else if (v instanceof LookupItem)
+		{
+			let value = this.control.lookupdata.get(v.key);
+			if (value !== v)
+			{
+				change.errors.push(this.msg_lookup_wrongitem(v));
+				change.value = null;
+			}
+		}
+		else
+		{
+			change.errors.push(this.msg_field_wrong_type(v));
+			change.value = null;
+		}
+	}
 };
 
 
 export class LookupField extends LookupFieldBase
 {
 	static classdoc = "Holds the value of a lookup field of a record (and related information)";
+
+	_validate(change)
+	{
+		let v = change.value;
+		if (v === null || v === "" || this.control.nonekey === v)
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(v));
+			change.value = null;
+		}
+		else
+		{
+			this._find_lookupitem(change);
+		}
+	}
 };
 
 
 export class MultipleLookupField extends LookupFieldBase
 {
 	static classdoc = "Holds the value of a multiple lookup field of a record (and related information)";
+
+	_validate(change)
+	{
+		let v = change.value;
+		let islist = (Object.prototype.toString.call(v) === "[object Array]");
+
+		if (v === null || v === "" || this.control.nonekey === v || (islist && v.length === 0))
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(v));
+			change.value = [];
+		}
+		else if (islist)
+		{
+			let newvalue = [];
+			for (let item of v)
+			{
+				let singlechange = {value: item, errors: []};
+				this._find_lookupitem(singlechange);
+				if (singlechange.errors.length > 0)
+					change.errors = [...change.errors, ...singlechange.errors];
+				else
+					newvalue.push(singlechange.value);
+			}
+			change.value = newvalue;
+		}
+		else
+		{
+			this._find_lookupitem(change);
+			if (change.errors.length > 0)
+				change.value = [];
+			else
+				change.value = [change.value];
+		}
+	}
 };
 
 
 export class AppLookupFieldBase extends Field
 {
 	static classdoc = "Base type of AppLookupField and MultipleAppLookupField";
+
+	get lookupdata()
+	{
+		if (this._lookupdate !== null)
+			return this._lookupdate;
+		else
+		{
+			if (this.control.lookup_app.records !== null)
+				return this.control.lookup_app.records;
+		}
+		return new Map();
+	}
+
+	set lookupdata(value)
+	{
+		this._lookupdate = value;
+	}
+
+	_find_record(change)
+	{
+		let v = change.value;
+		if (typeof(v) === "string")
+		{
+			let record = this.lookupdata.get(v);
+			if (record === undefined)
+			{
+				change.errors.push(this.msg_applookup_unknownkey(v))
+				change.value = null;
+			}
+			else
+			{
+				change.value = record;
+			}
+		}
+		else if (v instanceof Record)
+		{
+			if (v.app !== this.control.lookup_app)
+			{
+				change.errors.push(this.msg_applookup_wrongrecord(v));
+				change.value = null;
+			}
+		}
+		else
+		{
+			change.errors.push(this.msg_field_wrong_type(v));
+			change.value = null;
+		}
+	}
 };
 
 
 export class AppLookupField extends AppLookupFieldBase
 {
 	static classdoc = "Holds the value of a applookup field of a record (and related information)";
+
+	_validate(change)
+	{
+		this._find_record(change);
+	}
 };
 
 
 export class MultipleAppLookupField extends AppLookupFieldBase
 {
 	static classdoc = "Holds the value of a multiple applookup field of a record (and related information)";
+
+	_validate(change)
+	{
+		let v = change.value;
+		let islist = (Object.prototype.toString.call(v) === "[object Array]");
+
+		if (v === null || v === "" || this.control.nonekey === v || (islist && v.length === 0))
+		{
+			if (this.control.required)
+				change.errors.push(this.msg_field_required(v));
+			change.value = [];
+		}
+		else if (islist)
+		{
+			let newvalue = [];
+			for (let item of v)
+			{
+				let singlechange = {value: item, errors: []};
+				this._find_record(singlechange);
+				if (singlechange.errors.length > 0)
+					change.errors = [...change.errors, ...singlechange.errors];
+				else
+					newvalue.push(singlechange.value);
+			}
+			change.value = newvalue;
+		}
+		else
+		{
+			this._find_record(change);
+			if (change.errors.length > 0)
+				change.value = [];
+			else
+				change.value = [change.value];
+		}
+	}
 };
 
 
@@ -853,6 +1327,11 @@ export class Control extends Base
 	[ul4.symbols.repr]()
 	{
 		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+	}
+
+	get globals()
+	{
+		return this.app.globals;
 	}
 
 	get fulltype()
@@ -1134,15 +1613,6 @@ export class TelControl extends StringControl
 
 TelControl.prototype.subtype = "tel";
 TelControl.prototype.fieldtype = TelField;
-
-
-export class PasswordControl extends StringControl
-{
-	static classdoc = "A LivingApps password field (type 'string/password')";
-};
-
-PasswordControl.prototype.subtype = "password";
-PasswordControl.prototype.fieldtype = PasswordField;
 
 
 export class TextAreaControl extends StringControl
@@ -1848,7 +2318,6 @@ let classes = [
 	EmailControl,
 	URLControl,
 	TelControl,
-	PasswordControl,
 	TextAreaControl,
 	DateControl,
 	DatetimeMinuteControl,
@@ -1879,7 +2348,6 @@ let classes = [
 	EmailField,
 	URLField,
 	TelField,
-	PasswordField,
 	TextAreaField,
 	HTMLField,
 	IntField,
