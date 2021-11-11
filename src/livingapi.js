@@ -445,9 +445,7 @@ export class Record extends Base
 			this._values = new Map();
 			for (let [identifier, control] of this.app.controls.entries())
 			{
-				let fieldvalue = this._sparsevalues.get(identifier);
-				if (typeof(fieldvalue) === "undefined")
-					fieldvalue = null;
+				let fieldvalue = this._sparsevalues.get(identifier) ?? null;
 				this._values.set(identifier, fieldvalue);
 			}
 		}
@@ -1432,7 +1430,7 @@ export class Control extends Base
 		if (this.app._active_view === null)
 			return null;
 		let view_control = this.app._active_view.controls.get(this.identifier);
-		return view_control !== undefined ? view_control : null;
+		return view_control ?? null;
 	}
 
 	_logsearch(value, search)
