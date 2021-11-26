@@ -12,6 +12,20 @@ Add the following attributes for hierarchical applookup to ``AppLookupControl``:
 Add attribute `favorite` to `App` and expose it to UL4. Expose `superid` to
 UL4ON.
 
+Rename `App.language` to `App.lang`.
+
+Add `App.active_view`.
+
+Most LivingAPI objects are now persitent objects.
+
+Updated the code to directly use `Set` and `Map`.
+
+Implement `Globals.scaledURL()`.
+
+All LivingAPI object now implement `toString()` (by calling `repr()`).
+
+Add `ViewControl`. Control attributes now honor the
+
 
 ## 0.12.0 (2020-08-31)
 
