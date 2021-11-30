@@ -1353,6 +1353,11 @@ export class Control extends Base
 		this._label = value;
 	}
 
+	get default()
+	{
+		return null;
+	}
+
 	get top()
 	{
 		let view_control = this._view_control();
@@ -1535,6 +1540,74 @@ NumberControl.prototype.fieldtype = NumberField;
 
 export class StringControl extends PlaceholderControl
 {
+	_user_placeholder(user, placeholder)
+	{
+		if (placeholder === null)
+			return null;
+		switch (placeholder)
+		{
+			case "{gender}":
+				return user !== null ? user.gender : null;
+			case "{title}":
+				return user !== null ? user.title : null;
+			case "{firstname}":
+				return user !== null ? user.firstname : null;
+			case "{surname}":
+				return user !== null ? user.surname : null;
+			case "{account}":
+				return user !== null ? user.email : null;
+			case "{streetname}":
+				return user !== null ? user.streetname : null;
+			case "{streetnumber}":
+				return user !== null ? user.streetnumber : null;
+			case "{street}":
+				if (user === null)
+					return null;
+				else if (user.street === null)
+					return user.streetnumber;
+				else if (user.streetnumber === null)
+					return user.street;
+				else
+					return user.street + " " + user.streetnumber;
+			case "{zip}":
+				return user !== null ? user.zip : null;
+			case "{phone}":
+				return user !== null ? user.phone : null;
+			case "{fax}":
+				return user !== null ? user.fax : null;
+			case "{company}":
+				return user !== null ? user.company : null;
+			case "{city}":
+				return user !== null ? user.city : null;
+			case "{summary}":
+				return user !== null ? user.summary : null;
+			case "{interests}":
+				return user !== null ? user.interests : null;
+			case "{personal_website}":
+				return user !== null ? user.personal_website : null;
+			case "{company_website}":
+				return user !== null ? user.company_website : null;
+			case "{position}":
+				return user !== null ? user.position : null;
+			case "{department}":
+				return user !== null ? user.department : null;
+			case "{today}":
+				return ul4.today();
+			default:
+				return placeholder;
+		}
+	}
+
+	get default()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return null;
+
+		return this._user_placeholder(this.app.globals.user, view_control.default);
+	}
+
 	get minlength()
 	{
 		let view_control = this._view_control();
@@ -1652,6 +1725,16 @@ export class DateControl extends PlaceholderControl
 {
 	static classdoc = "A LivingApps date field (type 'date/date')";
 
+	get default()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return null;
+
+		return view_control.default === "{today}" ? ul4.today() : null;
+	}
+
 	formatstring(language)
 	{
 		language = language || this.app.language;
@@ -1696,6 +1779,24 @@ export class DatetimeMinuteControl extends DateControl
 {
 	static classdoc = "A LivingApps date field (type 'date/datetimeminute')";
 
+	get default()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return null;
+
+		if (view_control.default === "{today}")
+		{
+			let now = new Date();
+			now.setSeconds(0);
+			now.setMilliseconds(0);
+			return now;
+		}
+		else
+			return null;
+	}
+
 	formatstring(language)
 	{
 		language = language || this.app.language;
@@ -1715,6 +1816,23 @@ export class DatetimeSecondControl extends DateControl
 {
 	static classdoc = "A LivingApps date field (type 'date/datetimesecond')";
 
+	get default()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return null;
+
+		if (view_control.default === "{today}")
+		{
+			let now = new Date();
+			now.setMilliseconds(0);
+			return now;
+		}
+		else
+			return null;
+	}
+
 	formatstring(language)
 	{
 		language = language || this.app.language;
@@ -1732,6 +1850,16 @@ DatetimeSecondControl.prototype.fieldtype = DatetimeSecondField;
 
 export class LookupControl extends Control
 {
+	get default()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return null;
+
+		return this.lookupdata.get(view_control) ?? null;
+	}
+
 	get autoexpandable()
 	{
 		let view_control = this._view_control();
@@ -1851,6 +1979,18 @@ AppLookupChoiceControl.prototype.subtype = "choice";
 
 export class MultipleLookupControl extends LookupControl
 {
+	get default()
+	{
+		let view_control = this._view_control();
+
+		if (view_control === null)
+			return null;
+
+		let default = this.lookupdata.get(view_control)
+
+		return (default !== undefined) ? [default] : [];
+	}
+
 	// search.value must be ``null`` or a ``LookupItem`` key
 	search(value, search)
 	{
