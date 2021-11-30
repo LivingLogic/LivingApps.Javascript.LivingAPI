@@ -279,7 +279,7 @@ export class App extends Base
 
 	[ul4.symbols.call](values={})
 	{
-		let record = new Record(this);
+		let record = new Record(null, this);
 		if (ul4._ismap(values))
 		{
 			for (let [key, value] of values.entries())
