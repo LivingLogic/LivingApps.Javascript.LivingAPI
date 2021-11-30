@@ -282,21 +282,21 @@ export class App extends Base
 		let record = new Record(null, this);
 		if (ul4._ismap(values))
 		{
-			for (let [key, value] of values.entries())
+			for (let identifier of values.keys())
 			{
-				if (!record.fields.has(key))
-					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
-				record.fields.get(key).value = value;
+				if (!record.fields.has(identifier))
+					throw new ul4.ArgumentError(ul4._repr(this) + "() get an unexpected keyword argument " + ul4._repr(identifier));
 			}
+			record._make_fields(true, values, null, null);
 		}
 		else if (ul4._isobject(values))
 		{
-			for (let key in values)
+			for (let identifier in values)
 			{
-				if (!record.fields.has(key))
-					throw new ul4.ArgumentError("update() get an unexpected keyword argument " + ul4._repr(key));
-				record.fields.get(key).value = values[key];
+				if (!record.fields.has(identifier))
+					throw new ul4.ArgumentError(ul4._repr(this) + "() get an unexpected keyword argument " + ul4._repr(identifier));
 			}
+			record._make_fields(true, new Map(ul4._list(ul4.dicttype.items(values))), null, null);
 		}
 		else
 			throw new ul4.TypeError("values must be an object or a Map");
@@ -407,6 +407,35 @@ export class Record extends Base
 		this._is_new = true;
 	}
 
+	_make_fields(defaults, values, errors, lookupdata)
+	{
+		let fields = new Map();
+
+		for (let control of this.app.controls.values())
+		{
+			let identifier = control.identifier;
+			let value = null;
+			if (values !== null)
+			{
+				if (defaults && !values.has(identifier))
+					value = control.default;
+				else if (values.has(identifier))
+					value = values.get(identifier);
+			}
+			let field = new Field(control, this, value);
+			fields.set(identifier, field);
+			if (errors !== null && errors.has(identifier))
+				field.errors = errors.get(identifier);
+			if (lookupdata !== null && lookupdata.has(identifier))
+				field.lookupdata = lookupdata.get(identifier);
+		}
+
+		this._fields = fields;
+		this._sparsevalues = null;
+		this._sparsefielderrors = null;
+		this._sparselookupdata = null;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		let v = ["<Record id=", ul4._repr(this.id)];
@@ -443,10 +472,9 @@ export class Record extends Base
 		if (this._values === null)
 		{
 			this._values = new Map();
-			for (let [identifier, control] of this.app.controls.entries())
+			for (let field of this.fields.values())
 			{
-				let fieldvalue = this._sparsevalues.get(identifier) ?? null;
-				this._values.set(identifier, fieldvalue);
+				this._values.set(field.control.identifier, field.value);
 			}
 		}
 		return this._values;
@@ -455,21 +483,7 @@ export class Record extends Base
 	get fields()
 	{
 		if (this._fields === null)
-		{
-			this._fields = new Map();
-			for (let [identifier, value] of this.values.entries())
-			{
-				let control = this.app.controls.get(identifier);
-				let field = new control.fieldtype(control, this, null);
-				field.value = value;
-				field._dirty = false;
-				if (this._sparsefielderrors !== null && this._sparsefielderrors.has(identifier))
-					field.errors = this._sparsefielderrors.get(identifier);
-				if (this._sparsefieldlookupdata !== null && this._sparsefieldlookupdata.has(identifier))
-					field.lookupdata = this._sparsefieldlookupdata.get(identifier);
-				this._fields.set(identifier, field);
-			}
-		}
+			this._make_fields(false, this._sparsevalues, this._sparsefielderrors, this._sparsefieldlookupdata)
 		return this._fields;
 	}
 
@@ -1986,9 +2000,9 @@ export class MultipleLookupControl extends LookupControl
 		if (view_control === null)
 			return null;
 
-		let default = this.lookupdata.get(view_control)
+		let defaultValue = this.lookupdata.get(view_control)
 
-		return (default !== undefined) ? [default] : [];
+		return (defaultValue !== undefined) ? [defaultValue] : [];
 	}
 
 	// search.value must be ``null`` or a ``LookupItem`` key

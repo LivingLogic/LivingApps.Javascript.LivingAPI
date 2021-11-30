@@ -1,7 +1,7 @@
 # Changes
 
 
-## HEAD (2020-10-??)
+## 0.13.0 (2021-11-30)
 
 Renamed `AppLookupControl.lookupapp` to `lookup_app` and
 `AppLookupControl.lookupcontrols` to `lookup_controls`.
@@ -48,10 +48,7 @@ Added attribute `format` to `DateControl`.
 Added attributes `none_key` and `none_label` to `LookupControl`,
 `MultipleLookupControl`, `AppLookupControl` and `MultipleAppLookupControl`.
 
-Implemented field value validation.
-
-Creating
-
+Implemented field value validation and support for field default values.
 
 
 ## 0.12.0 (2020-08-31)
