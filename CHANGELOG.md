@@ -1,6 +1,56 @@
 # Changes
 
 
+## 0.13.0 (2021-11-30)
+
+Renamed `AppLookupControl.lookupapp` to `lookup_app` and
+`AppLookupControl.lookupcontrols` to `lookup_controls`.
+
+Add the following attributes for hierarchical applookup to ``AppLookupControl``:
+``local_master_control``, ``local_detail_controls`` and ``remote_master_control``.
+
+Add attribute `favorite` to `App` and expose it to UL4. Expose `superid` to
+UL4ON.
+
+Rename `App.language` to `App.lang`.
+
+Added `Globals.mode` which is the template mode we're running in. Valid values
+are `"form/new/init"`, `"form/new/search"`, `"form/new/failed"`,
+`"form/new/presave"`, `"form/new/postsave"`, `"form/edit/init"`,
+`"form/edit/search"`, `"form/edit/failed"`, `"form/edit/presave`,
+`"form/edit/postsave"`, `"view/list"`, `"view/detail"`, `"view/support"`,
+`"email/text` and `email/html"`.
+
+Most LivingAPI objects are now persistent objects.
+
+Updated the code to directly use `Set` and `Map`.
+
+Implement `Globals.scaledURL()`.
+
+All LivingAPI object now implement `toString()` (by calling `repr()`).
+
+Add the classes `ViewControl`, `HTMLLayoutControl` and `ImageLayoutControl` and
+attributes `View.controls` and `App.active_view`.
+
+Setting `App.active_view` to a `View` objects makes `Control` attributes honor
+the additional information defined in the `View`.
+
+Added `View` attributes `lang`, `controls` and `layout_controls`.
+
+Added `App` attribute `layout_controls`.
+
+Added various `Control` attributes that are used in `View`s: `top`, `left`,
+`width`, `height`, `default`, `tabindex`, `minlength`, `maxlength`, `required`,
+`placeholder`, `mode`, `labelpos`, `autoalign` and `labelwidth`.
+
+Added attribute `format` to `DateControl`.
+
+Added attributes `none_key` and `none_label` to `LookupControl`,
+`MultipleLookupControl`, `AppLookupControl` and `MultipleAppLookupControl`.
+
+Implemented field value validation and support for field default values.
+
+
 ## 0.12.0 (2020-08-31)
 
 Added classes `FileSignatureControl` and `HTMLControl`.
