@@ -1234,8 +1234,8 @@ export class AppLookupFieldBase extends Field
 
 	get lookupdata()
 	{
-		if (this._lookupdate !== null)
-			return this._lookupdate;
+		if (this._lookupdata !== null)
+			return this._lookupdata;
 		else
 		{
 			if (this.control.lookup_app.records !== null)
@@ -1246,7 +1246,7 @@ export class AppLookupFieldBase extends Field
 
 	set lookupdata(value)
 	{
-		this._lookupdate = value;
+		this._lookupdata = value;
 	}
 
 	_find_record(change)
