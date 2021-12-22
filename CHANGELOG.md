@@ -1,6 +1,16 @@
 # Changes
 
 
+## 0.13.1 (2021-12-22)
+
+Fixed creating `Field` objects: Now for each control type the matching field
+type will be used: e.g. the value for a `StringControl` will be in a
+`StringField`.
+
+Fix setting the initial value of a field: Now the value goes through the
+normal field validation.
+
+
 ## 0.13.0 (2021-11-30)
 
 Renamed `AppLookupControl.lookupapp` to `lookup_app` and

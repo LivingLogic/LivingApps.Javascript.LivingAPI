@@ -422,7 +422,7 @@ export class Record extends Base
 				else if (values.has(identifier))
 					value = values.get(identifier);
 			}
-			let field = new Field(control, this, value);
+			let field = new control.fieldtype(control, this, value);
 			fields.set(identifier, field);
 			if (errors !== null && errors.has(identifier))
 				field.errors = errors.get(identifier);
@@ -631,10 +631,11 @@ export class Field extends Base
 		this.control = control;
 		this.record = record;
 		this._label = null;
-		this._value = value;
-		this._dirty = false;
 		this._lookupdate = null;
 		this.errors = [];
+		this._value = null;
+		this.value = value;
+		this._dirty = false;
 	}
 
 	get value()
