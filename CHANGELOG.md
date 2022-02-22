@@ -1,6 +1,12 @@
 # Changes
 
 
+## 0.13.2 (2022-02-22)
+
+Fixed handling of `ul4.Date_` objects in `DateFieldBase.validate()`
+(and subclasses).
+
+
 ## 0.13.1 (2021-12-22)
 
 Fixed creating `Field` objects: Now for each control type the matching field
