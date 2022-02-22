@@ -2,8 +2,8 @@
  * LivingAPI JavaScript Library
  * https://my.living-apps.de/docs/LivingAPI.html
  *
- * Copyright 2017-2019 by LivingLogic AG, Bayreuth/Germany
- * Copyright 2017-2019 by Walter Dörwald
+ * Copyright 2017-2022 by LivingLogic AG, Bayreuth/Germany
+ * Copyright 2017-2022 by Walter Dörwald
  *
  * All Rights Reserved
  *
@@ -374,7 +374,7 @@ export class DataSourceData extends Base
 
 	[ul4.symbols.repr]()
 	{
-		return "<DataSource.Data id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<DataSourceData id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
@@ -1024,7 +1024,11 @@ export class DateFieldBase extends Field
 		}
 		else if (change.value instanceof Date)
 		{
-			change.value = this._convert(new Date(change.value.getTime()));
+			change.value = this._convert(change.value);
+		}
+		else if (change.value instanceof ul4.Date_)
+		{
+			change.value = this._convert(change.value._date);
 		}
 		else if (typeof(change.value) === "string")
 		{
