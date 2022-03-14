@@ -2236,7 +2236,7 @@ LayoutControl.prototype._ul4attrs = new Set(["id", "label", "identifier", "view"
 
 export class HTMLLayoutControl extends LayoutControl
 {
-	static classdoc = "An HTML decoration in an input form";
+	static classdoc = "HTML decoration in an input form";
 };
 
 HTMLLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "value"];
