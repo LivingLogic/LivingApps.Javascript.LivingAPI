@@ -2252,6 +2252,12 @@ ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onatt
 ImageLayoutControl.prototype._ul4attrs = new Set([LayoutControl.prototype._ul4attrs, "original", "scaled"]);
 
 
+export class ButtonLayoutControl extends LayoutControl
+{
+	static classdoc = "A submit button in an input form";
+};
+
+
 export class ViewControl extends Base
 {
 	static classdoc = "Contains view specific information aboutn a control";
