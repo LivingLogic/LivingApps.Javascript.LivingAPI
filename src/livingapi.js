@@ -310,6 +310,17 @@ export class App extends Base
 			if (!this.controls.has(name.substr(2)))
 				throw new ul4.AttributeError(this, name);
 			return this.controls.get(name.substr(2));
+		else if (name.startsWith("p_") && this.params !== null)
+		{
+			if (!this.params.has(name.substr(2)))
+				throw new ul4.AttributeError(this, name);
+			return this.params.get(name.substr(2));
+		}
+		else if (name.startsWith("pv_") && this.params !== null)
+		{
+			if (!this.params.has(name.substr(3)))
+				throw new ul4.AttributeError(this, name);
+			return this.params.get(name.substr(3)).value;
 		}
 		else
 			return super[ul4.symbols.getattr](name);
