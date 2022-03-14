@@ -2556,6 +2556,7 @@ let classes = [
 	LayoutControl,
 	HTMLLayoutControl,
 	ImageLayoutControl,
+	ButtonLayoutControl,
 	ViewControl,
 	User,
 	File,
