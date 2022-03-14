@@ -1433,6 +1433,10 @@ export class Control extends Base
 	get mode()
 	{
 		let view_control = this._view_control();
+		if (this.app._active_view !== null && view_control === null)
+			return null;
+		if (this.app.globals.mode === null)
+			return "display";
 		return view_control !== null ? view_control.mode : "edit";
 	}
 
