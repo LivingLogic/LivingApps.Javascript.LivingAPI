@@ -2309,10 +2309,17 @@ export class File extends Base
 	{
 		return "<File id=" + ul4._repr(this.id) + " url=" + ul4._repr(this.url) + " filename=" + ul4._repr(this.filename) + ">";
 	}
+
+	get archive_url()
+	{
+		if (this.archive ==- null)
+			return this.url;
+		return this.archive.url + "/" + this.filename;
+	}
 };
 
-File.prototype._ul4onattrs = ["url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size"];
-File.prototype._ul4attrs = new Set(["id", "url", "filename", "mimetype", "width", "height", "size", "createdat"]);
+File.prototype._ul4onattrs = ["url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size", "archive"];
+File.prototype._ul4attrs = new Set(["id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "archive", "createdat"]);
 
 
 export class Geo extends Base
