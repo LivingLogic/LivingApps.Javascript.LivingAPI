@@ -380,18 +380,18 @@ View.prototype._ul4onattrs = ["name", "combined_type", "app", "order", "width", 
 View.prototype._ul4attrs = new Set(["id", "name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"]);
 
 
-export class DataSourceData extends Base
+export class DataSource extends Base
 {
 	static classdoc = "The data resulting from a data source configuration";
 
 	[ul4.symbols.repr]()
 	{
-		return "<DataSourceData id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+		return "<DataSource id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 };
 
-DataSourceData.prototype._ul4onattrs = ["identifier", "app", "apps"];
-DataSourceData.prototype._ul4attrs = new Set(["id", "identifier", "app", "apps"]);
+DataSource.prototype._ul4onattrs = ["identifier", "app", "apps"];
+DataSource.prototype._ul4attrs = new Set(["id", "identifier", "app", "apps"]);
 
 
 export class Record extends Base
