@@ -448,6 +448,13 @@ export class Record extends Base
 		this._sparselookupdata = null;
 	}
 
+	_in_form()
+	{
+		let globals = this.app.globals;
+
+		return globals.mode !== null && globals.mode.startsWith("form/") && this === globals.record;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		let v = ["<Record id=", ul4._repr(this.id)];
@@ -648,6 +655,11 @@ export class Field extends Base
 		this._value = null;
 		this.value = value;
 		this._dirty = false;
+	}
+
+	_in_form()
+	{
+		return this.control.record._in_form();
 	}
 
 	get value()
@@ -2495,7 +2507,7 @@ let classes = [
 	FlashMessage,
 	App,
 	View,
-	DataSourceData,
+	DataSource,
 	Record,
 	BoolControl,
 	IntControl,
