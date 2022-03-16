@@ -655,11 +655,12 @@ export class Field extends Base
 		this._value = null;
 		this.value = value;
 		this._dirty = false;
+		this._visible = true;
 	}
 
 	_in_form()
 	{
-		return this.control.record._in_form();
+		return this.record._in_form();
 	}
 
 	get value()
@@ -688,6 +689,12 @@ export class Field extends Base
 		// Do nothing, i.e. accept the value unchanged and without errors
 	}
 
+	_update_label()
+	{
+		if (this._in_form())
+			this._dom_label().text(this.label);
+	}
+
 	get label()
 	{
 		if (this._label !== null)
@@ -698,6 +705,7 @@ export class Field extends Base
 	set label(value)
 	{
 		this._label = value;
+		this._update_label();
 	}
 
 	get globals()
@@ -796,6 +804,49 @@ export class Field extends Base
 		return `The record ${ul4._repr(value)} for "${this.label}" can't be found!`;
 	}
 
+	_dom_root()
+	{
+		return $("#livingapps-form ." + this.control._cssclass_root + ".llft-id-" + this.control.identifier);
+	}
+
+	_dom_label()
+	{
+		return this._dom_root().find("label span");
+	}
+
+	_show()
+	{
+		let el = this._dom_root().get(0);
+		el.style.transition = "height 0.2s ease";
+		el.style.overflowY = "hidden";
+		el.style.height = el.scrollHeight + "px";
+	}
+
+	_hide()
+	{
+		let el = this._dom_root().get(0);
+		el.style.transition = "height 0.2s ease";
+		el.style.overflowY = "hidden";
+		el.style.height = 0 + "px";
+	}
+
+	get visible()
+	{
+		return this._visible;
+	}
+
+	set visible(value)
+	{
+		if (this._in_form())
+		{
+			if (value)
+				this._show();
+			else
+				this._hide();
+		}
+		this._visible = value;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		let s = "<Field identifier=";
@@ -807,9 +858,17 @@ export class Field extends Base
 		s += ">"
 		return s;
 	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (name === "visible")
+			this.visible = ul4._bool(value);
+		else
+			return super[ul4.symbols.getattr](name);
+	}
 };
 
-Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "enabled", "writable", "visible"];
+Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "enabled", "writable", "_visible"];
 Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "enabled", "writable", "visible"]);
 
 
@@ -1216,6 +1275,29 @@ export class LookupField extends LookupFieldBase
 };
 
 
+export class LookupRadioField extends LookupField
+{
+	static classdoc = "Holds the value of a lookup/radio field of a record (and related information)";
+
+	_dom_label()
+	{
+		return this._dom_root().find("label:not([for]) > span");
+	}
+};
+
+
+export class LookupSelectField extends LookupField
+{
+	static classdoc = "Holds the value of a lookup/select field of a record (and related information)";
+};
+
+
+export class LookupChoiceField extends LookupField
+{
+	static classdoc = "Holds the value of a lookup/choice field of a record (and related information)";
+};
+
+
 export class MultipleLookupField extends LookupFieldBase
 {
 	static classdoc = "Holds the value of a multiple lookup field of a record (and related information)";
@@ -1254,6 +1336,29 @@ export class MultipleLookupField extends LookupFieldBase
 				change.value = [change.value];
 		}
 	}
+};
+
+
+export class MultipleLookupCheckboxField extends MultipleLookupField
+{
+	static classdoc = "Holds the value of a multiplelookup/radio field of a record (and related information)";
+
+	_dom_label()
+	{
+		return this._dom_root().find("label:not([for]) > span");
+	}
+};
+
+
+export class MultipleLookupSelectField extends MultipleLookupField
+{
+	static classdoc = "Holds the value of a multiplelookup/select field of a record (and related information)";
+};
+
+
+export class MultipleLookupChoiceField extends MultipleLookupField
+{
+	static classdoc = "Holds the value of a multiplelookup/choice field of a record (and related information)";
 };
 
 
@@ -1322,6 +1427,24 @@ export class AppLookupField extends AppLookupFieldBase
 };
 
 
+export class AppLookupSelectField extends AppLookupField
+{
+	static classdoc = "Holds the value of a `applookup`/`select` field of a record (and related information)";
+};
+
+
+export class AppLookupRadioField extends AppLookupField
+{
+	static classdoc = "Holds the value of a `applookup`/`radio` field of a record (and related information)";
+};
+
+
+export class AppLookupChoiceField extends AppLookupField
+{
+	static classdoc = "Holds the value of a `applookup`/`choice` field of a record (and related information)";
+};
+
+
 export class MultipleAppLookupField extends AppLookupFieldBase
 {
 	static classdoc = "Holds the value of a multiple applookup field of a record (and related information)";
@@ -1360,6 +1483,24 @@ export class MultipleAppLookupField extends AppLookupFieldBase
 				change.value = [change.value];
 		}
 	}
+};
+
+
+export class MultipleAppLookupCheckboxField extends MultipleAppLookupField
+{
+	static classdoc = "Holds the value of a `multipleapplookup`/`checkbox` field of a record (and related information)";
+};
+
+
+export class MultipleAppLookupSelectField extends MultipleAppLookupField
+{
+	static classdoc = "Holds the value of a `multipleapplookup`/`select` field of a record (and related information)";
+};
+
+
+export class MultipleAppLookupChoiceField extends MultipleAppLookupField
+{
+	static classdoc = "Holds the value of a `multipleapplookup`/`choice` field of a record (and related information)";
 };
 
 
@@ -1504,6 +1645,7 @@ Control.prototype.type = null;
 Control.prototype.subtype = null;
 Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "priority", "order", "ininsertprocedure", "inupdateprocedure"];
 Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
+Control.prototype._cssclass_root = "llft-control";
 
 
 export class BoolControl extends Control
@@ -1959,15 +2101,17 @@ export class LookupSelectControl extends LookupControl
 };
 
 LookupSelectControl.prototype.subtype = "select";
+LookupSelectControl.prototype.fieldtype = LookupSelectField;
 
 
 export class LookupRadioControl extends LookupControl
 {
 	static classdoc = "A LivingApps lookup field (type 'lookup/radio')";
-
 };
 
 LookupRadioControl.prototype.subtype = "radio";
+LookupRadioControl.prototype.fieldtype = LookupRadioField;
+LookupRadioControl.prototype._cssclass_root = "llft-element";
 
 
 export class LookupChoiceControl extends LookupControl
@@ -1977,6 +2121,7 @@ export class LookupChoiceControl extends LookupControl
 };
 
 LookupChoiceControl.prototype.subtype = "choice";
+LookupChoiceControl.prototype.fieldtype = LookupChoiceField;
 
 
 export class AppLookupControl extends Control
@@ -2004,6 +2149,7 @@ export class AppLookupSelectControl extends AppLookupControl
 };
 
 AppLookupSelectControl.prototype.subtype = "select";
+AppLookupSelectControl.prototype.fieldtype = AppLookupSelectField;
 
 
 export class AppLookupRadioControl extends AppLookupControl
@@ -2013,6 +2159,7 @@ export class AppLookupRadioControl extends AppLookupControl
 };
 
 AppLookupRadioControl.prototype.subtype = "radio";
+AppLookupRadioControl.prototype.fieldtype = AppLookupRadioField;
 
 
 export class AppLookupChoiceControl extends AppLookupControl
@@ -2022,6 +2169,7 @@ export class AppLookupChoiceControl extends AppLookupControl
 };
 
 AppLookupChoiceControl.prototype.subtype = "choice";
+AppLookupChoiceControl.prototype.fieldtype = AppLookupChoiceField;
 
 
 export class MultipleLookupControl extends LookupControl
@@ -2055,8 +2203,23 @@ export class MultipleLookupControl extends LookupControl
 	}
 };
 
-MultipleLookupControl.prototype.subtype = "multiplelookup";
+MultipleLookupControl.prototype.type = "multiplelookup";
 MultipleLookupControl.prototype.fieldtype = MultipleLookupField;
+
+
+export class MultipleLookupCheckboxControl extends MultipleLookupControl
+{
+	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/checkbox')";
+
+	_dom_label()
+	{
+		return this._dom_root().find("label:not([for]) > span");
+	}
+};
+
+MultipleLookupCheckboxControl.prototype.subtype = "checkbox";
+MultipleLookupCheckboxControl.prototype.fieldtype = MultipleLookupCheckboxField;
+MultipleLookupCheckboxControl.prototype._cssclass_root = "llft-element";
 
 
 export class MultipleLookupSelectControl extends MultipleLookupControl
@@ -2066,15 +2229,7 @@ export class MultipleLookupSelectControl extends MultipleLookupControl
 };
 
 MultipleLookupSelectControl.prototype.subtype = "select";
-
-
-export class MultipleLookupCheckboxControl extends MultipleLookupControl
-{
-	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/checkbox')";
-
-};
-
-MultipleLookupCheckboxControl.prototype.subtype = "checkbox";
+MultipleLookupSelectControl.prototype.fieldtype = MultipleLookupSelectField;
 
 
 export class MultipleLookupChoiceControl extends MultipleLookupControl
@@ -2084,6 +2239,7 @@ export class MultipleLookupChoiceControl extends MultipleLookupControl
 };
 
 MultipleLookupChoiceControl.prototype.subtype = "choice";
+MultipleLookupChoiceControl.prototype.fieldtype = MultipleLookupChoiceField;
 
 
 export class MultipleAppLookupControl extends AppLookupControl
@@ -2121,6 +2277,7 @@ export class MultipleAppLookupSelectControl extends MultipleAppLookupControl
 };
 
 MultipleAppLookupSelectControl.prototype.subtype = "select";
+MultipleAppLookupSelectControl.prototype.fieldtype = MultipleAppLookupSelectField;
 
 
 export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
@@ -2130,6 +2287,7 @@ export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
 };
 
 MultipleAppLookupCheckboxControl.prototype.subtype = "checkbox";
+MultipleAppLookupCheckboxControl.prototype.fieldtype = MultipleAppLookupCheckboxField;
 
 
 export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
@@ -2138,6 +2296,7 @@ export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 };
 
 MultipleAppLookupChoiceControl.prototype.subtype = "choice";
+MultipleAppLookupChoiceControl.prototype.fieldtype = MultipleAppLookupChoiceField;
 
 
 export class GeoControl extends Control
@@ -2147,6 +2306,7 @@ export class GeoControl extends Control
 
 GeoControl.prototype.type = "geo";
 GeoControl.prototype.fieldtype = GeoField;
+GeoControl.prototype._cssclass_root = "llft-element";
 
 
 export class FileControl extends Control
@@ -2333,6 +2493,7 @@ export class File extends Base
 
 File.prototype._ul4onattrs = ["url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size", "archive"];
 File.prototype._ul4attrs = new Set(["id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "archive", "createdat"]);
+File.prototype._cssclass_root = "llft-element";
 
 
 export class Geo extends Base
