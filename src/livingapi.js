@@ -653,18 +653,16 @@ export class Field extends Base
 		this._lookupdate = null;
 		this.errors = [];
 		this._value = null;
-		this.value = value;
+		if (!this._in_form())
+			this.value = value;
 		this._dirty = false;
 		this._visible = true;
 	}
 
-	_in_form()
-	{
-		return this.record._in_form();
-	}
-
 	get value()
 	{
+		if (this._in_form())
+			return this._get_value_from_dom();
 		return this._value;
 	}
 
@@ -682,6 +680,8 @@ export class Field extends Base
 			this._dirty = true;
 		}
 		this.errors = change.errors;
+		if (this._in_form())
+			this._set_dom_value(this._value);
 	}
 
 	_validate(change)
@@ -689,10 +689,10 @@ export class Field extends Base
 		// Do nothing, i.e. accept the value unchanged and without errors
 	}
 
-	_update_label()
+	_set_dom_label()
 	{
 		if (this._in_form())
-			this._dom_label().text(this.label);
+			document.querySelector(this._sel_label).textContent = this.label;
 	}
 
 	get label()
@@ -705,7 +705,7 @@ export class Field extends Base
 	set label(value)
 	{
 		this._label = value;
-		this._update_label();
+		this._set_dom_label();
 	}
 
 	get globals()
@@ -756,7 +756,7 @@ export class Field extends Base
 
 	msg_string_tooshort(value)
 	{
-		return `"${this.label}" is too short. Tou must use at least ${this.control.minlength} characters!`;
+		return `"${this.label}" is too short. You must use at least ${this.control.minlength} characters!`;
 	}
 
 	msg_string_toolong(value)
@@ -784,6 +784,11 @@ export class Field extends Base
 		return `"${this.label}" doesn't support this date format!`;
 	}
 
+	msg_number_format(value)
+	{
+		return `"${this.label}" doesn't support this number format!`;
+	}
+
 	msg_lookup_wrongitem(value)
 	{
 		return `The option ${ul4._repr(value)} for "${this.label}" doesn't belong to this lookup!`;
@@ -804,19 +809,44 @@ export class Field extends Base
 		return `The record ${ul4._repr(value)} for "${this.label}" can't be found!`;
 	}
 
-	_dom_root()
+	/*
+	The following methods are used in the input form.
+
+	I.e. the are expected to be executed inside a browser.
+	**/
+	_in_form()
 	{
-		return $("#livingapps-form ." + this.control._cssclass_root + ".llft-id-" + this.control.identifier);
+		return this.record._in_form();
 	}
 
-	_dom_label()
+	get _sel_root()
 	{
-		return this._dom_root().find("label span");
+		return "#livingapps-form ." + this.control._cssclass_root + ".llft-id-" + this.control.identifier;
+	}
+
+	get _sel_label()
+	{
+		return this._sel_root + " label span";
+	}
+
+	get _sel_control()
+	{
+		return this._sel_root + " " + this.control._cssclass_control;
+	}
+
+	_get_value_from_dom()
+	{
+		return document.querySelector(this._sel_control).value;
+	}
+
+	_set_dom_value(value)
+	{
+		document.querySelector(this._sel_control).value = value;
 	}
 
 	_show()
 	{
-		let el = this._dom_root().get(0);
+		let el = document.querySelector(this._sel_root);
 		el.style.transition = "height 0.2s ease";
 		el.style.overflowY = "hidden";
 		el.style.height = el.scrollHeight + "px";
@@ -824,7 +854,7 @@ export class Field extends Base
 
 	_hide()
 	{
-		let el = this._dom_root().get(0);
+		let el = document.querySelector(this._sel_root);
 		el.style.transition = "height 0.2s ease";
 		el.style.overflowY = "hidden";
 		el.style.height = 0 + "px";
@@ -894,12 +924,30 @@ export class BoolField extends Field
 			change.value = null;
 		}
 	}
+
+	_get_value_from_dom()
+	{
+		return document.querySelector(this._sel_control).checked;
+	}
+
+	_set_dom_value(value)
+	{
+		document.querySelector(this._sel_control).checked = value;
+	}
 };
 
 
 export class IntField extends Field
 {
 	static classdoc = "Holds the value of an int field of a record (and related information)";
+
+	_parse(value)
+	{
+		if (/^\s*[-+]?\d+\s*$/.test(value))
+			return parseInt(value);
+		else
+			return null;
+	}
 
 	_validate(change)
 	{
@@ -908,10 +956,43 @@ export class IntField extends Field
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(change.value));
 		}
-		else if (typeof(change.value) !== "number" || Math.round(change.value) !== change.value)
+		else if (typeof(change.value) === "string")
+		{
+			let value = this._parse(change.value);
+			if (value !== null)
+				change.value = value;
+			else
+				change.errors.push(this.msg_number_format(change.value));
+				// Keep original invalid string
+		}
+		else if (typeof(change.value) === "number")
+		{
+			if (Math.round(change.value) !== change.value)
+				change.errors.push(this.msg_field_wrong_type(change.value));
+				// Keep original floating point number
+		}
+		else
 		{
 			change.errors.push(this.msg_field_wrong_type(change.value));
+			change.value = null;
 		}
+	}
+
+	_get_value_from_dom()
+	{
+		let value = super._get_value_from_dom();
+		if (value)
+		{
+			let testvalue = this._parse(value);
+			if (testvalue !== null)
+				value = testvalue;
+		}
+		return value;
+	}
+
+	_set_dom_value(value)
+	{
+		super._set_dom_value(value + "");
 	}
 };
 
@@ -919,6 +1000,64 @@ export class IntField extends Field
 export class NumberField extends Field
 {
 	static classdoc = "Holds the value of a number field of a record (and related information)";
+
+	_parse(value)
+	{
+		if (value === null)
+			return null;
+
+		// Try to ignore thousands separators and return the value as a number
+		let testvalue = value;
+		// Count decimal delimiters
+		let seps = "";
+		let commas = 0;
+		let dots = 0
+		for (let i = 0; i < value.length; ++i)
+		{
+			let c = value[i];
+			if (c == ",")
+			{
+				commas++;
+				seps += c;
+			}
+			else if (c == ".")
+			{
+				dots++;
+				seps += c;
+			}
+		}
+		let convert = null;
+		if (commas == 0)
+		{
+			if (dots <= 1)
+				; // nothing to do
+			else
+				convert = "de";
+		}
+		else if (commas == 1)
+		{
+			if (dots == 1)
+				convert = (seps == ".,") ? "de" : "en";
+			else
+				convert = "de";
+		}
+		else // commas > 1
+		{
+			if (dots <= 1)
+				convert = "en";
+			else
+				return null; // We can't guess what the user meant
+		}
+
+		if (convert === "de")
+			testvalue = testvalue.replace(/\./g, "").replace(/,/g, ".");
+		else if (convert === "en")
+			testvalue = testvalue.replace(/,/g, "");
+		let floatvalue = parseFloat(testvalue);
+		if (isNaN(floatvalue))
+			return value;
+		return floatvalue;
+	}
 
 	_validate(change)
 	{
@@ -928,10 +1067,39 @@ export class NumberField extends Field
 				change.errors.push(this.msg_field_required(change.value));
 			change.value = null;
 		}
+		else if (typeof(change.value) === "string")
+		{
+			let value = this._parse(change.value);
+			if (value !== null)
+				change.value = value;
+			else
+				change.errors.push(this.msg_number_format(change.value));
+				// Keep original invalid string
+		}
 		else if (typeof(change.value) !== "number")
 		{
 			change.errors.push(this.msg_field_wrong_type(change.value));
+			change.value = null;
 		}
+	}
+
+	_get_value_from_dom()
+	{
+		let value = super._get_value_from_dom();
+		if (value)
+		{
+			let testvalue = this._parse(value);
+			if (testvalue !== null)
+				value = testvalue;
+		}
+		else
+			value = null;
+		return value;
+	}
+
+	_set_dom_value(value)
+	{
+		super._set_dom_value(value + "");
 	}
 };
 
@@ -1078,6 +1246,17 @@ export class FileField extends Field
 			change.value = null;
 		}
 	}
+
+	_get_value_from_dom()
+	{
+		// Always return `null``
+		return null;
+	}
+
+	_set_dom_value()
+	{
+		// Do nothing
+	}
 };
 
 
@@ -1096,6 +1275,151 @@ export class FileSignatureField extends FileField
 export class DateFieldBase extends Field
 {
 	static classdoc = "Holds the value of a date field of a record (and related information)";
+
+	_parse(value, format)
+	{
+		let year = null, month = null, day = null, hour = 0, minute = 0, second = 0, ispm = null;
+
+		function _int(v, len, min, max)
+		{
+			v = v.substring(0, len);
+			if (v.length != len)
+				return null;
+			v = parseInt(v, 10);
+			if (isNaN(v) || v < min || v > max)
+				return null;
+			return v;
+		}
+
+		while (value)
+		{
+			// Are both `value` and `format` not `null`,
+			// i.e. neither `value` nor `format` is exhaused?
+			if (!format)
+				return null;
+			if (format.startsWith("%Y"))
+			{
+				year = _int(value, 4);
+				if (year === null)
+					return null;
+				value = value.substring(4);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%y"))
+			{
+				year = _int(value, 2);
+				if (year === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%m"))
+			{
+				month = _int(value, 2);
+				if (month === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%d"))
+			{
+				day = _int(value, 2);
+				if (day === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%H"))
+			{
+				hour = _int(value, 2);
+				if (hour === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%I"))
+			{
+				hour = _int(value, 2);
+				if (hour === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%M"))
+			{
+				minute = _int(value, 2);
+				if (minute === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%S"))
+			{
+				second = _int(value, 2);
+				if (second === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%p"))
+			{
+				if (value.toLowerCase().startsWith("pm"))
+					ispm = true;
+				else if (value.toLowerCase().startsWith("am"))
+					ispm = false;
+				else
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
+			else if (format.startsWith("%%"))
+			{
+				if (!value.startsWith("%"))
+					return null;
+				value = value.substring(1);
+				format = format.substring(2);
+			}
+			else
+			{
+				if (!value.startsWith(format.substring(0, 1)))
+					return null;
+				value = value.substring(1);
+				format = format.substring(1);
+			}
+		}
+		// Are both `value` and `format` `null`?
+		// I.e. both `value` and `format` must be exhausted, otherwise ...
+		if (format)
+			// ... `format` has remaining content that the value didn't provide
+			return null;
+
+		// Check existance of values and their range
+		if (year === null)
+			return null;
+		if (month === null || month < 1 || month > 12)
+			return null;
+		if (day === null || day < 1 || day > 31) // FIXME: Use the actuall number of days
+			return null;
+		if (ispm === null)
+		{
+			if (hour < 0 || hour > 23)
+				return null;
+		}
+		else
+		{
+			if (hour < 0 || hour > 11)
+				return null;
+			if (ispm)
+				hour += 12;
+		}
+		if (minute < 0 || minute > 59)
+			return null;
+		if (minute < 0 || minute > 59)
+			return null;
+		if (second < 0 || second > 60)
+			return null;
+		return new Date(year, month-1, day, hour, minute, second);
+	}
 
 	_validate(change)
 	{
@@ -1116,22 +1440,17 @@ export class DateFieldBase extends Field
 		else if (typeof(change.value) === "string")
 		{
 			let value = null;
-			if (change.value.length === 10)
-				value = new Date(change.value + "T00:00:00");
-			else if (change.value.length === 16)
-				value = new Date(change.value + ":00");
-			else if (change.value.length === 19)
-				value = new Date(change.value);
-
-			if (value === null || Number.isNaN(value.getYear()))
+			for (let format of this.control.formatstrings_parse())
 			{
+				value = this._parse(change.value, format);
+				if (value !== null)
+					break;
+			}
+			if (value !== null)
+				change.value = this._convert(value);
+			else
 				change.errors.push(this.msg_date_format(change.value));
 				// Keep original invalid string
-			}
-			else
-			{
-				change.value = this._convert(value);
-			}
 		}
 		else
 		{
@@ -1149,6 +1468,28 @@ export class DateField extends DateFieldBase
 	_convert(date)
 	{
 		return new ul4.Date_(date.getFullYear(), date.getMonth()+1, date.getDate());
+	}
+
+	_get_value_from_dom()
+	{
+		let value = super._get_value_from_dom();
+		if (!value)
+			return null;
+
+		for (let format of this.control.formatstrings_parse())
+		{
+			let date = this._parse(value, format);
+			if (date !== null)
+				return this._convert(date);
+		}
+		return null;
+	}
+
+	_set_dom_value(value)
+	{
+		if (value !== null)
+			value = ul4._format(value, this.control.formatstring(), this.globals.lang);
+		super._set_dom_value(value);
 	}
 };
 
@@ -1279,9 +1620,9 @@ export class LookupRadioField extends LookupField
 {
 	static classdoc = "Holds the value of a lookup/radio field of a record (and related information)";
 
-	_dom_label()
+	get _sel_label()
 	{
-		return this._dom_root().find("label:not([for]) > span");
+		return this._sel_root + " label:not([for]) > span";
 	}
 };
 
@@ -1289,6 +1630,35 @@ export class LookupRadioField extends LookupField
 export class LookupSelectField extends LookupField
 {
 	static classdoc = "Holds the value of a lookup/select field of a record (and related information)";
+
+	_first_lookupitem()
+	{
+		for (let item of this.lookupdata.values())
+			return item;
+		return null;
+	}
+
+	_get_value_from_dom()
+	{
+		let value = super._get_value_from_dom();
+		if (value)
+		{
+			if (value === this.control.nonekey)
+				value = null;
+			else
+				value = this.control.lookupdata.get(value);
+		}
+		return value;
+	}
+
+	_set_dom_value(value)
+	{
+		if (value !== null)
+			value = value.key;
+		else
+			value = this.control.nonekey;
+		super._set_dom_value(value);
+	}
 };
 
 
@@ -1343,9 +1713,9 @@ export class MultipleLookupCheckboxField extends MultipleLookupField
 {
 	static classdoc = "Holds the value of a multiplelookup/radio field of a record (and related information)";
 
-	_dom_label()
+	get _sel_label()
 	{
-		return this._dom_root().find("label:not([for]) > span");
+		return this._sel_root + " label:not([for]) > span";
 	}
 };
 
@@ -1646,6 +2016,7 @@ Control.prototype.subtype = null;
 Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "priority", "order", "ininsertprocedure", "inupdateprocedure"];
 Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
+Control.prototype._cssclass_control = "input";
 
 
 export class BoolControl extends Control
@@ -1899,6 +2270,7 @@ TextAreaControl.prototype.subtype = "textarea";
 TextAreaControl.prototype.fieldtype = TextAreaField;
 TextAreaControl.prototype._ul4onattrs = [...StringControl.prototype._ul4onattrs, "encrypted"];
 TextAreaControl.prototype._ul4attrs = new Set([...StringControl.prototype._ul4attrs, "encrypted"]);
+TextAreaControl.prototype._cssclass_control = "textarea";
 
 
 export class HTMLControl extends StringControl
@@ -1924,14 +2296,29 @@ export class DateControl extends PlaceholderControl
 		return view_control.default === "{today}" ? ul4.today() : null;
 	}
 
-	formatstring(language)
+	formatstring(lang)
 	{
-		language = language || this.app.language;
+		lang = lang || this.globals.lang;
 
-		if (language === "de")
-			return "%d.%m.%Y";
-		else
-			return "%m/%d/%Y";
+		if (lang !== "de" && lang !== "fr" && lang !== "it")
+			lang = "en";
+		return this._formatstrings[lang];
+	}
+
+	formatstrings_parse(lang)
+	{
+		lang = lang || this.globals.lang;
+		if (lang !== "de" && lang !== "fr" && lang !== "it")
+			lang = "en";
+
+		return [
+			this._formatstrings[lang],
+			...this._formatstrings["intl"],
+			DatetimeMinuteControl.prototype._formatstrings[lang],
+			...DatetimeMinuteControl.prototype._formatstrings["intl"],
+			DatetimeSecondControl.prototype._formatstrings[lang],
+			...DatetimeSecondControl.prototype._formatstrings["intl"]
+		];
 	}
 
 	// searchvalue must be ``null``, a ``Date`` object or a string
@@ -1962,6 +2349,13 @@ export class DateControl extends PlaceholderControl
 DateControl.prototype.type = "date";
 DateControl.prototype.subtype = "date";
 DateControl.prototype.fieldtype = DateField;
+DateControl.prototype._formatstrings = {
+	"de": "%d.%m.%Y",
+	"fr": "%d.%m.%Y",
+	"it": "%d.%m.%Y",
+	"en": "%m/%d/%Y",
+	"intl": ["%Y-%m-%d"]
+};
 
 
 export class DatetimeMinuteControl extends DateControl
@@ -1986,19 +2380,32 @@ export class DatetimeMinuteControl extends DateControl
 			return null;
 	}
 
-	formatstring(language)
+	formatstrings_parse(lang)
 	{
-		language = language || this.app.language;
+		lang = lang || this.globals.lang;
+		if (lang !== "de" && lang !== "fr" && lang !== "it")
+			lang = "en";
 
-		if (language === "de")
-			return "%d.%m.%Y %H:%M";
-		else
-			return "%m/%d/%Y %H:%M";
+		return [
+			this._formatstrings[lang],
+			...this._formatstrings["intl"],
+			DatetimeSecondControl.prototype._formatstrings[lang],
+			...DatetimeSecondControl.prototype._formatstrings["intl"],
+			DateControl.prototype._formatstrings[lang],
+			...DateControl.prototype._formatstrings["intl"]
+		];
 	}
 };
 
 DatetimeMinuteControl.prototype.subtype = "datetimeminute";
 DatetimeMinuteControl.prototype.fieldtype = DatetimeMinuteField;
+DatetimeMinuteControl.prototype._formatstrings = {
+	"de": "%d.%m.%Y %H:%M",
+	"fr": "%d.%m.%Y %H:%M",
+	"it": "%d.%m.%Y %H:%M",
+	"en": "%m/%d/%Y %H:%M",
+	"intl": ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+};
 
 
 export class DatetimeSecondControl extends DateControl
@@ -2022,19 +2429,32 @@ export class DatetimeSecondControl extends DateControl
 			return null;
 	}
 
-	formatstring(language)
+	formatstrings_parse(lang)
 	{
-		language = language || this.app.language;
+		lang = lang || this.globals.lang;
+		if (lang !== "de" && lang !== "fr" && lang !== "it")
+			lang = "en";
 
-		if (language === "de")
-			return "%d.%m.%Y %H:%M:%S";
-		else
-			return "%m/%d/%Y %H:%M:%S";
+		return [
+			this._formatstrings[lang],
+			...this._formatstrings["intl"],
+			DatetimeMinuteControl.prototype._formatstrings[lang],
+			...DatetimeMinuteControl.prototype._formatstrings["intl"],
+			DateControl.prototype._formatstrings[lang],
+			...DateControl.prototype._formatstrings["intl"]
+		];
 	}
 };
 
 DatetimeSecondControl.prototype.subtype = "datetimesecond";
 DatetimeSecondControl.prototype.fieldtype = DatetimeSecondField;
+DatetimeSecondControl.prototype._formatstrings = {
+	"de": "%d.%m.%Y %H:%M:%S",
+	"fr": "%d.%m.%Y %H:%M:%S",
+	"it": "%d.%m.%Y %H:%M:%S",
+	"en": "%m/%d/%Y %H:%M:%S",
+	"intl": ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S"]
+};
 
 
 export class LookupControl extends Control
@@ -2102,6 +2522,7 @@ export class LookupSelectControl extends LookupControl
 
 LookupSelectControl.prototype.subtype = "select";
 LookupSelectControl.prototype.fieldtype = LookupSelectField;
+LookupSelectControl.prototype._cssclass_control = "select";
 
 
 export class LookupRadioControl extends LookupControl
@@ -2150,6 +2571,7 @@ export class AppLookupSelectControl extends AppLookupControl
 
 AppLookupSelectControl.prototype.subtype = "select";
 AppLookupSelectControl.prototype.fieldtype = AppLookupSelectField;
+AppLookupSelectControl.prototype._cssclass_control = "select";
 
 
 export class AppLookupRadioControl extends AppLookupControl
@@ -2211,9 +2633,9 @@ export class MultipleLookupCheckboxControl extends MultipleLookupControl
 {
 	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/checkbox')";
 
-	_dom_label()
+	get _sel_label()
 	{
-		return this._dom_root().find("label:not([for]) > span");
+		return this._sel_root + " label:not([for]) > span";
 	}
 };
 
@@ -2230,6 +2652,7 @@ export class MultipleLookupSelectControl extends MultipleLookupControl
 
 MultipleLookupSelectControl.prototype.subtype = "select";
 MultipleLookupSelectControl.prototype.fieldtype = MultipleLookupSelectField;
+MultipleLookupSelectControl.prototype._cssclass_control = "select";
 
 
 export class MultipleLookupChoiceControl extends MultipleLookupControl
@@ -2278,6 +2701,7 @@ export class MultipleAppLookupSelectControl extends MultipleAppLookupControl
 
 MultipleAppLookupSelectControl.prototype.subtype = "select";
 MultipleAppLookupSelectControl.prototype.fieldtype = MultipleAppLookupSelectField;
+MultipleAppLookupSelectControl.prototype._cssclass_control = "select";
 
 
 export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
@@ -2316,6 +2740,7 @@ export class FileControl extends Control
 
 FileControl.prototype.type = "file";
 FileControl.prototype.fieldtype = FileField;
+FileControl.prototype._cssclass_root = "llft-element";
 
 
 export class FileSignatureControl extends FileControl
@@ -2493,7 +2918,6 @@ export class File extends Base
 
 File.prototype._ul4onattrs = ["url", "filename", "mimetype", "width", "height", "internalid", "createdat", "size", "archive"];
 File.prototype._ul4attrs = new Set(["id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "archive", "createdat"]);
-File.prototype._cssclass_root = "llft-element";
 
 
 export class Geo extends Base
