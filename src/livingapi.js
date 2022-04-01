@@ -2096,6 +2096,8 @@ export class NumberControl extends PlaceholderControl
 
 NumberControl.prototype.type = "number";
 NumberControl.prototype.fieldtype = NumberField;
+NumberControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "precision", "minimum", "maximum"];
+NumberControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "precision", "minimum", "maximum"]);
 
 
 export class StringControl extends PlaceholderControl
