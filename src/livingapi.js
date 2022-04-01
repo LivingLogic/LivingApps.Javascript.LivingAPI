@@ -1071,16 +1071,43 @@ export class NumberField extends Field
 		{
 			let value = this._parse(change.value);
 			if (value !== null)
+			{
+				value = this._bound_value(value);
+				if (this.control.precision !== null)
+					value = ul4._round(value, this.control.precision);
 				change.value = value;
+			}
 			else
 				change.errors.push(this.msg_number_format(change.value));
 				// Keep original invalid string
 		}
-		else if (typeof(change.value) !== "number")
+		else if (typeof(change.value) === "number")
+		{
+			value = this._bound_value(value);
+			if (this.control.precision !== null)
+				value = ul4._round(value, this.control.precision);
+			change.value = value;
+		}
+		else
 		{
 			change.errors.push(this.msg_field_wrong_type(change.value));
 			change.value = null;
 		}
+	}
+
+	_bound_value(value)
+	{
+		if (this.control.minimum !== null)
+		{
+			if (value < this.control.minimum)
+				value = this.control.minimum;
+		}
+		if (this.control.maximum !== null)
+		{
+			if (value > this.control.maximum)
+				value = this.control.maximum;
+		}
+		return value;
 	}
 
 	_get_value_from_dom()
@@ -1088,9 +1115,18 @@ export class NumberField extends Field
 		let value = super._get_value_from_dom();
 		if (value)
 		{
-			let testvalue = this._parse(value);
-			if (testvalue !== null)
-				value = testvalue;
+			if (typeof(value) == "string")
+			{
+				let testvalue = this._parse(value);
+				if (testvalue !== null)
+					value = testvalue;
+			}
+			if (typeof(value) === "number")
+			{
+				if (this.control.precision !== null)
+					value = ul4._round(value, this.control.precision);
+				value = this._bound_value(value);
+			}
 		}
 		else
 			value = null;
@@ -1099,7 +1135,16 @@ export class NumberField extends Field
 
 	_set_dom_value(value)
 	{
-		super._set_dom_value(value + "");
+		if (typeof(value) === "number")
+		{
+			value = this._bound_value(value);
+			if (this.control.precision !== null)
+				value = value.toFixed(this.control.precision);
+		}
+		value += "";
+		if (this.globals.lang == "de")
+			value = value.replace(".", ",");
+		super._set_dom_value(value);
 	}
 };
 
