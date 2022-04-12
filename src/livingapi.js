@@ -662,7 +662,7 @@ export class Field extends Base
 	get value()
 	{
 		if (this._in_form())
-			return this._get_value_from_dom();
+			return this._get_dom_value();
 		return this._value;
 	}
 
@@ -834,7 +834,7 @@ export class Field extends Base
 		return this._sel_root + " " + this.control._cssclass_control;
 	}
 
-	_get_value_from_dom()
+	_get_dom_value()
 	{
 		return document.querySelector(this._sel_control).value;
 	}
@@ -925,7 +925,7 @@ export class BoolField extends Field
 		}
 	}
 
-	_get_value_from_dom()
+	_get_dom_value()
 	{
 		return document.querySelector(this._sel_control).checked;
 	}
@@ -978,9 +978,9 @@ export class IntField extends Field
 		}
 	}
 
-	_get_value_from_dom()
+	_get_dom_value()
 	{
-		let value = super._get_value_from_dom();
+		let value = super._get_dom_value();
 		if (value)
 		{
 			let testvalue = this._parse(value);
@@ -1110,9 +1110,9 @@ export class NumberField extends Field
 		return value;
 	}
 
-	_get_value_from_dom()
+	_get_dom_value()
 	{
-		let value = super._get_value_from_dom();
+		let value = super._get_dom_value();
 		if (value)
 		{
 			if (typeof(value) == "string")
@@ -1142,7 +1142,7 @@ export class NumberField extends Field
 				value = value.toFixed(this.control.precision);
 		}
 		value += "";
-		if (this.globals.lang == "de")
+		if (this.globals.lang == "de" && this.control.precision === null)
 			value = value.replace(".", ",");
 		super._set_dom_value(value);
 	}
@@ -1292,7 +1292,7 @@ export class FileField extends Field
 		}
 	}
 
-	_get_value_from_dom()
+	_get_dom_value()
 	{
 		// Always return `null``
 		return null;
@@ -1503,21 +1503,10 @@ export class DateFieldBase extends Field
 			change.value = null;
 		}
 	}
-};
 
-
-export class DateField extends DateFieldBase
-{
-	static classdoc = "Holds the value of a date/date field of a record (and related information)";
-
-	_convert(date)
+	_get_dom_value()
 	{
-		return new ul4.Date_(date.getFullYear(), date.getMonth()+1, date.getDate());
-	}
-
-	_get_value_from_dom()
-	{
-		let value = super._get_value_from_dom();
+		let value = super._get_dom_value();
 		if (!value)
 			return null;
 
@@ -1535,6 +1524,17 @@ export class DateField extends DateFieldBase
 		if (value !== null)
 			value = ul4._format(value, this.control.formatstring(), this.globals.lang);
 		super._set_dom_value(value);
+	}
+};
+
+
+export class DateField extends DateFieldBase
+{
+	static classdoc = "Holds the value of a date/date field of a record (and related information)";
+
+	_convert(date)
+	{
+		return new ul4.Date_(date.getFullYear(), date.getMonth()+1, date.getDate());
 	}
 };
 
@@ -1588,12 +1588,12 @@ export class LookupFieldBase extends Field
 		let v = change.value;
 		if (typeof(v) === "string")
 		{
-			// If `lookupdata`} is `null`, this is probably an interface,
+			// If `lookupdata` is `null`, this probably an interface,
 			// so we can't validate anything (note that interfaces will however go
 			// away in the future)
 			if (this.lookupdata === null)
 				return;
-			let lookupitem = this.lookupdata.get(v);
+			let lookupitem = this.control.lookupdata.get(v);
 			if (lookupitem === undefined)
 			{
 				// If the lookup control is auto expandable,
@@ -1669,6 +1669,31 @@ export class LookupRadioField extends LookupField
 	{
 		return this._sel_root + " label:not([for]) > span";
 	}
+
+	_get_dom_value()
+	{
+		for (let node of document.querySelectorAll(this._sel_control))
+		{
+			if (node.checked)
+			{
+				let key = node.getAttribute("value");
+				return this.control.lookupdata.get(key);
+			}
+
+		}
+		return null;
+	}
+
+	_set_dom_value(value)
+	{
+		if (value instanceof LookupItem)
+			value = value.key;
+		if (value === null)
+			value = this.control.nonekey;
+
+		for (let node of document.querySelectorAll(this._sel_control))
+			node.checked = node.getAttribute("value") === value;
+	}
 };
 
 
@@ -1676,16 +1701,9 @@ export class LookupSelectField extends LookupField
 {
 	static classdoc = "Holds the value of a lookup/select field of a record (and related information)";
 
-	_first_lookupitem()
+	_get_dom_value()
 	{
-		for (let item of this.lookupdata.values())
-			return item;
-		return null;
-	}
-
-	_get_value_from_dom()
-	{
-		let value = super._get_value_from_dom();
+		let value = super._get_dom_value();
 		if (value)
 		{
 			if (value === this.control.nonekey)
@@ -1698,11 +1716,9 @@ export class LookupSelectField extends LookupField
 
 	_set_dom_value(value)
 	{
-		if (value !== null)
-			value = value.key;
-		else
-			value = this.control.nonekey;
-		super._set_dom_value(value);
+		let change = {value: value, errors: []};
+		this._validate(change);
+		super._set_dom_value(change.value != null ? change.value.key : this.control.nonekey);
 	}
 };
 
@@ -1762,12 +1778,61 @@ export class MultipleLookupCheckboxField extends MultipleLookupField
 	{
 		return this._sel_root + " label:not([for]) > span";
 	}
+
+	_get_dom_value()
+	{
+		let value = [];
+		for (let node of document.querySelectorAll(this._sel_control))
+		{
+			if (node.checked)
+			{
+				let key = node.getAttribute("value");
+				value.push(this.control.lookupdata.get(key));
+			}
+
+		}
+		return value;
+	}
+
+	_set_dom_value(value)
+	{
+		let change = {value: value, errors: []};
+		this._validate(change);
+		let values = new Set();
+		for (let value of change.value)
+			values.add(value.key);
+
+		for (let node of document.querySelectorAll(this._sel_control))
+			node.checked = values.has(node.getAttribute("value"));
+	}
 };
 
 
 export class MultipleLookupSelectField extends MultipleLookupField
 {
 	static classdoc = "Holds the value of a multiplelookup/select field of a record (and related information)";
+
+	_get_dom_value()
+	{
+		let value = [];
+		for (let option of document.querySelector(this._sel_control).querySelectorAll("option"))
+		{
+			if (option.selected)
+				value.push(this.control.lookupdata.get(option.getAttribute("value")));
+		}
+		return value;
+	}
+
+	_set_dom_value(value)
+	{
+		let change = {value: value, errors: []};
+		this._validate(change);
+		let values = new Set();
+		for (let value of change.value)
+			values.add(value.key);
+		for (let option of document.querySelector(this._sel_control).querySelectorAll("option"))
+			option.selected = values.has(option.getAttribute("value"));
+	}
 };
 
 
@@ -1803,7 +1868,11 @@ export class AppLookupFieldBase extends Field
 		let v = change.value;
 		if (typeof(v) === "string")
 		{
-			let record = this.lookupdata.get(v);
+			let record = this.control.lookup_app.records !== null ?
+				this.control.lookup_app.records.get(v) :
+				undefined
+			;
+
 			if (record === undefined)
 			{
 				change.errors.push(this.msg_applookup_unknownkey(v))
@@ -1845,6 +1914,28 @@ export class AppLookupField extends AppLookupFieldBase
 export class AppLookupSelectField extends AppLookupField
 {
 	static classdoc = "Holds the value of a `applookup`/`select` field of a record (and related information)";
+
+	_get_dom_value()
+	{
+		let value = super._get_dom_value();
+
+		if (this.control.lookup_app.records !== null)
+		{
+			value = this.control.lookup_app.records.get(value);
+			if (value === undefined)
+				value = null;
+		}
+		else
+			value = null;
+		return value;
+	}
+
+	_set_dom_value(value)
+	{
+		let change = {value: value, errors: []};
+		this._validate(change);
+		super._set_dom_value(change.value != null ? change.value.id : this.control.nonekey);
+	}
 };
 
 
@@ -2594,6 +2685,22 @@ LookupChoiceControl.prototype.fieldtype = LookupChoiceField;
 
 export class AppLookupControl extends Control
 {
+	get nonekey()
+	{
+		let view_control = this._view_control();
+		if (view_control === null)
+			return null;
+		return view_control.lookupnonekey;
+	}
+
+	get nonelabel()
+	{
+		let view_control = this._view_control();
+		if (view_control === null)
+			return null;
+		return view_control.lookupnonelabel;
+	}
+
 	// ``search.value`` must be an object containing the search criteria for the referenced record
 	search(value, search)
 	{
