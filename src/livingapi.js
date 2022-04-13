@@ -656,6 +656,7 @@ export class Field extends Base
 		if (!this._in_form())
 			this.value = value;
 		this._dirty = false;
+		this._enabled = true;
 		this._visible = true;
 	}
 
@@ -877,6 +878,22 @@ export class Field extends Base
 		this._visible = value;
 	}
 
+	get enabled()
+	{
+		return this._enabled;
+	}
+
+	set enabled(value)
+	{
+		if (this._in_form())
+		{
+			let disabled = !value;
+			for (let node of document.querySelectorAll(this._sel_control))
+				node.disabled = disabled;
+		}
+		this._enabled = value;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		let s = "<Field identifier=";
@@ -892,6 +909,8 @@ export class Field extends Base
 	[ul4.symbols.setattr](name, value)
 	{
 		if (name === "visible")
+			this.visible = ul4._bool(value);
+		else if (name === "enaabled")
 			this.visible = ul4._bool(value);
 		else
 			return super[ul4.symbols.getattr](name);
