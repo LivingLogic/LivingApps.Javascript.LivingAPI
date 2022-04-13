@@ -126,10 +126,19 @@ export class Handler
 };
 
 
+class GlobalsType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Globals;
+	}
+};
+
+let globalstype = new GlobalsType("la", "Globals", "Global information");
+
+
 export class Globals extends Base
 {
-	static classdoc = "Global information";
-
 	constructor(id)
 	{
 		super(id);
@@ -144,6 +153,11 @@ export class Globals extends Base
 		this.maxtemplateruntime = null;
 		this.flashmessages = null;
 		this.handler = new Handler();
+	}
+
+	[ul4.symbols.type]()
+	{
+		return globalstype;
 	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
@@ -240,9 +254,23 @@ Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", 
 Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode"]);
 
 
+class FlashMessageType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof FlashMessage;
+	}
+};
+
+let flashmessagetype = new FlashMessageType("la", "FlashMessage", "A flash message in a web page");
+
+
 export class FlashMessage extends Base
 {
-	static classdoc = "A flash message in a web page";
+	[ul4.symbols.type]()
+	{
+		return flashmessagetype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -254,9 +282,23 @@ FlashMessage.prototype._ul4onattrs = ["timestamp", "type", "title", "message"];
 FlashMessage.prototype._ul4attrs = new Set(["timestamp", "type", "title", "message"]);
 
 
+class AppType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof App;
+	}
+};
+
+let apptype = new AppType("la", "App", "A LivingApps application");
+
+
 export class App extends Base
 {
-	static classdoc = "A LivingApps application";
+	[ul4.symbols.type]()
+	{
+		return apptype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -366,9 +408,23 @@ ul4.expose(App.prototype[ul4.symbols.call], ["**values"], {"needsobject": true})
 ul4.expose(App.prototype.insert, ["**values"], {"needsobject": true});
 
 
+class ViewType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof View;
+	}
+};
+
+let viewtype = new ViewType("la", "View", "An input form for a LivingViews application");
+
+
 export class View extends Base
 {
-	static classdoc = "An input form for a LivingApps application";
+	[ul4.symbols.type]()
+	{
+		return viewtype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -380,9 +436,23 @@ View.prototype._ul4onattrs = ["name", "combined_type", "app", "order", "width", 
 View.prototype._ul4attrs = new Set(["id", "name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"]);
 
 
+class DataSourceType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DataSource;
+	}
+};
+
+let datasourcetype = new DataSourceType("la", "DataSource", "The data resulting from a data source configuration");
+
+
 export class DataSource extends Base
 {
-	static classdoc = "The data resulting from a data source configuration";
+	[ul4.symbols.type]()
+	{
+		return datasourcetype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -394,10 +464,19 @@ DataSource.prototype._ul4onattrs = ["identifier", "app", "apps"];
 DataSource.prototype._ul4attrs = new Set(["id", "identifier", "app", "apps"]);
 
 
+class RecordType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Record;
+	}
+};
+
+let recordtype = new RecordType("la", "Record", "A record of a LivingApp application");
+
+
 export class Record extends Base
 {
-	static classdoc = "A record of a LivingApp application";
-
 	constructor(id, app)
 	{
 		super(id);
@@ -417,6 +496,11 @@ export class Record extends Base
 		this._sparsefieldlookupdata = null;
 		this._is_deleted = false;
 		this._is_new = true;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return recordtype;
 	}
 
 	_make_fields(defaults, values, errors, lookupdata)
@@ -640,10 +724,19 @@ ul4.expose(Record.prototype.save, []);
 ul4.expose(Record.prototype.update, ["**values"], {"needsobject": true});
 
 
+class FieldType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Field;
+	}
+};
+
+let fieldtype = new FieldType("la", "Field", "Holds the value of a field of a record (and related information)");
+
+
 export class Field extends Base
 {
-	static classdoc = "Holds the value of a field of a record (and related information)";
-
 	constructor(control, record, value)
 	{
 		super(null);
@@ -657,7 +750,13 @@ export class Field extends Base
 			this.value = value;
 		this._dirty = false;
 		this._enabled = true;
+		this._writable = true;
 		this._visible = true;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return fieldtype;
 	}
 
 	get value()
@@ -693,7 +792,7 @@ export class Field extends Base
 	_set_dom_label()
 	{
 		if (this._in_form())
-			document.querySelector(this._sel_label).textContent = this.label;
+			this._dom_label.textContent = this.label;
 	}
 
 	get label()
@@ -835,19 +934,39 @@ export class Field extends Base
 		return this._sel_root + " " + this.control._cssclass_control;
 	}
 
+	get _dom_root()
+	{
+		return document.querySelector(this._sel_root);
+	}
+
+	get _dom_label()
+	{
+		return document.querySelector(this._sel_label);
+	}
+
+	get _dom_control()
+	{
+		return document.querySelector(this._sel_control);
+	}
+
+	get _dom_controls()
+	{
+		return document.querySelectorAll(this._sel_control);
+	}
+
 	_get_dom_value()
 	{
-		return document.querySelector(this._sel_control).value;
+		return this._dom_control.value;
 	}
 
 	_set_dom_value(value)
 	{
-		document.querySelector(this._sel_control).value = value;
+		this._dom_control.value = value;
 	}
 
 	_show()
 	{
-		let el = document.querySelector(this._sel_root);
+		let el = this._dom_root;
 		el.style.transition = "height 0.2s ease";
 		el.style.overflowY = "hidden";
 		el.style.height = el.scrollHeight + "px";
@@ -855,7 +974,7 @@ export class Field extends Base
 
 	_hide()
 	{
-		let el = document.querySelector(this._sel_root);
+		let el = this._dom_root;
 		el.style.transition = "height 0.2s ease";
 		el.style.overflowY = "hidden";
 		el.style.height = 0 + "px";
@@ -880,18 +999,34 @@ export class Field extends Base
 
 	get enabled()
 	{
-		return this._enabled;
+		if (this._in_form())
+			return !this._dom_root.classList.contains("llft-control-readonly");
+		else
+			return this._enabled;
 	}
 
 	set enabled(value)
 	{
+		console.log(this._in_form(), this._dom_root, this._dom_root.classList);
 		if (this._in_form())
 		{
 			let disabled = !value;
-			for (let node of document.querySelectorAll(this._sel_control))
+			for (let node of this._dom_controls)
 				node.disabled = disabled;
+			this._dom_root.classList.toggle("llft-control-readonly", disabled);
+			console.log(this._in_form(), this._dom_root, this._dom_root.classList);
 		}
 		this._enabled = value;
+	}
+
+	get writable()
+	{
+		return this._writable;
+	}
+
+	set writable(value)
+	{
+		this._writable = value;
 	}
 
 	[ul4.symbols.repr]()
@@ -921,9 +1056,23 @@ Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", 
 Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "enabled", "writable", "visible"]);
 
 
+class BoolFieldType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof BoolField;
+	}
+};
+
+let boolfieldtype = new BoolFieldType("la", "BoolField", "Holds the value of a bool field of a record (and related information)");
+
+
 export class BoolField extends Field
 {
-	static classdoc = "Holds the value of a bool field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return boolfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -946,19 +1095,33 @@ export class BoolField extends Field
 
 	_get_dom_value()
 	{
-		return document.querySelector(this._sel_control).checked;
+		return this._dom_control.checked;
 	}
 
 	_set_dom_value(value)
 	{
-		document.querySelector(this._sel_control).checked = value;
+		this._dom_control.checked = value;
 	}
 };
 
 
+class IntFieldType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof IntField;
+	}
+};
+
+let intfieldtype = new IntFieldType("la", "IntField", "Holds the value of an int field of a record (and related information)");
+
+
 export class IntField extends Field
 {
-	static classdoc = "Holds the value of an int field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return intfieldtype;
+	}
 
 	_parse(value)
 	{
@@ -1016,9 +1179,23 @@ export class IntField extends Field
 };
 
 
+class NumberFieldType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof NumberField;
+	}
+};
+
+let numberfieldtype = new NumberFieldType("la", "NumberField", "Holds the value of a number field of a record (and related information)");
+
+
 export class NumberField extends Field
 {
-	static classdoc = "Holds the value of a number field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return numberfieldtype;
+	}
 
 	_parse(value)
 	{
@@ -1168,9 +1345,23 @@ export class NumberField extends Field
 };
 
 
+class StringFieldType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof StringField;
+	}
+};
+
+let stringfieldtype = new StringFieldType("la", "StringField", "Holds the value of a string field of a record (and related information)");
+
+
 export class StringField extends Field
 {
-	static classdoc = "Holds the value of a string field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return stringfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1195,12 +1386,42 @@ export class StringField extends Field
 			change.value = null;
 		}
 	}
+
+	get writable()
+	{
+		return this._writable;
+	}
+
+	set writable(value)
+	{
+		if (this._in_form())
+		{
+			let readonly = !value;
+			for (let node of this._dom_controls)
+				node.readOnly = readonly;
+		}
+		super.writable = value;
+	}
 };
+
+
+class EmailFieldType extends StringFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof EmailField;
+	}
+};
+
+let emailfieldtype = new EmailFieldType("la", "EmailField", "Holds the value of a string/email field of a record (and related information)");
 
 
 export class EmailField extends StringField
 {
-	static classdoc = "Holds the value of a string/email field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return emailfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1215,9 +1436,23 @@ export class EmailField extends StringField
 };
 
 
+class URLFieldType extends StringFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof URLField;
+	}
+};
+
+let urlfieldtype = new URLFieldType("la", "URLField", "Holds the value of a string/url field of a record (and related information)");
+
+
 export class URLField extends StringField
 {
-	static classdoc = "Holds the value of a string/url field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return urlfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1242,9 +1477,23 @@ export class URLField extends StringField
 };
 
 
+class TelFieldType extends StringFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof TelField;
+	}
+};
+
+let telfieldtype = new TelFieldType("la", "TelField", "Holds the value of a string/tel field of a record (and related information)");
+
+
 export class TelField extends StringField
 {
-	static classdoc = "Holds the value of a string/tel field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return telfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1259,21 +1508,63 @@ export class TelField extends StringField
 };
 
 
+class TextAreaFieldType extends StringFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof TextAreaField;
+	}
+};
+
+let textareafieldtype = new TextAreaFieldType("la", "TextAreaField", "Holds the value of a string/textarea field of a record (and related information)");
+
+
 export class TextAreaField extends StringField
 {
-	static classdoc = "Holds the value of a string/textarea field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return textareafieldtype;
+	}
 };
+
+
+class HTMLFieldType extends StringFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof HTMLField;
+	}
+};
+
+let htmlfieldtype = new HTMLFieldType("la", "HTMLField", "Holds the value of a string/html field of a record (and related information)");
 
 
 export class HTMLField extends StringField
 {
-	static classdoc = "Holds the value of a string/html field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return htmlfieldtype;
+	}
 };
+
+
+class GeoFieldType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof GeoField;
+	}
+};
+
+let geofieldtype = new GeoFieldType("la", "GeoField", "Holds the value of a geo field of a record (and related information)");
 
 
 export class GeoField extends Field
 {
-	static classdoc = "Holds the value of a geo field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return geofieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1292,9 +1583,23 @@ export class GeoField extends Field
 };
 
 
+class FileFieldType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof FileField;
+	}
+};
+
+let filefieldtype = new FileFieldType("la", "FileField", "Holds the value of a file field of a record (and related information)");
+
+
 export class FileField extends Field
 {
-	static classdoc = "Holds the value of a file field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return filefieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1324,9 +1629,23 @@ export class FileField extends Field
 };
 
 
+class FileSignatureFieldType extends FileFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof FileSignatureField;
+	}
+};
+
+let filesignaturefieldtype = new FileSignatureFieldType("la", "FileSignatureField", "Holds the value of a file/signature field of a record (and related information)");
+
+
 export class FileSignatureField extends FileField
 {
-	static classdoc = "Holds the value of a file/signature field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return filesignaturefieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1336,9 +1655,23 @@ export class FileSignatureField extends FileField
 };
 
 
+class DateFieldBaseType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DateFieldBase;
+	}
+};
+
+let datefieldbasetype = new DateFieldBaseType("la", "DateFieldBase", "Holds the value of a date field of a record (and related information)");
+
+
 export class DateFieldBase extends Field
 {
-	static classdoc = "Holds the value of a date field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return datefieldbasetype;
+	}
 
 	_parse(value, format)
 	{
@@ -1547,9 +1880,23 @@ export class DateFieldBase extends Field
 };
 
 
+class DateFieldType extends DateFieldBaseType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DateField;
+	}
+};
+
+let datefieldtype = new DateFieldType("la", "DateField", "Holds the value of a date/date field of a record (and related information)");
+
+
 export class DateField extends DateFieldBase
 {
-	static classdoc = "Holds the value of a date/date field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return datefieldtype;
+	}
 
 	_convert(date)
 	{
@@ -1558,9 +1905,23 @@ export class DateField extends DateFieldBase
 };
 
 
+class DatetimeMinuteFieldType extends DateFieldBaseType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DatetimeMinuteField;
+	}
+};
+
+let datetimeminutefieldtype = new DatetimeMinuteFieldType("la", "DatetimeMinuteField", "Holds the value of a date/datetimeminute field of a record (and related information)");
+
+
 export class DatetimeMinuteField extends DateFieldBase
 {
-	static classdoc = "Holds the value of a date/datetimeminute field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return datetimeminutefieldtype;
+	}
 
 	_convert(date)
 	{
@@ -1572,9 +1933,23 @@ export class DatetimeMinuteField extends DateFieldBase
 };
 
 
+class DatetimeSecondFieldType extends DateFieldBaseType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DatetimeSecondField;
+	}
+};
+
+let datetimesecondfieldtype = new DatetimeSecondFieldType("la", "DatetimeSecondField", "Holds the value of a date/datetimesecond field of a record (and related information)");
+
+
 export class DatetimeSecondField extends DateFieldBase
 {
-	static classdoc = "Holds the value of a date/datetimesecond field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return datetimesecondfieldtype;
+	}
 
 	_convert(date)
 	{
@@ -1585,9 +1960,23 @@ export class DatetimeSecondField extends DateFieldBase
 };
 
 
+class LookupFieldBaseType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupFieldBase;
+	}
+};
+
+let lookupfieldbasetype = new LookupFieldBaseType("la", "LookupFieldBase", "Base type of LookupField and MultipleLookupField");
+
+
 export class LookupFieldBase extends Field
 {
-	static classdoc = "Base type of LookupField and MultipleLookupField";
+	[ul4.symbols.type]()
+	{
+		return lookupfieldbasetype;
+	}
 
 	get lookupdata()
 	{
@@ -1659,9 +2048,23 @@ export class LookupFieldBase extends Field
 };
 
 
+class LookupFieldType extends LookupFieldBaseType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupField;
+	}
+};
+
+let lookupfieldtype = new LookupFieldType("la", "LookupField", "Holds the value of a lookup field of a record (and related information)");
+
+
 export class LookupField extends LookupFieldBase
 {
-	static classdoc = "Holds the value of a lookup field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return lookupfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1680,9 +2083,23 @@ export class LookupField extends LookupFieldBase
 };
 
 
+class LookupRadioFieldType extends LookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupRadioField;
+	}
+};
+
+let lookupradiofieldtype = new LookupRadioFieldType("la", "LookupRadioField", "Holds the value of a lookup/radio field of a record (and related information)");
+
+
 export class LookupRadioField extends LookupField
 {
-	static classdoc = "Holds the value of a lookup/radio field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return lookupradiofieldtype;
+	}
 
 	get _sel_label()
 	{
@@ -1691,7 +2108,7 @@ export class LookupRadioField extends LookupField
 
 	_get_dom_value()
 	{
-		for (let node of document.querySelectorAll(this._sel_control))
+		for (let node of this._dom_controls)
 		{
 			if (node.checked)
 			{
@@ -1710,15 +2127,29 @@ export class LookupRadioField extends LookupField
 		if (value === null)
 			value = this.control.nonekey;
 
-		for (let node of document.querySelectorAll(this._sel_control))
+		for (let node of this._dom_controls)
 			node.checked = node.getAttribute("value") === value;
 	}
 };
 
 
+class LookupSelectFieldType extends LookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupSelectField;
+	}
+};
+
+let lookupselectfieldtype = new LookupSelectFieldType("la", "LookupSelectField", "Holds the value of a lookup/select field of a record (and related information)");
+
+
 export class LookupSelectField extends LookupField
 {
-	static classdoc = "Holds the value of a lookup/select field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return lookupselectfieldtype;
+	}
 
 	_get_dom_value()
 	{
@@ -1742,15 +2173,43 @@ export class LookupSelectField extends LookupField
 };
 
 
+class LookupChoiceFieldType extends LookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupChoiceField;
+	}
+};
+
+let lookupchoicefieldtype = new LookupChoiceFieldType("la", "LookupChoiceField", "Holds the value of a lookup/choice field of a record (and related information)");
+
+
 export class LookupChoiceField extends LookupField
 {
-	static classdoc = "Holds the value of a lookup/choice field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return lookupchoicefieldtype;
+	}
 };
+
+
+class MultipleLookupFieldType extends LookupFieldBaseType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupField;
+	}
+};
+
+let multiplelookupfieldtype = new MultipleLookupFieldType("la", "MultipleLookupField", "Holds the value of a multiple lookup field of a record (and related information)");
 
 
 export class MultipleLookupField extends LookupFieldBase
 {
-	static classdoc = "Holds the value of a multiple lookup field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multiplelookupfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1789,9 +2248,23 @@ export class MultipleLookupField extends LookupFieldBase
 };
 
 
+class MultipleLookupCheckboxFieldType extends MultipleLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupCheckboxField;
+	}
+};
+
+let multiplelookupcheckboxfieldtype = new MultipleLookupCheckboxFieldType("la", "MultipleLookupCheckboxField", "Holds the value of a multiplelookup/radio field of a record (and related information)");
+
+
 export class MultipleLookupCheckboxField extends MultipleLookupField
 {
-	static classdoc = "Holds the value of a multiplelookup/radio field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multiplelookupcheckboxfieldtype;
+	}
 
 	get _sel_label()
 	{
@@ -1801,7 +2274,7 @@ export class MultipleLookupCheckboxField extends MultipleLookupField
 	_get_dom_value()
 	{
 		let value = [];
-		for (let node of document.querySelectorAll(this._sel_control))
+		for (let node of this._dom_controls)
 		{
 			if (node.checked)
 			{
@@ -1821,20 +2294,33 @@ export class MultipleLookupCheckboxField extends MultipleLookupField
 		for (let value of change.value)
 			values.add(value.key);
 
-		for (let node of document.querySelectorAll(this._sel_control))
+		for (let node of this._dom_controls)
 			node.checked = values.has(node.getAttribute("value"));
 	}
 };
 
 
+class MultipleLookupSelectFieldType extends MultipleLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupSelectField;
+	}
+};
+
+let multiplelookupselectfieldtype = new MultipleLookupSelectFieldType("la", "MultipleLookupSelectField", "Holds the value of a multiplelookup/select field of a record (and related information)");
+
 export class MultipleLookupSelectField extends MultipleLookupField
 {
-	static classdoc = "Holds the value of a multiplelookup/select field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multiplelookupselectfieldtype;
+	}
 
 	_get_dom_value()
 	{
 		let value = [];
-		for (let option of document.querySelector(this._sel_control).querySelectorAll("option"))
+		for (let option of this._dom_control.querySelectorAll("option"))
 		{
 			if (option.selected)
 				value.push(this.control.lookupdata.get(option.getAttribute("value")));
@@ -1849,21 +2335,49 @@ export class MultipleLookupSelectField extends MultipleLookupField
 		let values = new Set();
 		for (let value of change.value)
 			values.add(value.key);
-		for (let option of document.querySelector(this._sel_control).querySelectorAll("option"))
+		for (let option of this._dom_control.querySelectorAll("option"))
 			option.selected = values.has(option.getAttribute("value"));
 	}
 };
 
 
+class MultipleLookupChoiceFieldType extends MultipleLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupChoiceField;
+	}
+};
+
+let multiplelookupchoicefieldtype = new MultipleLookupChoiceFieldType("la", "MultipleLookupChoiceField", "Holds the value of a multiplelookup/choice field of a record (and related information)");
+
+
 export class MultipleLookupChoiceField extends MultipleLookupField
 {
-	static classdoc = "Holds the value of a multiplelookup/choice field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multiplelookupchoicefieldtype;
+	}
 };
+
+
+class AppLookupFieldBaseType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupFieldBase;
+	}
+};
+
+let applookupfieldbasetype = new AppLookupFieldBaseType("la", "AppLookupFieldBase", "Base type of AppLookupField and MultipleAppLookupField");
 
 
 export class AppLookupFieldBase extends Field
 {
-	static classdoc = "Base type of AppLookupField and MultipleAppLookupField";
+	[ul4.symbols.type]()
+	{
+		return applookupfieldbasetype;
+	}
 
 	get lookupdata()
 	{
@@ -1919,9 +2433,23 @@ export class AppLookupFieldBase extends Field
 };
 
 
+class AppLookupFieldType extends AppLookupFieldBaseType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupField;
+	}
+};
+
+let applookupfieldtype = new AppLookupFieldType("la", "AppLookupField", "Holds the value of a applookup field of a record (and related information)");
+
+
 export class AppLookupField extends AppLookupFieldBase
 {
-	static classdoc = "Holds the value of a applookup field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return applookupfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -1930,9 +2458,23 @@ export class AppLookupField extends AppLookupFieldBase
 };
 
 
+class AppLookupSelectFieldType extends AppLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupSelectField;
+	}
+};
+
+let applookupselectfieldtype = new AppLookupSelectFieldType("la", "AppLookupSelectField", "Holds the value of a `applookup`/`select` field of a record (and related information)");
+
+
 export class AppLookupSelectField extends AppLookupField
 {
-	static classdoc = "Holds the value of a `applookup`/`select` field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return applookupselectfieldtype;
+	}
 
 	_get_dom_value()
 	{
@@ -1958,21 +2500,63 @@ export class AppLookupSelectField extends AppLookupField
 };
 
 
+class AppLookupRadioFieldType extends AppLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupRadioField;
+	}
+};
+
+let applookupradiofieldtype = new AppLookupRadioFieldType("la", "AppLookupRadioField", "Holds the value of a `applookup`/`radio` field of a record (and related information)");
+
+
 export class AppLookupRadioField extends AppLookupField
 {
-	static classdoc = "Holds the value of a `applookup`/`radio` field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return applookupradiofieldtype;
+	}
 };
+
+
+class AppLookupChoiceFieldType extends AppLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupChoiceField;
+	}
+};
+
+let applookupchoicefieldtype = new AppLookupChoiceFieldType("la", "AppLookupChoiceField", "Holds the value of a `applookup`/`choice` field of a record (and related information)");
 
 
 export class AppLookupChoiceField extends AppLookupField
 {
-	static classdoc = "Holds the value of a `applookup`/`choice` field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return applookupchoicefieldtype;
+	}
 };
+
+
+class MultipleAppLookupFieldType extends AppLookupFieldBaseType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupField;
+	}
+};
+
+let multipleapplookupfieldtype = new MultipleAppLookupFieldType("la", "MultipleAppLookupField", "Holds the value of a multiple applookup field of a record (and related information)");
 
 
 export class MultipleAppLookupField extends AppLookupFieldBase
 {
-	static classdoc = "Holds the value of a multiple applookup field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupfieldtype;
+	}
 
 	_validate(change)
 	{
@@ -2011,26 +2595,84 @@ export class MultipleAppLookupField extends AppLookupFieldBase
 };
 
 
+class MultipleAppLookupCheckboxFieldType extends MultipleAppLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupCheckboxField;
+	}
+};
+
+let multipleapplookupcheckboxfieldtype = new MultipleAppLookupCheckboxFieldType("la", "MultipleAppLookupCheckboxField", "Holds the value of a `multipleapplookup`/`checkbox` field of a record (and related information)");
+
+
 export class MultipleAppLookupCheckboxField extends MultipleAppLookupField
 {
-	static classdoc = "Holds the value of a `multipleapplookup`/`checkbox` field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupcheckboxfieldtype;
+	}
 };
+
+
+class MultipleAppLookupSelectFieldType extends MultipleAppLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupSelectField;
+	}
+};
+
+let multipleapplookupselectfieldtype = new MultipleAppLookupSelectFieldType("la", "MultipleAppLookupSelectField", "Holds the value of a `multipleapplookup`/`select` field of a record (and related information)");
 
 
 export class MultipleAppLookupSelectField extends MultipleAppLookupField
 {
-	static classdoc = "Holds the value of a `multipleapplookup`/`select` field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupselectfieldtype;
+	}
 };
+
+
+class MultipleAppLookupChoiceFieldType extends MultipleAppLookupFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupChoiceField;
+	}
+};
+
+let multipleapplookupchoicefieldtype = new MultipleAppLookupChoiceFieldType("la", "MultipleAppLookupChoiceField", "Holds the value of a `multipleapplookup`/`choice` field of a record (and related information)");
 
 
 export class MultipleAppLookupChoiceField extends MultipleAppLookupField
 {
-	static classdoc = "Holds the value of a `multipleapplookup`/`choice` field of a record (and related information)";
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupchoicefieldtype;
+	}
 };
+
+
+class ControlType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Control;
+	}
+};
+
+let controltype = new ControlType("la", "Control", "Metainformation about a field in a LivingApps application");
 
 
 export class Control extends Base
 {
+	[ul4.symbols.type]()
+	{
+		return controltype;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
@@ -2174,9 +2816,23 @@ Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
 
 
+class BoolControlType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof BoolControl;
+	}
+};
+
+let boolcontroltype = new BoolControlType("la", "BoolControl", "A LivingApps boolean field (type 'bool')");
+
+
 export class BoolControl extends Control
 {
-	static classdoc = "A LivingApps boolean field (type 'bool')";
+	[ul4.symbols.type]()
+	{
+		return boolcontroltype;
+	}
 
 	// ``search`` must by ``null``, ``false`` or ``true``
 	search(value, search)
@@ -2193,9 +2849,23 @@ BoolControl.prototype.type = "bool";
 BoolControl.prototype.fieldtype = BoolField;
 
 
+class IntControlType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof IntControl;
+	}
+};
+
+let intcontroltype = new IntControlType("la", "IntControl", "A LivingApps integer field (type 'int')");
+
+
 export class IntControl extends Control
 {
-	static classdoc = "A LivingApps integer field (type 'int')";
+	[ul4.symbols.type]()
+	{
+		return intcontroltype;
+	}
 
 	// ``search.value`` must by ``null`` or an integer
 	search(value, search)
@@ -2212,9 +2882,23 @@ IntControl.prototype.type = "int";
 IntControl.prototype.fieldtype = IntField;
 
 
+class PlaceholderControldType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof PlaceholderControld;
+	}
+};
+
+let placeholdercontroldtype = new PlaceholderControldType("la", "PlaceholderControld", "A LivingApps field that has a placeholder");
+
+
 class PlaceholderControl extends Control
 {
-	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/select')";
+	[ul4.symbols.type]()
+	{
+		return placeholdercontroldtype;
+	}
 
 	get placeholder()
 	{
@@ -2228,9 +2912,23 @@ class PlaceholderControl extends Control
 PlaceholderControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "placeholder"]);
 
 
+class NumberControlType extends PlaceholderControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof NumberControl;
+	}
+};
+
+let numbercontroltype = new NumberControlType("la", "NumberControl", "A LivingApps number field (type 'number')");
+
+
 export class NumberControl extends PlaceholderControl
 {
-	static classdoc = "A LivingApps number field (type 'number')";
+	[ul4.symbols.type]()
+	{
+		return numbercontroltype;
+	}
 
 	// ``search.value`` must by ``null`` or an integer
 	search(value, search)
@@ -2255,8 +2953,24 @@ NumberControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "precis
 NumberControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "precision", "minimum", "maximum"]);
 
 
+class StringControlType extends PlaceholderControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof StringControl;
+	}
+};
+
+let stringcontroltype = new StringControlType("la", "StringControl", "A LivingApps number field (type 'string')");
+
+
 export class StringControl extends PlaceholderControl
 {
+	[ul4.symbols.type]()
+	{
+		return stringcontroltype;
+	}
+
 	_user_placeholder(user, placeholder)
 	{
 		if (placeholder === null)
@@ -2367,45 +3081,115 @@ export class StringControl extends PlaceholderControl
 StringControl.prototype.type = "string";
 
 
+class TextControlType extends StringControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof TextControl;
+	}
+};
+
+let textcontroltype = new TextControlType("la", "TextControl", "A LivingApps text field (type 'string/text')");
+
+
 export class TextControl extends StringControl
 {
-	static classdoc = "A LivingApps text field (type 'string/text')";
+	[ul4.symbols.type]()
+	{
+		return textcontroltype;
+	}
 };
 
 TextControl.prototype.subtype = "text";
 TextControl.prototype.fieldtype = StringField;
 
 
+class EmailControlType extends StringControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof EmailControl;
+	}
+};
+
+let emailcontroltype = new EmailControlType("la", "EmailControl", "A LivingApps email field (type 'string/email')");
+
+
 export class EmailControl extends StringControl
 {
-	static classdoc = "A LivingApps email field (type 'string/email')";
+	[ul4.symbols.type]()
+	{
+		return emailcontroltype;
+	}
 };
 
 EmailControl.prototype.subtype = "email";
 EmailControl.prototype.fieldtype = EmailField;
 
 
+class URLControlType extends StringControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof URLControl;
+	}
+};
+
+let urlcontroltype = new URLControlType("la", "URLControl", "A LivingApps URL field (type 'string/url')");
+
+
 export class URLControl extends StringControl
 {
-	static classdoc = "A LivingApps URL field (type 'string/url')";
+	[ul4.symbols.type]()
+	{
+		return urlcontroltype;
+	}
 };
 
 URLControl.prototype.subtype = "url";
 URLControl.prototype.fieldtype = URLField;
 
 
+class TelControlType extends StringControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof TelControl;
+	}
+};
+
+let telcontroltype = new TelControlType("la", "TelControl", "A LivingApps phone number field (type 'string/tel')");
+
+
 export class TelControl extends StringControl
 {
-	static classdoc = "A LivingApps phone number field (type 'string/tel')";
+	[ul4.symbols.type]()
+	{
+		return telcontroltype;
+	}
 };
 
 TelControl.prototype.subtype = "tel";
 TelControl.prototype.fieldtype = TelField;
 
 
+class TextAreaControlType extends StringControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof TextAreaControl;
+	}
+};
+
+let textareacontroltype = new TextAreaControlType("la", "TextAreaControl", "A LivingApps textarea field (type 'string/textarea')");
+
+
 export class TextAreaControl extends StringControl
 {
-	static classdoc = "A LivingApps textarea field (type 'string/textarea')";
+	[ul4.symbols.type]()
+	{
+		return textareacontroltype;
+	}
 
 	get maxlength()
 	{
@@ -2430,18 +3214,46 @@ TextAreaControl.prototype._ul4attrs = new Set([...StringControl.prototype._ul4at
 TextAreaControl.prototype._cssclass_control = "textarea";
 
 
+class HTMLControlType extends StringControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof HTMLControl;
+	}
+};
+
+let htmlcontroltype = new HTMLControlType("la", "HTMLControl", "A LivingApps HTML field (type 'string/html')");
+
+
 export class HTMLControl extends StringControl
 {
-	static classdoc = "A LivingApps HTML field (type 'string/html')";
+	[ul4.symbols.type]()
+	{
+		return htmlcontroltype;
+	}
 };
 
 HTMLControl.prototype.subtype = "html";
 HTMLControl.prototype.fieldtype = HTMLField;
 
 
+class DateControlType extends PlaceholderControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DateControl;
+	}
+};
+
+let datecontroltype = new DateControlType("la", "DateControl", "A LivingApps date field (type 'date/date')");
+
+
 export class DateControl extends PlaceholderControl
 {
-	static classdoc = "A LivingApps date field (type 'date/date')";
+	[ul4.symbols.type]()
+	{
+		return datecontroltype;
+	}
 
 	get default()
 	{
@@ -2515,9 +3327,23 @@ DateControl.prototype._formatstrings = {
 };
 
 
+class DatetimeMinuteControlType extends DateControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DatetimeMinuteControl;
+	}
+};
+
+let datetimeminutecontroltype = new DatetimeMinuteControlType("la", "DatetimeMinuteControl", "A LivingApps date field (type 'date/datetimeminute')");
+
+
 export class DatetimeMinuteControl extends DateControl
 {
-	static classdoc = "A LivingApps date field (type 'date/datetimeminute')";
+	[ul4.symbols.type]()
+	{
+		return datetimeminutecontroltype;
+	}
 
 	get default()
 	{
@@ -2565,9 +3391,23 @@ DatetimeMinuteControl.prototype._formatstrings = {
 };
 
 
+class DatetimeSecondControlType extends DateControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DatetimeSecondControl;
+	}
+};
+
+let datetimesecondcontroltype = new DatetimeSecondControlType("la", "DatetimeSecondControl", "A LivingApps date field (type 'date/datetimesecond')");
+
+
 export class DatetimeSecondControl extends DateControl
 {
-	static classdoc = "A LivingApps date field (type 'date/datetimesecond')";
+	[ul4.symbols.type]()
+	{
+		return datetimesecondcontroltype;
+	}
 
 	get default()
 	{
@@ -2614,8 +3454,24 @@ DatetimeSecondControl.prototype._formatstrings = {
 };
 
 
+class LookupControlType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupControl;
+	}
+};
+
+let lookupcontroltype = new LookupControlType("la", "LookupControl", "A LivingApps date field (type 'lookup')");
+
+
 export class LookupControl extends Control
 {
+	[ul4.symbols.type]()
+	{
+		return lookupcontroltype;
+	}
+
 	get default()
 	{
 		let view_control = this._view_control();
@@ -2671,10 +3527,23 @@ LookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "lookup
 LookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookupdata"]);
 
 
+class LookupSelectControlType extends LookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupSelectControl;
+	}
+};
+
+let lookupselectcontroltype = new LookupSelectControlType("la", "LookupSelectControl", "A LivingApps lookup field (type 'lookup/select')");
+
+
 export class LookupSelectControl extends LookupControl
 {
-	static classdoc = "A LivingApps lookup field (type 'lookup/select')";
-
+	[ul4.symbols.type]()
+	{
+		return lookupselectcontroltype;
+	}
 };
 
 LookupSelectControl.prototype.subtype = "select";
@@ -2682,9 +3551,23 @@ LookupSelectControl.prototype.fieldtype = LookupSelectField;
 LookupSelectControl.prototype._cssclass_control = "select";
 
 
+class LookupRadioControlType extends LookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupRadioControl;
+	}
+};
+
+let lookupradiocontroltype = new LookupRadioControlType("la", "LookupRadioControl", "A LivingApps lookup field (type 'lookup/radio')");
+
+
 export class LookupRadioControl extends LookupControl
 {
-	static classdoc = "A LivingApps lookup field (type 'lookup/radio')";
+	[ul4.symbols.type]()
+	{
+		return lookupradiocontroltype;
+	}
 };
 
 LookupRadioControl.prototype.subtype = "radio";
@@ -2692,18 +3575,47 @@ LookupRadioControl.prototype.fieldtype = LookupRadioField;
 LookupRadioControl.prototype._cssclass_root = "llft-element";
 
 
+class LookupChoiceControlType extends LookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupChoiceControl;
+	}
+};
+
+let lookupchoicecontroltype = new LookupChoiceControlType("la", "LookupChoiceControl", "A LivingApps lookup field (type 'lookup/choice')");
+
+
 export class LookupChoiceControl extends LookupControl
 {
-	static classdoc = "A LivingApps lookup field (type 'lookup/choice')";
-
+	[ul4.symbols.type]()
+	{
+		return lookupchoicecontroltype;
+	}
 };
 
 LookupChoiceControl.prototype.subtype = "choice";
 LookupChoiceControl.prototype.fieldtype = LookupChoiceField;
 
 
+class AppLookupControlType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupControl;
+	}
+};
+
+let applookupcontroltype = new AppLookupControlType("la", "AppLookupControl", "A LivingApps lookup field (type 'applookup')");
+
+
 export class AppLookupControl extends Control
 {
+	[ul4.symbols.type]()
+	{
+		return applookupcontroltype;
+	}
+
 	get nonekey()
 	{
 		let view_control = this._view_control();
@@ -2736,10 +3648,23 @@ AppLookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "loo
 AppLookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
 
 
+class AppLookupSelectControlType extends AppLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupSelectControl;
+	}
+};
+
+let applookupselectcontroltype = new AppLookupSelectControlType("la", "AppLookupSelectControl", "A LivingApps applookup field (type 'applookup/select')");
+
+
 export class AppLookupSelectControl extends AppLookupControl
 {
-	static classdoc = "A LivingApps applookup field (type 'applookup/select')";
-
+	[ul4.symbols.type]()
+	{
+		return applookupselectcontroltype;
+	}
 };
 
 AppLookupSelectControl.prototype.subtype = "select";
@@ -2747,28 +3672,70 @@ AppLookupSelectControl.prototype.fieldtype = AppLookupSelectField;
 AppLookupSelectControl.prototype._cssclass_control = "select";
 
 
+class AppLookupRadioControlType extends AppLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupRadioControl;
+	}
+};
+
+let applookupradiocontroltype = new AppLookupRadioControlType("la", "AppLookupRadioControl", "A LivingApps applookup field (type 'applookup/radio')");
+
+
 export class AppLookupRadioControl extends AppLookupControl
 {
-	static classdoc = "A LivingApps applookup field (type 'applookup/radio')";
-
+	[ul4.symbols.type]()
+	{
+		return applookupradiocontroltype;
+	}
 };
 
 AppLookupRadioControl.prototype.subtype = "radio";
 AppLookupRadioControl.prototype.fieldtype = AppLookupRadioField;
 
 
+class AppLookupChoiceControlType extends AppLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLookupChoiceControl;
+	}
+};
+
+let applookupchoicecontroltype = new AppLookupChoiceControlType("la", "AppLookupChoiceControl", "A LivingApps applookup field (type 'applookup/choice')");
+
+
 export class AppLookupChoiceControl extends AppLookupControl
 {
-	static classdoc = "A LivingApps applookup field (type 'applookup/choice')";
-
+	[ul4.symbols.type]()
+	{
+		return applookupchoicecontroltype;
+	}
 };
 
 AppLookupChoiceControl.prototype.subtype = "choice";
 AppLookupChoiceControl.prototype.fieldtype = AppLookupChoiceField;
 
 
+class MultipleLookupControlType extends LookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupControl;
+	}
+};
+
+let multiplelookupcontroltype = new MultipleLookupControlType("la", "MultipleLookupControl", "A LivingApps multiple applookup field (type 'multipleapplookup')");
+
+
 export class MultipleLookupControl extends LookupControl
 {
+	[ul4.symbols.type]()
+	{
+		return multiplelookupcontroltype;
+	}
+
 	get default()
 	{
 		let view_control = this._view_control();
@@ -2802,9 +3769,23 @@ MultipleLookupControl.prototype.type = "multiplelookup";
 MultipleLookupControl.prototype.fieldtype = MultipleLookupField;
 
 
+class MultipleLookupCheckboxControlType extends MultipleLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupCheckboxControl;
+	}
+};
+
+let multiplelookupcheckboxcontroltype = new MultipleLookupCheckboxControlType("la", "MultipleLookupCheckboxControl", "A LivingApps multiplelookup field (type 'multiplelookup/checkbox')");
+
+
 export class MultipleLookupCheckboxControl extends MultipleLookupControl
 {
-	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/checkbox')";
+	[ul4.symbols.type]()
+	{
+		return multiplelookupcheckboxcontroltype;
+	}
 
 	get _sel_label()
 	{
@@ -2817,10 +3798,23 @@ MultipleLookupCheckboxControl.prototype.fieldtype = MultipleLookupCheckboxField;
 MultipleLookupCheckboxControl.prototype._cssclass_root = "llft-element";
 
 
+class MultipleLookupSelectControlType extends MultipleLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupSelectControl;
+	}
+};
+
+let multiplelookupselectcontroltype = new MultipleLookupSelectControlType("la", "MultipleLookupSelectControl", "A LivingApps multiplelookup field (type 'multiplelookup/select')");
+
+
 export class MultipleLookupSelectControl extends MultipleLookupControl
 {
-	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/select')";
-
+	[ul4.symbols.type]()
+	{
+		return multiplelookupselectcontroltype;
+	}
 };
 
 MultipleLookupSelectControl.prototype.subtype = "select";
@@ -2828,18 +3822,47 @@ MultipleLookupSelectControl.prototype.fieldtype = MultipleLookupSelectField;
 MultipleLookupSelectControl.prototype._cssclass_control = "select";
 
 
+class MultipleLookupChoiceControlType extends MultipleLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleLookupChoiceControl;
+	}
+};
+
+let multiplelookupchoicecontroltype = new MultipleLookupChoiceControlType("la", "MultipleLookupChoiceControl", "A LivingApps multiplelookup field (type 'multiplelookup/choice')");
+
+
 export class MultipleLookupChoiceControl extends MultipleLookupControl
 {
-	static classdoc = "A LivingApps multiplelookup field (type 'multiplelookup/choice')";
-
+	[ul4.symbols.type]()
+	{
+		return multiplelookupchoicecontroltype;
+	}
 };
 
 MultipleLookupChoiceControl.prototype.subtype = "choice";
 MultipleLookupChoiceControl.prototype.fieldtype = MultipleLookupChoiceField;
 
 
+class MultipleAppLookupControlType extends AppLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupControl;
+	}
+};
+
+let multipleapplookupcontroltype = new MultipleAppLookupControlType("la", "MultipleAppLookupControl", "A LivingApps multiple applookup field (type 'multipleapplookup')");
+
+
 export class MultipleAppLookupControl extends AppLookupControl
 {
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupcontroltype;
+	}
+
 	// ``search.value`` must be an object containing the search criteria for the referenced record
 	search(value, search)
 	{
@@ -2866,10 +3889,23 @@ MultipleAppLookupControl.prototype.type = "multipleapplookup";
 MultipleAppLookupControl.prototype.fieldtype = MultipleAppLookupField;
 
 
+class MultipleAppLookupSelectControlType extends MultipleAppLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupSelectControl;
+	}
+};
+
+let multipleapplookupselectcontroltype = new MultipleAppLookupSelectControlType("la", "MultipleAppLookupSelectControl", "A LivingApps multiple applookup field (type 'multipleapplookup/select')");
+
+
 export class MultipleAppLookupSelectControl extends MultipleAppLookupControl
 {
-	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/select')";
-
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupselectcontroltype;
+	}
 };
 
 MultipleAppLookupSelectControl.prototype.subtype = "select";
@@ -2877,28 +3913,69 @@ MultipleAppLookupSelectControl.prototype.fieldtype = MultipleAppLookupSelectFiel
 MultipleAppLookupSelectControl.prototype._cssclass_control = "select";
 
 
+class MultipleAppLookupCheckboxControlType extends MultipleAppLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupCheckboxControl;
+	}
+};
+
+let multipleapplookupcheckboxcontroltype = new MultipleAppLookupCheckboxControlType("la", "MultipleAppLookupCheckboxControl", "A LivingApps multiple applookup field (type 'multipleapplookup/checkbox')");
+
+
 export class MultipleAppLookupCheckboxControl extends MultipleAppLookupControl
 {
-	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/checkbox')";
-
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupcheckboxcontroltype;
+	}
 };
 
 MultipleAppLookupCheckboxControl.prototype.subtype = "checkbox";
 MultipleAppLookupCheckboxControl.prototype.fieldtype = MultipleAppLookupCheckboxField;
 
 
+class MultipleAppLookupChoiceControlType extends MultipleAppLookupControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MultipleAppLookupChoiceControl;
+	}
+};
+
+let multipleapplookupchoicecontroltype = new MultipleAppLookupChoiceControlType("la", "MultipleAppLookupChoiceControl", "A LivingApps multiple applookup field (type 'multipleapplookup/choice')");
+
+
 export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 {
-	static classdoc = "A LivingApps multiple applookup field (type 'multipleapplookup/choice')";
+	[ul4.symbols.type]()
+	{
+		return multipleapplookupchoicecontroltype;
+	}
 };
 
 MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 MultipleAppLookupChoiceControl.prototype.fieldtype = MultipleAppLookupChoiceField;
 
 
+class GeoControlType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof GeoControl;
+	}
+};
+
+let geocontroltype = new GeoControlType("la", "GeoControl", "A LivingApps geo field (type 'geo')");
+
+
 export class GeoControl extends Control
 {
-	static classdoc = "A LivingApps geo field (type 'geo')";
+	[ul4.symbols.type]()
+	{
+		return geocontroltype;
+	}
 };
 
 GeoControl.prototype.type = "geo";
@@ -2906,9 +3983,23 @@ GeoControl.prototype.fieldtype = GeoField;
 GeoControl.prototype._cssclass_root = "llft-element";
 
 
+class FileControlType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof FileControl;
+	}
+};
+
+let filecontroltype = new FileControlType("la", "FileControl", "A LivingApps upload field (type 'file')");
+
+
 export class FileControl extends Control
 {
-	static classdoc = "A LivingApps upload field (type 'file')";
+	[ul4.symbols.type]()
+	{
+		return filecontroltype;
+	}
 };
 
 FileControl.prototype.type = "file";
@@ -2916,25 +4007,68 @@ FileControl.prototype.fieldtype = FileField;
 FileControl.prototype._cssclass_root = "llft-element";
 
 
+class FileSignatureControlType extends FileControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof FileSignatureControl;
+	}
+};
+
+let filesignaturecontroltype = new FileSignatureControlType("la", "FileSignatureControl", "A LivingApps signature image field (type 'file/signature')");
+
+
 export class FileSignatureControl extends FileControl
 {
-	static classdoc = "A LivingApps signature image field (type 'file/signature')";
+	[ul4.symbols.type]()
+	{
+		return filesignaturecontroltype;
+	}
 };
 
 FileSignatureControl.prototype.subtype = "signature";
 FileSignatureControl.prototype.fieldtype = FileSignatureField;
 
 
+class ButtonControlType extends ControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ButtonControl;
+	}
+};
+
+let buttoncontroltype = new ButtonControlType("la", "ButtonControl", "A submit button");
+
+
 export class ButtonControl extends Control
 {
+	[ul4.symbols.type]()
+	{
+		return buttoncontroltype;
+	}
 };
 
 ButtonControl.prototype.type = "button";
 
 
+class LookupItemType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupItem;
+	}
+};
+
+let lookupitemtype = new LookupItemType("la", "LookupItem", "An option in a lookup control/field");
+
+
 export class LookupItem extends Base
 {
-	static classdoc = "An option in a lookup control/field";
+	[ul4.symbols.type]()
+	{
+		return lookupitemtype;
+	}
 
 	get label()
 	{
@@ -2989,9 +4123,23 @@ LookupItem.prototype._ul4onattrs = ["control", "key", "_label"];
 LookupItem.prototype._ul4attrs = new Set(["id", "control", "key", "label"]);
 
 
+class ViewLookupItemType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ViewLookupItem;
+	}
+};
+
+let viewlookupitemtype = new ViewLookupItemType("la", "ViewLookupItem", "View specific information about a lookup item");
+
+
 export class ViewLookupItem extends Base
 {
-	static classdoc = "View specific information about a lookup item";
+	[ul4.symbols.type]()
+	{
+		return viewlookupitemtype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3006,9 +4154,23 @@ ViewLookupItem.prototype._ul4onattrs = ["key", "label", "visible"];
 ViewLookupItem.prototype._ul4attrs = new Set(["key", "label", "visible"]);
 
 
+class LayoutControlType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LayoutControl;
+	}
+};
+
+let layoutcontroltype = new LayoutControlType("la", "LayoutControl", "A decoration in an input form");
+
+
 export class LayoutControl extends Base
 {
-	static classdoc = "A decoration in an input form";
+	[ul4.symbols.type]()
+	{
+		return layoutcontroltype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3020,33 +4182,89 @@ LayoutControl.prototype._ul4onattrs = ["label", "identifier", "view", "top", "le
 LayoutControl.prototype._ul4attrs = new Set(["id", "label", "identifier", "view", "top", "left", "width", "height"]);
 
 
+class HTMLLayoutControlType extends LayoutControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof HTMLLayoutControl;
+	}
+};
+
+let htmllayoutcontroltype = new HTMLLayoutControlType("la", "HTMLLayoutControl", "HTML decoration in an input form");
+
+
 export class HTMLLayoutControl extends LayoutControl
 {
-	static classdoc = "HTML decoration in an input form";
+	[ul4.symbols.type]()
+	{
+		return htmllayoutcontroltype;
+	}
 };
 
 HTMLLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "value"];
 HTMLLayoutControl.prototype._ul4attrs = new Set([LayoutControl.prototype._ul4attrs, "value"]);
 
 
+class ImageLayoutControlType extends LayoutControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ImageLayoutControl;
+	}
+};
+
+let imagelayoutcontroltype = new ImageLayoutControlType("la", "ImageLayoutControl", "An image decoration in an input form");
+
+
 export class ImageLayoutControl extends LayoutControl
 {
-	static classdoc = "An image decoration in an input form";
+	[ul4.symbols.type]()
+	{
+		return imagelayoutcontroltype;
+	}
 };
 
 ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "original", "scaled"];
 ImageLayoutControl.prototype._ul4attrs = new Set([LayoutControl.prototype._ul4attrs, "original", "scaled"]);
 
 
+class ButtonLayoutControlType extends LayoutControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ButtonLayoutControl;
+	}
+};
+
+let buttonlayoutcontroltype = new ButtonLayoutControlType("la", "ButtonLayoutControl", "A submit button in an input form");
+
+
 export class ButtonLayoutControl extends LayoutControl
 {
-	static classdoc = "A submit button in an input form";
+	[ul4.symbols.type]()
+	{
+		return buttonlayoutcontroltype;
+	}
 };
+
+
+class ViewControlType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ViewControl;
+	}
+};
+
+let viewcontroltype = new ViewControlType("la", "ViewControl", "Contains view specific information about a control");
 
 
 export class ViewControl extends Base
 {
-	static classdoc = "Contains view specific information aboutn a control";
+	[ul4.symbols.type]()
+	{
+		return viewcontroltype;
+	}
 
 	get mode()
 	{
@@ -3058,9 +4276,23 @@ ViewControl.prototype._ul4onattrs = ["view", "control", "top", "left", "width", 
 ViewControl.prototype._ul4attrs = new Set(["id", "view", "control", "top", "left", "width", "height", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"]);
 
 
+class UserType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof User;
+	}
+};
+
+let usertype = new UserType("la", "User", "A LivingApps user/account");
+
+
 export class User extends Base
 {
-	static classdoc = "A LivingApps user/account";
+	[ul4.symbols.type]()
+	{
+		return usertype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3072,9 +4304,23 @@ User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", 
 User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
 
 
+class FileType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof File;
+	}
+};
+
+let filetype = new FileType("la", "File", "An uploaded file");
+
+
 export class File extends Base
 {
-	static classdoc = "An uploaded file";
+	[ul4.symbols.type]()
+	{
+		return filetype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3093,16 +4339,30 @@ File.prototype._ul4onattrs = ["url", "filename", "mimetype", "width", "height", 
 File.prototype._ul4attrs = new Set(["id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "archive", "createdat"]);
 
 
+class GeoType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Geo;
+	}
+};
+
+let geotype = new GeoType("la", "Geo", "Geographical coordinates and location information");
+
+
 export class Geo extends Base
 {
-	static classdoc = "Geographical coordinates and location information";
-
 	constructor(lat, long, info)
 	{
 		super(null);
 		this.lat = lat;
 		this.long = long;
 		this.info = info;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return geotype;
 	}
 
 	[ul4.symbols.repr]()
@@ -3115,8 +4375,24 @@ Geo.prototype._ul4onattrs = ["lat", "long", "info"];
 Geo.prototype._ul4attrs = new Set(["lat", "long", "info"]);
 
 
+class AttachmentType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Attachment;
+	}
+};
+
+let attachmenttype = new AttachmentType("la", "Attachment", "An attachment of a record");
+
+
 export class Attachment extends Base
 {
+	[ul4.symbols.type]()
+	{
+		return attachmenttype;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + ">";
@@ -3127,10 +4403,23 @@ Attachment.prototype._ul4onattrs = ["record", "label", "active"];
 Attachment.prototype._ul4attrs = new Set(["id", "record", "label", "active"]);
 
 
+class NoteAttachmentType extends AttachmentType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof NoteAttachment;
+	}
+};
+
+let noteattachmenttype = new NoteAttachmentType("la", "NoteAttachment", "A note attachment of a record");
+
+
 export class NoteAttachment extends Attachment
 {
-	static classdoc = "A note attachment of a record";
-
+	[ul4.symbols.type]()
+	{
+		return noteattachmenttype;
+	}
 };
 
 NoteAttachment.prototype.type = "noteattachment";
@@ -3138,10 +4427,23 @@ NoteAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "va
 NoteAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 
+class URLAttachmentType extends AttachmentType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof URLAttachment;
+	}
+};
+
+let urlattachmenttype = new URLAttachmentType("la", "URLAttachment", "A URL attachment of a record");
+
+
 export class URLAttachment extends Attachment
 {
-	static classdoc = "A URL attachment of a record";
-
+	[ul4.symbols.type]()
+	{
+		return urlattachmenttype;
+	}
 };
 
 URLAttachment.prototype.type = "urlattachment";
@@ -3149,10 +4451,23 @@ URLAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "val
 URLAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 
+class FileAttachmentType extends AttachmentType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof FileAttachment;
+	}
+};
+
+let fileattachmenttype = new FileAttachmentType("la", "FileAttachment", "A file attachment of a record");
+
+
 export class FileAttachment extends Attachment
 {
-	static classdoc = "A file attachment of a record";
-
+	[ul4.symbols.type]()
+	{
+		return fileattachmenttype;
+	}
 };
 
 FileAttachment.prototype.type = "fileattachment";
@@ -3160,10 +4475,23 @@ FileAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "va
 FileAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 
+class ImageAttachmentType extends AttachmentType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ImageAttachment;
+	}
+};
+
+let imageattachmenttype = new ImageAttachmentType("la", "ImageAttachment", "An image attachment of a record");
+
+
 export class ImageAttachment extends Attachment
 {
-	static classdoc = "An image attachment of a record";
-
+	[ul4.symbols.type]()
+	{
+		return imageattachmenttype;
+	}
 };
 
 ImageAttachment.prototype.type = "imageattachment";
@@ -3171,9 +4499,23 @@ ImageAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "o
 ImageAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large"]);
 
 
+class JSONAttachmentType extends AttachmentType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof JSONAttachment;
+	}
+};
+
+let jsonattachmenttype = new JSONAttachmentType("la", "JSONAttachment", "A JSON attachment of a record");
+
+
 export class JSONAttachment extends Attachment
 {
-	static classdoc = "A JSON attachment of a record";
+	[ul4.symbols.type]()
+	{
+		return jsonattachmenttype;
+	}
 
 	_dumpUL4ONAttr(name)
 	{
@@ -3197,9 +4539,23 @@ JSONAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "va
 JSONAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 
+class InstallationType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Installation;
+	}
+};
+
+let installationtype = new InstallationType("la", "Installation", "The installation that created an app");
+
+
 export class Installation extends Base
 {
-	static classdoc = "The installation that created an app";
+	[ul4.symbols.type]()
+	{
+		return installationtype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3211,9 +4567,23 @@ Installation.prototype._ul4onattrs = ["name"];
 Installation.prototype._ul4attrs = new Set(["id", "name"]);
 
 
+class CategoryType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Category;
+	}
+};
+
+let categorytype = new CategoryType("la", "Category", "A navigation category");
+
+
 export class Category extends Base
 {
-	static classdoc = "A navigation category";
+	[ul4.symbols.type]()
+	{
+		return categorytype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3232,9 +4602,23 @@ Category.prototype._ul4onattrs = ["identifier", "name", "order", "parent", "chil
 Category.prototype._ul4attrs = new Set(["id", "identifier", "name", "order", "parent", "children", "apps"]);
 
 
+class KeyViewType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof KeyView;
+	}
+};
+
+let keyviewtype = new KeyViewType("la", "KeyView", "Object granting access to a view template");
+
+
 export class KeyView extends Base
 {
-	static classdoc = "Object granting access to a view template";
+	[ul4.symbols.type]()
+	{
+		return keyviewtype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3246,9 +4630,23 @@ KeyView.prototype._ul4onattrs = ["identifier", "name", "key", "user"];
 KeyView.prototype._ul4attrs = new Set(["id", "identifier", "name", "key", "user"]);
 
 
+class AppParameterType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppParameter;
+	}
+};
+
+let appparametertype = new AppParameterType("la", "AppParameter", "A parameter of a LivingApps application");
+
+
 export class AppParameter extends Base
 {
-	static classdoc = "A parameter of a LivingApps application";
+	[ul4.symbols.type]()
+	{
+		return appparametertype;
+	}
 
 	[ul4.symbols.repr]()
 	{
@@ -3258,6 +4656,48 @@ export class AppParameter extends Base
 
 AppParameter.prototype._ul4onattrs = ["app", "identifier", "description", "value"];
 AppParameter.prototype._ul4attrs = new Set(["id", "app", "identifier", "description", "value"]);
+
+
+class FormType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Form;
+	}
+};
+
+let formtype = new FormType("la", "Form", "The input form.");
+
+export class Form extends ul4.Proto
+{
+	[ul4.symbols.type]()
+	{
+		return formtype;
+	}
+
+	get enabled()
+	{
+		return !document.querySelector(this._sel_form).disabled;
+	}
+
+	set enabled(value)
+	{
+		document.querySelector(this._sel_form).disabled = ul4._not(value);
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<" + this.constructor.name + " enabled=" + ul4._repr(this.enabled) + ">";
+	}
+
+	toString()
+	{
+		return this[ul4.symbols.repr]();
+	}
+};
+
+Form.prototype._ul4attrs = new Set(["enabled"]);
+Form.prototype._sel_form = "#livingapps-form form [type=submit]";
 
 
 let classes = [
