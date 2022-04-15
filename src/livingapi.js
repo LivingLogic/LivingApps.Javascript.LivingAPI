@@ -2882,7 +2882,7 @@ IntControl.prototype.type = "int";
 IntControl.prototype.fieldtype = IntField;
 
 
-class PlaceholderControldType extends ControlType
+class PlaceholderControlType extends ControlType
 {
 	instancecheck(obj)
 	{
@@ -2890,14 +2890,14 @@ class PlaceholderControldType extends ControlType
 	}
 };
 
-let placeholdercontroldtype = new PlaceholderControldType("la", "PlaceholderControld", "A LivingApps field that has a placeholder");
+let placeholdercontroltype = new PlaceholderControlType("la", "PlaceholderControl", "A LivingApps field that has a placeholder");
 
 
 class PlaceholderControl extends Control
 {
 	[ul4.symbols.type]()
 	{
-		return placeholdercontroldtype;
+		return placeholdercontroltype;
 	}
 
 	get placeholder()
