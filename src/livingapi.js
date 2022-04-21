@@ -1043,17 +1043,21 @@ export class Field extends Base
 
 	[ul4.symbols.setattr](name, value)
 	{
-		if (name === "visible")
+		if (name === "value")
+			this.value = value;
+		else if (name === "visible")
 			this.visible = ul4._bool(value);
-		else if (name === "enaabled")
-			this.visible = ul4._bool(value);
+		else if (name === "enabled")
+			this.enabled = ul4._bool(value);
+		else if (name === "writable")
+			this.writable = ul4._bool(value);
 		else
 			return super[ul4.symbols.getattr](name);
 	}
 };
 
-Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "enabled", "writable", "_visible"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "enabled", "writable", "visible"]);
+Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable"];
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable"]);
 
 
 class BoolFieldType extends FieldType
