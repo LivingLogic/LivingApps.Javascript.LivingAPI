@@ -246,7 +246,7 @@ export class Globals extends Base
 
 	[ul4.symbols.repr]()
 	{
-		return "<Globals version=" + ul4._repr(this.version) + ">";
+		return "<Globals version=" + ul4._repr(this.version) + " mode=" + ul4._repr(this.mode) + ">";
 	}
 };
 
