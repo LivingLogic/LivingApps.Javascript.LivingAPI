@@ -404,8 +404,8 @@ export class App extends Base
 
 App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view"];
 App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite", "_active_view"]);
-ul4.expose(App.prototype[ul4.symbols.call], ["**values"], {"needsobject": true});
-ul4.expose(App.prototype.insert, ["**values"], {"needsobject": true});
+ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
+ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 
 
 class ViewType extends ul4.Type
@@ -721,7 +721,7 @@ ul4.expose(Record.prototype.is_dirty, []);
 ul4.expose(Record.prototype.has_errors, []);
 ul4.expose(Record.prototype.delete, []);
 ul4.expose(Record.prototype.save, []);
-ul4.expose(Record.prototype.update, ["**values"], {"needsobject": true});
+ul4.expose(Record.prototype.update, ["values", "**"], {"needsobject": true});
 
 
 class FieldType extends ul4.Type
