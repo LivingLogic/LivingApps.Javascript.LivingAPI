@@ -153,6 +153,7 @@ export class Globals extends Base
 		this.maxtemplateruntime = null;
 		this.flashmessages = null;
 		this.handler = new Handler();
+		this._log_stack = [];
 	}
 
 	[ul4.symbols.type]()
@@ -248,10 +249,95 @@ export class Globals extends Base
 	{
 		return "<Globals version=" + ul4._repr(this.version) + " mode=" + ul4._repr(this.mode) + ">";
 	}
+
+	_make_log_message(messages)
+	{
+		let output = [];
+		for (let message of messages)
+		{
+			if (typeof(message) !== "string")
+				message = ul4._repr(message);
+			output.push(message);
+		}
+		return output.join(" ");
+	}
+
+	begin_logging(header)
+	{
+		this._log_stack.push({header: header, output: false});
+	}
+
+	end_logging()
+	{
+		if (this._log_stack)
+		{
+			if (this._log_stack[this._log_stack.length-1].output && console && console.groupEnd)
+				console.groupEnd();
+			this._log_stack.pop();
+		}
+	}
+
+	group_logging(header, callback)
+	{
+		this.begin_logging(header);
+		try
+		{
+			callback();
+		}
+		finally
+		{
+			this.end_logging();
+		}
+	}
+
+	_start_log_message()
+	{
+		for (let level of this._log_stack)
+		{
+			if (!level.output)
+			{
+				if (console && console.group)
+					console.group(level.header)
+				level.output = true;
+			}
+		}
+	}
+
+	log_debug(message)
+	{
+		this._start_log_message();
+		if (console && console.debug)
+			console.debug(this._make_log_message(message))
+	}
+
+	log_info(message)
+	{
+		this._start_log_message();
+		if (console && console.info)
+			console.info(this._make_log_message(message))
+	}
+
+	log_warning(message)
+	{
+		this._start_log_message();
+		if (console && console.warn)
+			console.warn(this._make_log_message(message))
+	}
+
+	log_error(message)
+	{
+		this._start_log_message();
+		if (console && console.error)
+			console.error(this._make_log_message(message))
+	}
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode"]);
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "log_debug", "log_info", "log_warning", "log_error"]);
+ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
+ul4.expose(Globals.prototype.log_info, ["message", "*"]);
+ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
+ul4.expose(Globals.prototype.log_error, ["message", "*"]);
 
 
 class FlashMessageType extends ul4.Type
