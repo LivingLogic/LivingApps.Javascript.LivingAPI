@@ -4760,19 +4760,51 @@ let formtype = new FormType("la", "Form", "The input form.");
 
 export class Form extends ul4.Proto
 {
+	constructor(globals, template)
+	{
+		super();
+		this.globals = globals;
+		this.template = template;
+
+		for (let field of globals.record.fields.values())
+			this.wire_field(field);
+		this.render_template(null);
+	}
+
 	[ul4.symbols.type]()
 	{
 		return formtype;
 	}
 
+	get _dom_button()
+	{
+		return document.querySelector(this._sel_form + " " + this._sel_button);
+	}
+
 	get enabled()
 	{
-		return !document.querySelector(this._sel_form).disabled;
+		return !this._dom_button.disabled;
 	}
 
 	set enabled(value)
 	{
-		document.querySelector(this._sel_form).disabled = ul4._not(value);
+		this._dom_button.disabled = value;
+	}
+
+	[ul4.symbols.getattr](key)
+	{
+		if (key === "enabled")
+			return this.enabled;
+		else
+			throw new ul4.AttributeError(this, key);
+	}
+
+	[ul4.symbols.setattr](key, value)
+	{
+		if (key === "enabled")
+			this.enabled = ul4._bool(value);
+		else
+			throw "no writable attribute " + key + " found!";
 	}
 
 	[ul4.symbols.repr]()
@@ -4784,10 +4816,65 @@ export class Form extends ul4.Proto
 	{
 		return this[ul4.symbols.repr]();
 	}
+
+	render_template(identifier)
+	{
+		let vars = {
+			"record": this.globals.record,
+			"fields": this.globals.record.fields,
+			"identifier": identifier
+		};
+		let globalVars = {
+			"globals": this.globals,
+			"form": this
+		};
+
+		let msg = "LivingApps update template: ";
+		if (identifier === null)
+			msg += "Initialization";
+		else
+			msg += "Value change in " + ul4._repr(identifier);
+
+		this.globals.group_logging(msg, () => {
+			try
+			{
+				this.template.renders(vars, globalVars);
+			}
+			catch (exc)
+			{
+				if (console && console.error)
+				{
+					this.globals.group_logging("UL4 stacktrace", () => {
+						this.globals._start_log_message();
+						ul4.report_exc(exc);
+					});
+					this.globals.group_logging("Javascript stacktrace", () => {
+						this.globals._start_log_message();
+						console.error(exc);
+					});
+				}
+			}
+		});
+	}
+
+	wire_field(field)
+	{
+		this.globals.log_debug(["Wiring", field.control.identifier]);
+		for (let dom_node of field._dom_controls)
+		{
+			dom_node.addEventListener('click', (event) => {
+				this.render_template(field.control.identifier);
+			});
+			dom_node.addEventListener('keyup', (event) => {
+				this.render_template(field.control.identifier);
+			});
+		}
+	}
 };
 
 Form.prototype._ul4attrs = new Set(["enabled"]);
-Form.prototype._sel_form = "#livingapps-form form [type=submit]";
+Form.prototype._sel_form = "#livingapps-form form";
+Form.prototype._sel_button = "[type=submit]";
 
 
 let classes = [
