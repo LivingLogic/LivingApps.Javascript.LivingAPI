@@ -1369,7 +1369,7 @@ export class NumberField extends Field
 		}
 		else if (typeof(change.value) === "number")
 		{
-			value = this._bound_value(value);
+			let value = this._bound_value(change.value);
 			if (this.control.precision !== null)
 				value = ul4._round(value, this.control.precision);
 			change.value = value;
