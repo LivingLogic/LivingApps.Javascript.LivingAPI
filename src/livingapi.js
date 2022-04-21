@@ -4844,14 +4844,18 @@ export class Form extends ul4.Proto
 			{
 				if (console && console.error)
 				{
-					this.globals.group_logging("UL4 stacktrace", () => {
-						this.globals._start_log_message();
-						ul4.report_exc(exc);
-					});
-					this.globals.group_logging("Javascript stacktrace", () => {
-						this.globals._start_log_message();
-						console.error(exc);
-					});
+					this.globals._start_log_message();
+					if (console.group)
+						console.group("UL4 stacktrace");
+					ul4.report_exc(exc);
+					if (console.groupEnd)
+						console.groupEnd();
+
+					if (console.groupCollapsed)
+						console.groupCollapsed("Javascript stacktrace");
+					console.error(exc);
+					if (console.groupEnd)
+						console.groupEnd();
 				}
 			}
 		});
