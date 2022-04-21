@@ -4862,10 +4862,7 @@ export class Form extends ul4.Proto
 		this.globals.log_debug(["Wiring", field.control.identifier]);
 		for (let dom_node of field._dom_controls)
 		{
-			dom_node.addEventListener('click', (event) => {
-				this.render_template(field.control.identifier);
-			});
-			dom_node.addEventListener('keyup', (event) => {
+			dom_node.addEventListener('input', (event) => {
 				this.render_template(field.control.identifier);
 			});
 		}
