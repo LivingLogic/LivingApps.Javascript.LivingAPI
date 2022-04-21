@@ -1031,7 +1031,7 @@ export class Field extends Base
 
 	[ul4.symbols.repr]()
 	{
-		let s = "<Field identifier=";
+		let s = "<" + this.constructor.name + " identifier=";
 		s += ul4._repr(this.control.identifier)
 		if (this._dirty)
 			s += " is_dirty()=True";
