@@ -99,8 +99,23 @@ export class Base extends ul4.Proto
 			}
 			return value;
 		}
+		else if (name.startsWith("x_"))
+		{
+			return this.hasOwnProperty(name) ? this[name] : null;
+		}
 		throw new ul4.AttributeError(this, name);
 	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (name.startsWith("x_"))
+		{
+			this[name] = value;
+		}
+		else
+			throw new ul4.AttributeError(this, name);
+	}
+
 
 	[ul4.symbols.repr]()
 	{
