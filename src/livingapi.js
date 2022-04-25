@@ -162,11 +162,15 @@ export class Globals extends Base
 		this.platform = null;
 		this.user = null;
 		this.lang = null;
+		this.datasources = null;
 		this.app = null;
 		this.record = null;
+		this.mode = null;
 		this.maxdbactions = null;
 		this.maxtemplateruntime = null;
 		this.flashmessages = null;
+		this.view_template_id = null;
+		this.email_template_id = null;
 		this.handler = new Handler();
 		this._log_stack = [];
 	}
@@ -348,7 +352,7 @@ export class Globals extends Base
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "log_debug", "log_info", "log_warning", "log_error"]);
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "log_debug", "log_info", "log_warning", "log_error"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
