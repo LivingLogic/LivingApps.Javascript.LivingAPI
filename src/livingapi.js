@@ -4800,7 +4800,7 @@ export class Form extends ul4.Proto
 		if (key === "enabled")
 			this.enabled = ul4._bool(value);
 		else
-			throw "no writable attribute " + key + " found!";
+			throw new ul4.AttributeError(this, key);
 	}
 
 	[ul4.symbols.repr]()
