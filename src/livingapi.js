@@ -4859,10 +4859,9 @@ export class Form extends ul4.Proto
 
 	wire_field(field)
 	{
-		this.globals.log_debug(["Wiring", field.control.identifier]);
 		for (let dom_node of field._dom_controls)
 		{
-			dom_node.addEventListener('input', (event) => {
+			dom_node.addEventListener(field.type == 'date' ? 'change' : 'input', (event) => {
 				this.render_template(field.control.identifier);
 			});
 		}
