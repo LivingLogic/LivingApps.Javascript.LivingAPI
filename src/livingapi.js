@@ -1069,22 +1069,6 @@ export class Field extends Base
 		this._dom_control.value = value;
 	}
 
-	_show()
-	{
-		let el = this._dom_root;
-		el.style.transition = "height 0.2s ease";
-		el.style.overflowY = "hidden";
-		el.style.height = el.scrollHeight + "px";
-	}
-
-	_hide()
-	{
-		let el = this._dom_root;
-		el.style.transition = "height 0.2s ease";
-		el.style.overflowY = "hidden";
-		el.style.height = 0 + "px";
-	}
-
 	get visible()
 	{
 		return this._visible;
@@ -1093,12 +1077,7 @@ export class Field extends Base
 	set visible(value)
 	{
 		if (this._in_form())
-		{
-			if (value)
-				this._show();
-			else
-				this._hide();
-		}
+			this._dom_root.hidden = !value;
 		this._visible = value;
 	}
 
