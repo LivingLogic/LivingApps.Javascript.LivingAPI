@@ -1091,14 +1091,12 @@ export class Field extends Base
 
 	set enabled(value)
 	{
-		console.log(this._in_form(), this._dom_root, this._dom_root.classList);
 		if (this._in_form())
 		{
 			let disabled = !value;
 			for (let node of this._dom_controls)
 				node.disabled = disabled;
 			this._dom_root.classList.toggle("llft-control-readonly", disabled);
-			console.log(this._in_form(), this._dom_root, this._dom_root.classList);
 		}
 		this._enabled = value;
 	}
