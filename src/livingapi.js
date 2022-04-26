@@ -806,7 +806,7 @@ export class Record extends Base
 		else if (name.startsWith("v_"))
 			return this.values.get(name.substr(2))
 		else
-			return this[name];
+			return super[ul4.symbols.getattr](name);
 	}
 
 	[ul4.symbols.setattr](name, value)
@@ -816,7 +816,7 @@ export class Record extends Base
 		else if (name.startsWith("v_"))
 			this.fields.get(name.substr(2)).value = value;
 		else
-			throw new ul4.AttributeError(this, name);
+			return super[ul4.symbols.setattr](name, value);
 	}
 };
 
