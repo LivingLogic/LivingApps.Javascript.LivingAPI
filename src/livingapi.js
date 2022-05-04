@@ -207,7 +207,7 @@ export class Globals extends Base
 		return s;
 	}
 
-	scaledURL(url, width, height, type="fill", enlarge=true, gravity="sm", quality=null, rotate=null, blur=null, sharpen=null, format=null, cache=true)
+	scaled_url(image, width, height, type="fill", enlarge=true, gravity="sm", quality=null, rotate=null, blur=null, sharpen=null, format=null, cache=true)
 	{
 		let filename = null;
 
@@ -352,11 +352,25 @@ export class Globals extends Base
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "log_debug", "log_info", "log_warning", "log_error"]);
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "log_debug", "log_info", "log_warning", "log_error"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
 ul4.expose(Globals.prototype.log_error, ["message", "*"]);
+ul4.expose(Globals.prototype.scaled_url, [
+	"image", "p",
+	"width", "p",
+	"height", "p",
+	"type", "k=", "fill",
+	"enlarge", "k=", true,
+	"gravity", "k=", "sm",
+	"quality", "k=", null,
+	"rotate", "k=", null,
+	"blur", "k=", null,
+	"sharpen", "k=", null,
+	"format", "k=", null,
+	"cache", "k==", true
+]);
 
 
 class FlashMessageType extends ul4.Type
