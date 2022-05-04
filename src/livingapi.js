@@ -269,6 +269,63 @@ export class Globals extends Base
 		return "<Globals version=" + ul4._repr(this.version) + " mode=" + ul4._repr(this.mode) + ">";
 	}
 
+
+	msg_bool(value)
+	{
+		switch (value)
+		{
+			case true:
+				return this.msg_bool_true();
+			case false:
+				return this.msg_bool_false();
+			default:
+				return null;
+		}
+	}
+
+	msg_bool_true(value)
+	{
+		switch (this.lang)
+		{
+			case "de":
+				return "Ja";
+			default:
+				return "Yes";
+		}
+	}
+
+	msg_bool_false(value)
+	{
+		switch (this.lang)
+		{
+			case "de":
+				return "Nein";
+			default:
+				return "No";
+		}
+	}
+
+	msg_no_fields()
+	{
+		switch (this.lang)
+		{
+			case "de":
+				return "(Keine Felder gefunden)";
+			default:
+				return "(No fields found)";
+		}
+	}
+
+	msg_nothing_selected()
+	{
+		switch (this.lang)
+		{
+			case "de":
+				return "(Nichts ausgewählt)";
+			default:
+				return "(Nothing selected)";
+		}
+	}
 	_make_log_message(messages)
 	{
 		let output = [];
@@ -628,6 +685,30 @@ export class Record extends Base
 		return recordtype;
 	}
 
+	as_text(maxlevel=3, controls=null)
+	{
+		if (maxlevel == 0)
+			return "...";
+		let fields = [];
+		for (let [identifier, control] of (controls || this.app.controls))
+		{
+			if (controls !== null || control.priority)
+			{
+				let fieldvalue = this.fields.get(identifier).value_as_text(maxlevel-1);
+				if (fieldvalue !== null)
+					fields.push([control.label, fieldvalue]);
+			}
+		}
+		if (fields.length === 0)
+			return this.globals.msg_no_fields();
+		else if (fields.length === 1)
+			return fields[0][1];
+		let result = [];
+		for (let [label, fieldvalue] of fields)
+			result.push(label + ": " + fieldvalue);
+		return result.join(", ");
+	}
+
 	_make_fields(defaults, values, errors, lookupdata)
 	{
 		let fields = new Map();
@@ -907,6 +988,11 @@ export class Field extends Base
 		this.errors = change.errors;
 		if (this._in_form())
 			this._set_dom_value(this._value);
+	}
+
+	value_as_text(maxlevel=3)
+	{
+		return null;
 	}
 
 	_validate(change)
@@ -1208,6 +1294,11 @@ export class BoolField extends Field
 	{
 		this._dom_control.checked = value;
 	}
+
+	value_as_text(maxlevel=3)
+	{
+		return this.globals.msg_bool(this.value);
+	}
 };
 
 
@@ -1281,6 +1372,12 @@ export class IntField extends Field
 	_set_dom_value(value)
 	{
 		super._set_dom_value(value + "");
+	}
+
+	value_as_text(maxlevel=3)
+	{
+		let value = this.value;
+		return value != null ? value + "" : null;
 	}
 };
 
@@ -1448,6 +1545,16 @@ export class NumberField extends Field
 			value = value.replace(".", ",");
 		super._set_dom_value(value);
 	}
+
+	value_as_text(maxlevel=3)
+	{
+		let value = this.value;
+		if (value === null)
+			return null;
+		if (this.control.precision !== null)
+			return value.toFixed(this.control.precision);
+		return value.toString();
+	}
 };
 
 
@@ -1507,6 +1614,11 @@ export class StringField extends Field
 				node.readOnly = readonly;
 		}
 		super.writable = value;
+	}
+
+	value_as_text(maxlevel=3)
+	{
+		return this.value;
 	}
 };
 
@@ -1672,6 +1784,18 @@ export class GeoField extends Field
 		return geofieldtype;
 	}
 
+
+	value_as_text(maxlevel=3)
+	{
+		let value = this.value;
+		if (this.value === null)
+			return null;
+		// FIXME: Show N/S and W/E? Show arc minutes/seconds?
+		let result = value.lat.toFixed(5) + ", " + value.long.toFixed(5);
+		if (value.info !== null)
+			result += " (" + value.info + ")";
+		return result;
+	}
 	_validate(change)
 	{
 		if (change.value === null || change.value === "")
@@ -1777,6 +1901,16 @@ export class DateFieldBase extends Field
 	[ul4.symbols.type]()
 	{
 		return datefieldbasetype;
+	}
+
+	value_as_text(maxlevel=3)
+	{
+		let value = this.value;
+		if (value === null)
+			return null;
+		if (typeof(value) === "string")
+			return value;
+		return ul4._format(value, this.control.formatstring())
 	}
 
 	_parse(value, format)
@@ -2172,6 +2306,14 @@ export class LookupField extends LookupFieldBase
 		return lookupfieldtype;
 	}
 
+	value_as_text(maxlevel=3)
+	{
+		let value = this.value;
+		if (value === null)
+			return null;
+		return value.label;
+	}
+
 	_validate(change)
 	{
 		let v = change.value;
@@ -2315,6 +2457,17 @@ export class MultipleLookupField extends LookupFieldBase
 	[ul4.symbols.type]()
 	{
 		return multiplelookupfieldtype;
+	}
+
+	value_as_text(maxlevel=3)
+	{
+		let value = this.value;
+		if (value === null || value.length === 0)
+			return null;
+		let result = [];
+		for (let item of value)
+			result.push(item.label);
+		return result.join(", ");
 	}
 
 	_validate(change)
@@ -2555,6 +2708,14 @@ export class AppLookupField extends AppLookupFieldBase
 	[ul4.symbols.type]()
 	{
 		return applookupfieldtype;
+	}
+
+	value_as_text(maxlevel=3)
+	{
+		let value = this.value;
+		if (value === null)
+			return null;
+		return "(" + this.value.as_text(maxlevel) + ")";
 	}
 
 	_validate(change)
