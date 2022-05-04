@@ -1008,9 +1008,7 @@ export class Field extends Base
 
 	get label()
 	{
-		if (this._label !== null)
-			return this._label;
-		return this.control.label;
+		return this._label ?? this.control.label;
 	}
 
 	set label(value)
