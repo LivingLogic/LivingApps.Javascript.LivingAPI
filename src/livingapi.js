@@ -34,7 +34,7 @@ export { version };
 import * as ul4 from '@livinglogic/ul4';
 
 
-function el(name, ...args)
+export function element(name, ...args)
 {
 	let dom_node = document.createElement(name);
 	for (let arg of args)
@@ -1152,7 +1152,7 @@ export class Field extends Base
 	The following methods are used in the input form.
 
 	I.e. they are expected to be executed inside a browser.
-	**/
+	*/
 	_in_form()
 	{
 		return this.record._in_form();
@@ -2300,7 +2300,7 @@ export class ChoiceFieldBase extends Field
 {
 	_make_option(selected, value, label)
 	{
-		let option = el(
+		let option = element(
 			"option",
 			label,
 			{
