@@ -4599,7 +4599,7 @@ export class File extends Base
 
 	get archive_url()
 	{
-		if (this.archive ==- null)
+		if (this.archive === null)
 			return this.url;
 		return this.archive.url + "/" + this.filename;
 	}
