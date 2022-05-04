@@ -4490,7 +4490,7 @@ export class ImageLayoutControl extends LayoutControl
 };
 
 ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "original", "scaled"];
-ImageLayoutControl.prototype._ul4attrs = new Set([LayoutControl.prototype._ul4attrs, "original", "scaled"]);
+ImageLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "original", "scaled"]);
 
 
 class ButtonLayoutControlType extends LayoutControlType
