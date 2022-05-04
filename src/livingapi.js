@@ -34,6 +34,30 @@ export { version };
 import * as ul4 from '@livinglogic/ul4';
 
 
+function el(name, ...args)
+{
+	let dom_node = document.createElement(name);
+	for (let arg of args)
+	{
+		if (typeof(arg) === "string")
+			dom_node.appendChild(document.createTextNode(arg));
+		let ismap = arg instanceof Map;
+		let isobject = ul4._isobject(arg);
+		if (ismap || isobject)
+		{
+			if (isobject)
+				arg = Object.entries(arg);
+			for (let [name, value] of arg)
+			{
+				if (value !== null)
+					dom_node.setAttribute(name, value);
+			}
+		}
+	}
+	return dom_node;
+}
+
+
 export class Base extends ul4.Proto
 {
 	constructor(id)
@@ -270,6 +294,11 @@ export class Globals extends Base
 	}
 
 
+	_in_form()
+	{
+		return this.mode !== null && this.mode.startsWith("form/");
+	}
+
 	msg_bool(value)
 	{
 		switch (value)
@@ -326,6 +355,7 @@ export class Globals extends Base
 				return "(Nothing selected)";
 		}
 	}
+
 	_make_log_message(messages)
 	{
 		let output = [];
@@ -742,7 +772,7 @@ export class Record extends Base
 	{
 		let globals = this.app.globals;
 
-		return globals.mode !== null && globals.mode.startsWith("form/") && this === globals.record;
+		return globals._in_form() && this === globals.record;
 	}
 
 	[ul4.symbols.repr]()
@@ -905,7 +935,7 @@ export class Record extends Base
 		else if (name.startsWith("f_"))
 			return this.fields.get(name.substr(2))
 		else if (name.startsWith("v_"))
-			return this.values.get(name.substr(2))
+			return this.fields.get(name.substr(2)).value
 		else
 			return super[ul4.symbols.getattr](name);
 	}
@@ -949,7 +979,7 @@ export class Field extends Base
 		this.control = control;
 		this.record = record;
 		this._label = null;
-		this._lookupdate = null;
+		this._lookupdata = null;
 		this.errors = [];
 		this._value = null;
 		if (!this._in_form())
@@ -1024,7 +1054,7 @@ export class Field extends Base
 
 	is_empty()
 	{
-		return this._value === null || (ul4._islist(this._value) && this._value.length === 0);
+		return this._value === null;
 	}
 
 	is_dirty()
@@ -1782,6 +1812,61 @@ export class GeoField extends Field
 		return geofieldtype;
 	}
 
+	_get_dom_value()
+	{
+		for (let dom_node of this._dom_controls)
+		{
+			if (dom_node.id.endsWith("_geoinfo"))
+			{
+				let value = dom_node.value;
+				if (value)
+				{
+					value = JSON.parse(value);
+					return new Geo(
+						value.geometry.coordinates[0],
+						value.geometry.coordinates[1],
+						value.properties.formatted_address
+					);
+				}
+			}
+		}
+		return null;
+	}
+
+	_set_dom_value(value)
+	{
+		if (value === null)
+		{
+			for (let dom_node of this._dom_controls)
+			{
+				dom_node.value = null;
+			}
+		}
+		else
+		{
+			for (let dom_node of this._dom_controls)
+			{
+				if (dom_node.id.endsWith("_geoinfo"))
+				{
+					let dom_value = {
+						"type": "Feature",
+						"geometry": {
+							"coordinates": [
+								value.lat,
+								value.long
+							]
+						},
+						"properties": {
+							"formatted_address": value.info
+						}
+					};
+					dom_node.value = ul4._asjson(dom_value);
+				}
+				else
+					dom_node.value = value.info;
+			}
+		}
+	}
 
 	value_as_text(maxlevel=3)
 	{
@@ -1794,6 +1879,7 @@ export class GeoField extends Field
 			result += " (" + value.info + ")";
 		return result;
 	}
+
 	_validate(change)
 	{
 		if (change.value === null || change.value === "")
@@ -2191,9 +2277,128 @@ export class DatetimeSecondField extends DateFieldBase
 
 	_convert(date)
 	{
-		// Get rid of milliseconds
+		// Get rid of milliseconds, this modifies the object passed in.
 		date.setMilliseconds(0);
 		return date;
+	}
+};
+
+/*
+`ChoiceFieldBase` is used as the base class for all `lookup`, `multiplelookup`,
+`applookup` and `multipleapplookup` fields.
+
+Since the inheritance hierarchy follows the data model *not* which HTML element
+is used for editing, we would have to implement the same DOM interaction logic
+in multiple classes (i.e. we would have to handle a HTML `select` element in
+`LookupSelectField`, `MultipleLookupSelectField`, `AppLookupSelectField`
+and `MultipleAppLookupSelectField`).
+
+To solve this problem, all methods that handle HTML elements are implemented in
+this class. Subclasses then simply call the appropriate method.
+*/
+export class ChoiceFieldBase extends Field
+{
+	_make_option(selected, value, label)
+	{
+		let option = el(
+			"option",
+			label,
+			{
+				"value": value,
+				"class": value === this.control.nonekey ? "la-none-option" : null,
+				"selected": selected ? "selected" : null,
+			}
+		);
+		return option;
+	}
+
+	_set_dom_lookupdata_select(lookupdata)
+	{
+		if (lookupdata === null)
+			lookupdata = this.control.lookup_data;
+		if (ul4._isobject(lookupdata))
+			lookupdata = new Map(Object.entries(lookupdata));
+
+		let none_selected = false;
+		let selected = new Set();
+		for (let dom_option of this._dom_control.querySelectorAll("option:checked"))
+		{
+			let value = dom_option.getAttribute("value");
+			if (lookupdata.has(value))
+				selected.add(value);
+			else if (value === this.control.nonekey)
+				none_selected = true;
+		}
+
+		let new_children = [];
+		if (this.control.nonekey !== null)
+		{
+			new_children.push(
+				this._make_option(
+					none_selected,
+					this.control.nonekey,
+					this.control.nonelabel !== null ? this.control.nonelabel : this.globals.msg_nothing_selected()
+				)
+			);
+		}
+
+		for (let [key, value] of lookupdata)
+		{
+			new_children.push(
+				this._make_option(
+					selected.has(key),
+					key,
+					this._make_label(value)
+				)
+			);
+		}
+		this._dom_control.replaceChildren(...new_children);
+	}
+
+	_set_dom_lookupdata_input(lookupdata)
+	{
+		if (lookupdata === null)
+			lookupdata = this.control.lookup_data;
+		else if (ul4._isobject(lookupdata))
+			lookupdata = new Map(Object.entries(lookupdata));
+
+		let none_selected = false;
+		let selected = new Set();
+		for (let dom_input of this._dom_controls)
+		{
+			let value = dom_input.getAttribute("value");
+			if (dom_input.checked)
+			{
+				if (lookupdata.has(value))
+					selected.add(value);
+				else if (value === this.control.nonekey)
+					none_selected = true;
+
+			}
+		}
+
+		let dom_none_input = this._dom_root.querySelector("input[value=" + this.control.nonekey + "]");
+		if (dom_none_input !== null)
+			dom_none_input.checked = none_selected;
+
+		for (let [key, item] of this.control.lookupdata)
+		{
+			let dom_input = this._dom_root.querySelector("input[value=" + key + "]");
+			let dom_label = this._dom_root.querySelector("label[for=" + dom_input.id + "]")
+
+			if (lookupdata.has(key))
+			{
+				dom_input.style.display = "inline";
+				dom_label.style.display = "inline";
+				dom_label.innerText = this._make_label(lookupdata.get(key));
+			}
+			else
+			{
+				dom_input.style.display = "none";
+				dom_label.style.display = "none";
+				dom_label.checked = false;
+			}
+		}
 	}
 };
 
@@ -2209,7 +2414,7 @@ class LookupFieldBaseType extends FieldType
 let lookupfieldbasetype = new LookupFieldBaseType("la", "LookupFieldBase", "Base type of LookupField and MultipleLookupField");
 
 
-export class LookupFieldBase extends Field
+export class LookupFieldBase extends ChoiceFieldBase
 {
 	[ul4.symbols.type]()
 	{
@@ -2218,15 +2423,31 @@ export class LookupFieldBase extends Field
 
 	get lookupdata()
 	{
-		if (this._lookupdate !== null)
-			return this._lookupdate;
+		if (this._lookupdata !== null)
+			return this._lookupdata;
 		else
 			return this.control.lookupdata;
 	}
 
 	set lookupdata(value)
 	{
-		this._lookupdate = value;
+		if (this._in_form())
+			this._set_dom_lookupdata(value);
+		this._lookupdata = value;
+	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+	}
+
+	_make_label(value)
+	{
+		if (typeof(value) === "string")
+			return value;
+		else if (value instanceof LookupItem)
+			return value.label;
+		else
+			return ul4._str(value);
 	}
 
 	_find_lookupitem(change)
@@ -2376,6 +2597,11 @@ export class LookupRadioField extends LookupField
 		for (let node of this._dom_controls)
 			node.checked = node.getAttribute("value") === value;
 	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+		this._set_dom_lookupdata_input(lookupdata);
+	}
 };
 
 
@@ -2416,6 +2642,11 @@ export class LookupSelectField extends LookupField
 		this._validate(change);
 		super._set_dom_value(change.value != null ? change.value.key : this.control.nonekey);
 	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+		this._set_dom_lookupdata_select(lookupdata);
+	}
 };
 
 
@@ -2455,6 +2686,11 @@ export class MultipleLookupField extends LookupFieldBase
 	[ul4.symbols.type]()
 	{
 		return multiplelookupfieldtype;
+	}
+
+	is_empty()
+	{
+		return this._value.length === 0;
 	}
 
 	value_as_text(maxlevel=3)
@@ -2554,6 +2790,11 @@ export class MultipleLookupCheckboxField extends MultipleLookupField
 		for (let node of this._dom_controls)
 			node.checked = values.has(node.getAttribute("value"));
 	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+		this._set_dom_lookupdata_input(lookupdata);
+	}
 };
 
 
@@ -2595,6 +2836,11 @@ export class MultipleLookupSelectField extends MultipleLookupField
 		for (let option of this._dom_control.querySelectorAll("option"))
 			option.selected = values.has(option.getAttribute("value"));
 	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+		this._set_dom_lookupdata_select(lookupdata);
+	}
 };
 
 
@@ -2629,7 +2875,7 @@ class AppLookupFieldBaseType extends FieldType
 let applookupfieldbasetype = new AppLookupFieldBaseType("la", "AppLookupFieldBase", "Base type of AppLookupField and MultipleAppLookupField");
 
 
-export class AppLookupFieldBase extends Field
+export class AppLookupFieldBase extends ChoiceFieldBase
 {
 	[ul4.symbols.type]()
 	{
@@ -2650,7 +2896,23 @@ export class AppLookupFieldBase extends Field
 
 	set lookupdata(value)
 	{
+		if (this._in_form())
+			this._set_dom_lookupdata(value);
 		this._lookupdata = value;
+	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+	}
+
+	_make_label(value)
+	{
+		if (typeof(value) === "string")
+			return value;
+		else if (value instanceof Record)
+			return value.as_text(this.control.lookup_controls);
+		else
+			return ul4._str(value);
 	}
 
 	_find_record(change)
@@ -2687,7 +2949,17 @@ export class AppLookupFieldBase extends Field
 			change.value = null;
 		}
 	}
+
+	[ul4.symbols.setattr](key, value)
+	{
+		if (key === "lookupdata")
+			this.lookupdata = value;
+		else
+			super[ul4.symbols.setattr](key, value);
+	}
 };
+AppLookupFieldBase.prototype._ul4attrs = new Set([...Field.prototype._ul4attrs, "lookupdata"]);
+
 
 
 class AppLookupFieldType extends AppLookupFieldBaseType
@@ -2762,6 +3034,11 @@ export class AppLookupSelectField extends AppLookupField
 		this._validate(change);
 		super._set_dom_value(change.value != null ? change.value.id : this.control.nonekey);
 	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+		this._set_dom_lookupdata_select(lookupdata);
+	}
 };
 
 
@@ -2821,6 +3098,11 @@ export class MultipleAppLookupField extends AppLookupFieldBase
 	[ul4.symbols.type]()
 	{
 		return multipleapplookupfieldtype;
+	}
+
+	is_empty()
+	{
+		return this._value.length === 0;
 	}
 
 	_validate(change)
@@ -2896,6 +3178,11 @@ export class MultipleAppLookupSelectField extends MultipleAppLookupField
 	[ul4.symbols.type]()
 	{
 		return multipleapplookupselectfieldtype;
+	}
+
+	_set_dom_lookupdata(lookupdata)
+	{
+		this._set_dom_lookupdata_select(lookupdata);
 	}
 };
 
@@ -3881,6 +4168,14 @@ export class AppLookupControl extends Control
 		return applookupcontroltype;
 	}
 
+	get lookupdata()
+	{
+		if (this.lookup_app !== null && this.lookup_app.records !== null)
+			return this.lookup_app.records;
+		else
+			return new Map();
+	}
+
 	get nonekey()
 	{
 		let view_control = this._view_control();
@@ -4441,6 +4736,21 @@ export class LayoutControl extends Base
 	{
 		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
+
+	get globals()
+	{
+		return this.view.app.globals;
+	}
+
+	get _sel_root()
+	{
+		return "#livingapps-form .llft-element.llft-id-" + this.identifier;
+	}
+
+	get _dom_root()
+	{
+		return document.querySelector(this._sel_root);
+	}
 };
 
 LayoutControl.prototype._ul4onattrs = ["label", "identifier", "view", "top", "left", "width", "height"];
@@ -4464,10 +4774,35 @@ export class HTMLLayoutControl extends LayoutControl
 	{
 		return htmllayoutcontroltype;
 	}
+
+	get value()
+	{
+		return this._value;
+	}
+
+	set value(value)
+	{
+		this._value = value;
+		if (this.globals._in_form())
+			this._set_dom_value(this._value);
+	}
+
+	_set_dom_value(value)
+	{
+		this._dom_root.innerHTML = value;
+	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (name === "value")
+			this.value = value;
+		else
+			return super[ul4.symbols.getattr](name);
+	}
 };
 
-HTMLLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "value"];
-HTMLLayoutControl.prototype._ul4attrs = new Set([LayoutControl.prototype._ul4attrs, "value"]);
+HTMLLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_value"];
+HTMLLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "value"]);
 
 
 class ImageLayoutControlType extends LayoutControlType
