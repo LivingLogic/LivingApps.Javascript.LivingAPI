@@ -211,11 +211,11 @@ export class Globals extends Base
 	{
 		let filename = null;
 
-		if (url instanceof File)
+		if (image instanceof File)
 		{
-			url = "https://" + this.hostname + url.url;
-			filename = encodeURIComponent(url.filename);
-			if (filename != url.filename)
+			image = "https://" + this.hostname + image.archive_url;
+			filename = encodeURIComponent(image.filename);
+			if (filename != image.filename)
 				filename = null;
 		}
 
@@ -259,7 +259,7 @@ export class Globals extends Base
 		if (filename !== null && filename !== undefined)
 			result += "/fn:" + filename;
 
-		result += "/plain/" + encodeURIComponent(url);
+		result += "/plain/" + encodeURIComponent(image);
 
 		return result;
 	}
