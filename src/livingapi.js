@@ -1123,7 +1123,7 @@ export class Field extends Base
 	/*
 	The following methods are used in the input form.
 
-	I.e. the are expected to be executed inside a browser.
+	I.e. they are expected to be executed inside a browser.
 	**/
 	_in_form()
 	{
