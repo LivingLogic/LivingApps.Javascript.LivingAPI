@@ -197,6 +197,7 @@ export class Globals extends Base
 		this.email_template_id = null;
 		this.handler = new Handler();
 		this._log_stack = [];
+		this._current_geo = null;
 	}
 
 	[ul4.symbols.type]()
@@ -205,7 +206,7 @@ export class Globals extends Base
 	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
-	static geodist(geo1, geo2)
+	geo_dist(geo1, geo2)
 	{
 		let sqsin = function sqsin(x) {x = Math.sin(x); return x*x};
 		let sqcos = function sqsos(x) {x = Math.cos(x); return x*x};
@@ -293,6 +294,15 @@ export class Globals extends Base
 		return "<Globals version=" + ul4._repr(this.version) + " mode=" + ul4._repr(this.mode) + ">";
 	}
 
+	current_geo()
+	{
+		return this._current_geo;
+	}
+
+	set_current_geo(position)
+	{
+		this._current_geo = new Geo(position.coords.latitude, position.coords.longitude);
+	}
 
 	_in_form()
 	{
@@ -438,12 +448,14 @@ export class Globals extends Base
 	}
 };
 
-Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "flashmessages", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "log_debug", "log_info", "log_warning", "log_error"]);
+Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "geo_dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
 ul4.expose(Globals.prototype.log_error, ["message", "*"]);
+ul4.expose(Globals.prototype.geo_dist, ["geo1", "pk", "geo2", "pk"]);
+ul4.expose(Globals.prototype.current_geo, []);
 ul4.expose(Globals.prototype.scaled_url, [
 	"image", "p",
 	"width", "p",
@@ -456,7 +468,7 @@ ul4.expose(Globals.prototype.scaled_url, [
 	"blur", "k=", null,
 	"sharpen", "k=", null,
 	"format", "k=", null,
-	"cache", "k==", true
+	"cache", "k=", true
 ]);
 
 
@@ -644,8 +656,8 @@ export class View extends Base
 	}
 };
 
-View.prototype._ul4onattrs = ["name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"];
-View.prototype._ul4attrs = new Set(["id", "name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang"]);
+View.prototype._ul4onattrs = ["name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang", "login_required", "result_page", "use_geo"];
+View.prototype._ul4attrs = new Set(["id", "name", "combined_type", "app", "order", "width", "height", "start", "end", "controls", "layout_controls", "lang", "login_required", "result_page", "use_geo"]);
 
 
 class DataSourceType extends ul4.Type
@@ -4957,7 +4969,7 @@ let geotype = new GeoType("la", "Geo", "Geographical coordinates and location in
 
 export class Geo extends Base
 {
-	constructor(lat, long, info)
+	constructor(lat, long, info=null)
 	{
 		super(null);
 		this.lat = lat;
@@ -5280,6 +5292,7 @@ export class Form extends ul4.Proto
 		super();
 		this.globals = globals;
 		this.template = template;
+		this._geo_wired = false;
 
 		for (let field of globals.record.fields.values())
 			this.wire_field(field);
@@ -5376,11 +5389,44 @@ export class Form extends ul4.Proto
 		});
 	}
 
+	wire_geo()
+	{
+		if (this._geo_wired)
+			return;
+
+		if (this.globals.app.active_view !== null && navigator.geolocation)
+		{
+			let use_geo = this.globals.app.active_view.use_geo;
+			if (use_geo === "once" || use_geo === "watch")
+			{
+				navigator.geolocation.getCurrentPosition((position) => {
+					this.globals.mode = this.globals.mode.substring(0, this.globals.mode.lastIndexOf("/") + 1) + "geo";
+					console.log(position.coords);
+					this.globals.set_current_geo(position);
+					this.render_template(null);
+				});
+			}
+
+			if (use_geo === "watch")
+			{
+				navigator.geolocation.watchPosition((position) => {
+					this.globals.mode = this.globals.mode.substring(0, this.globals.mode.lastIndexOf("/") + 1) + "geo";
+					console.log(position.coords);
+					this.globals.set_current_geo(position);
+					this.render_template(null);
+				});
+			}
+		}
+		this._geo_wired = true;
+	}
+
 	wire_field(field)
 	{
 		for (let dom_node of field._dom_controls)
 		{
-			dom_node.addEventListener(field.type == 'date' ? 'change' : 'input', (event) => {
+			dom_node.addEventListener('input', (event) => {
+				this.wire_geo();
+				this.globals.mode = this.globals.mode.substring(0, this.globals.mode.lastIndexOf("/") + 1) + "input";
 				this.render_template(field.control.identifier);
 			});
 		}
