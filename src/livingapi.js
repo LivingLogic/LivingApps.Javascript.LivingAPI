@@ -2370,7 +2370,7 @@ export class ChoiceFieldBase extends Field
 	_set_dom_lookupdata_input(lookupdata)
 	{
 		if (lookupdata === null)
-			lookupdata = this.control.lookup_data;
+			lookupdata = this.control.lookupdata;
 		else if (ul4._isobject(lookupdata))
 			lookupdata = new Map(Object.entries(lookupdata));
 
