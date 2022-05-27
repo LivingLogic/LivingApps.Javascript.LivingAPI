@@ -5401,7 +5401,6 @@ export class Form extends ul4.Proto
 			{
 				navigator.geolocation.getCurrentPosition((position) => {
 					this.globals.mode = this.globals.mode.substring(0, this.globals.mode.lastIndexOf("/") + 1) + "geo";
-					console.log(position.coords);
 					this.globals.set_current_geo(position);
 					this.render_template(null);
 				});
@@ -5411,7 +5410,6 @@ export class Form extends ul4.Proto
 			{
 				navigator.geolocation.watchPosition((position) => {
 					this.globals.mode = this.globals.mode.substring(0, this.globals.mode.lastIndexOf("/") + 1) + "geo";
-					console.log(position.coords);
 					this.globals.set_current_geo(position);
 					this.render_template(null);
 				});
