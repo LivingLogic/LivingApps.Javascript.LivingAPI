@@ -2112,6 +2112,24 @@ export class DateFieldBase extends Field
 				value = value.substring(1);
 				format = format.substring(2);
 			}
+			else if (format.startsWith("%z"))
+			{
+				if (!value.startsWith("-") && !value.startsWith("+"))
+					return null;
+				value = value.substring(1);
+				let _tzhour = _int(value, 2);
+				if (_tzhour === null)
+					return null;
+				value = value.substring(2);
+				if (!value.startsWith(":"))
+					return null;
+				value = value.substring(1);
+				let _tzminute = _int(value, 2);
+				if (_tzminute === null)
+					return null;
+				value = value.substring(2);
+				format = format.substring(2);
+			}
 			else
 			{
 				if (!value.startsWith(format.substring(0, 1)))
@@ -5316,7 +5334,7 @@ export class Form extends ul4.Proto
 
 	set enabled(value)
 	{
-		this._dom_button.disabled = value;
+		this._dom_button.disabled = !value;
 	}
 
 	[ul4.symbols.getattr](key)
