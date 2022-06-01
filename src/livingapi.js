@@ -368,14 +368,10 @@ export class Globals extends Base
 
 	_make_log_message(messages)
 	{
-		let output = [];
-		for (let message of messages)
-		{
-			if (typeof(message) !== "string")
-				message = ul4._repr(message);
-			output.push(message);
-		}
-		return output.join(" ");
+		return messages
+			.map(m => typeof(m) !== "string" ? ul4._repr(m) : m)
+			.join(" ")
+		;
 	}
 
 	begin_logging(header)
@@ -2279,7 +2275,7 @@ export class DatetimeMinuteField extends DateFieldBase
 
 	_convert(date)
 	{
-		// Get rid of seconds and milliseconds
+		// Get rid of seconds and milliseconds, this modifies the object passed in.
 		date.setSeconds(0);
 		date.setMilliseconds(0);
 		return date;
@@ -2728,10 +2724,7 @@ export class MultipleLookupField extends LookupFieldBase
 		let value = this.value;
 		if (value === null || value.length === 0)
 			return null;
-		let result = [];
-		for (let item of value)
-			result.push(item.label);
-		return result.join(", ");
+		return value.map(item => item.label).join(", ");
 	}
 
 	_validate(change)
@@ -3863,12 +3856,8 @@ export class DateControl extends PlaceholderControl
 			lang = "en";
 
 		return [
-			this._formatstrings[lang],
-			...this._formatstrings["intl"],
-			DatetimeMinuteControl.prototype._formatstrings[lang],
-			...DatetimeMinuteControl.prototype._formatstrings["intl"],
-			DatetimeSecondControl.prototype._formatstrings[lang],
-			...DatetimeSecondControl.prototype._formatstrings["intl"]
+			...this._formatstrings_parse[lang],
+			...this._formatstrings_parse["intl"]
 		];
 	}
 
@@ -3905,7 +3894,37 @@ DateControl.prototype._formatstrings = {
 	"fr": "%d.%m.%Y",
 	"it": "%d.%m.%Y",
 	"en": "%m/%d/%Y",
-	"intl": ["%Y-%m-%d"]
+	"intl": "%Y-%m-%d"
+};
+
+let _suffixes = [
+	"",
+	" %H:%M",
+	"T%H:%M",
+	" %H:%M:%S",
+	"T%H:%M:%S",
+	" %H:%M:%S.%f",
+	"T%H:%M:%S.%f",
+	" %H:%M%z",
+	"T%H:%M%z",
+	" %H:%M:%S%z",
+	"T%H:%M:%S%z",
+	" %H:%M:%S.%f%z",
+	"T%H:%M:%S.%f%z",
+	" %H:%M %z",
+	"T%H:%M %z",
+	" %H:%M:%S %z",
+	"T%H:%M:%S %z",
+	" %H:%M:%S.%f %z",
+	"T%H:%M:%S.%f %z"
+]
+
+DateControl.prototype._formatstrings_parse = {
+	"en": _suffixes.map(s => "%m/%d/%Y" + s),
+	"de": _suffixes.map(s => "%d.%m.%Y" + s),
+	"fr": _suffixes.map(s => "%d.%m.%Y" + s),
+	"it": _suffixes.map(s => "%d.%m.%Y" + s),
+	"intl": _suffixes.map(s => "%Y-%m-%d" + s)
 };
 
 
@@ -3944,22 +3963,6 @@ export class DatetimeMinuteControl extends DateControl
 		else
 			return null;
 	}
-
-	formatstrings_parse(lang)
-	{
-		lang = lang || this.globals.lang;
-		if (lang !== "de" && lang !== "fr" && lang !== "it")
-			lang = "en";
-
-		return [
-			this._formatstrings[lang],
-			...this._formatstrings["intl"],
-			DatetimeSecondControl.prototype._formatstrings[lang],
-			...DatetimeSecondControl.prototype._formatstrings["intl"],
-			DateControl.prototype._formatstrings[lang],
-			...DateControl.prototype._formatstrings["intl"]
-		];
-	}
 };
 
 DatetimeMinuteControl.prototype.subtype = "datetimeminute";
@@ -3969,7 +3972,7 @@ DatetimeMinuteControl.prototype._formatstrings = {
 	"fr": "%d.%m.%Y %H:%M",
 	"it": "%d.%m.%Y %H:%M",
 	"en": "%m/%d/%Y %H:%M",
-	"intl": ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+	"intl": "%Y-%m-%d %H:%M"
 };
 
 
@@ -4007,22 +4010,6 @@ export class DatetimeSecondControl extends DateControl
 		else
 			return null;
 	}
-
-	formatstrings_parse(lang)
-	{
-		lang = lang || this.globals.lang;
-		if (lang !== "de" && lang !== "fr" && lang !== "it")
-			lang = "en";
-
-		return [
-			this._formatstrings[lang],
-			...this._formatstrings["intl"],
-			DatetimeMinuteControl.prototype._formatstrings[lang],
-			...DatetimeMinuteControl.prototype._formatstrings["intl"],
-			DateControl.prototype._formatstrings[lang],
-			...DateControl.prototype._formatstrings["intl"]
-		];
-	}
 };
 
 DatetimeSecondControl.prototype.subtype = "datetimesecond";
@@ -4032,7 +4019,7 @@ DatetimeSecondControl.prototype._formatstrings = {
 	"fr": "%d.%m.%Y %H:%M:%S",
 	"it": "%d.%m.%Y %H:%M:%S",
 	"en": "%m/%d/%Y %H:%M:%S",
-	"intl": ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S"]
+	"intl": "%Y-%m-%d %H:%M:%S"
 };
 
 
