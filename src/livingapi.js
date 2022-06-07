@@ -1415,6 +1415,22 @@ export class IntField extends Field
 		let value = this.value;
 		return value != null ? value + "" : null;
 	}
+
+	get writable()
+	{
+		return this._writable;
+	}
+
+	set writable(value)
+	{
+		if (this._in_form())
+		{
+			let readonly = !value;
+			for (let node of this._dom_controls)
+				node.readOnly = readonly;
+		}
+		super.writable = value;
+	}
 };
 
 
@@ -1590,6 +1606,22 @@ export class NumberField extends Field
 		if (this.control.precision !== null)
 			return value.toFixed(this.control.precision);
 		return value.toString();
+	}
+
+	get writable()
+	{
+		return this._writable;
+	}
+
+	set writable(value)
+	{
+		if (this._in_form())
+		{
+			let readonly = !value;
+			for (let node of this._dom_controls)
+				node.readOnly = readonly;
+		}
+		super.writable = value;
 	}
 };
 
