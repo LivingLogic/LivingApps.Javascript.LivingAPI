@@ -1282,6 +1282,7 @@ export class Field extends Base
 
 Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable"];
 Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable"]);
+Field.prototype._inputevent = "input";
 
 
 class BoolFieldType extends FieldType
@@ -1935,6 +1936,7 @@ export class GeoField extends Field
 		}
 	}
 };
+GeoField.prototype._inputevent = "llgeo";
 
 
 class FileFieldType extends FieldType
@@ -5459,7 +5461,7 @@ export class Form extends ul4.Proto
 	{
 		for (let dom_node of field._dom_controls)
 		{
-			dom_node.addEventListener('input', (event) => {
+			dom_node.addEventListener(field._inputevent, (event) => {
 				this.wire_geo();
 				this.globals.mode = this.globals.mode.substring(0, this.globals.mode.lastIndexOf("/") + 1) + "input";
 				this.render_template(field.control.identifier);
