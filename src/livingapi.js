@@ -1699,6 +1699,26 @@ export class StringField extends Field
 };
 
 
+class PasswordFieldType extends StringFieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof PasswordField;
+	}
+};
+
+let passwordfieldtype = new PasswordFieldType("la", "PasswordField", "Holds the value of a string/password field of a record (and related information)");
+
+
+export class PasswordField extends StringField
+{
+	[ul4.symbols.type]()
+	{
+		return passwordfieldtype;
+	}
+};
+
+
 class EmailFieldType extends StringFieldType
 {
 	instancecheck(obj)
@@ -3720,6 +3740,29 @@ TextControl.prototype.subtype = "text";
 TextControl.prototype.fieldtype = StringField;
 
 
+class PasswordControlType extends StringControlType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof PasswordControl;
+	}
+};
+
+let passwordcontroltype = new PasswordControlType("la", "PasswordControl", "A LivingApps password field (type 'string/password')");
+
+
+export class PasswordControl extends StringControl
+{
+	[ul4.symbols.type]()
+	{
+		return passwordcontroltype;
+	}
+};
+
+PasswordControl.prototype.subtype = "password";
+PasswordControl.prototype.fieldtype = PasswordField;
+
+
 class EmailControlType extends StringControlType
 {
 	instancecheck(obj)
@@ -5398,9 +5441,11 @@ export class Form extends ul4.Proto
 			"fields": this.globals.record.fields,
 			"identifier": identifier
 		};
+
 		let globalVars = {
 			"globals": this.globals,
-			"form": this
+			"form": this,
+			"la": module
 		};
 
 		let msg = "LivingApps update template: ";
@@ -5568,3 +5613,62 @@ for (let constructor of classes)
 {
 	ul4.register("de.livinglogic.livingapi." + constructor.name.toLowerCase(), constructor);
 }
+
+export const module = new ul4.Module(
+	"la",
+	"LivingAPI types",
+	{
+		FlashMessage: FlashMessage,
+		File: File,
+		Geo: Geo,
+		User: User,
+		KeyView: KeyView,
+		Globals: Globals,
+		App: App,
+		TextControl: TextControl,
+		URLControl: URLControl,
+		EmailControl: EmailControl,
+		PasswordControl: PasswordControl,
+		TelControl: TelControl,
+		TextAreaControl: TextAreaControl,
+		HTMLControl: HTMLControl,
+		IntControl: IntControl,
+		NumberControl: NumberControl,
+		DateControl: DateControl,
+		DatetimeMinuteControl: DatetimeMinuteControl,
+		DatetimeSecondControl: DatetimeSecondControl,
+		BoolControl: BoolControl,
+		LookupSelectControl: LookupSelectControl,
+		LookupRadioControl: LookupRadioControl,
+		LookupChoiceControl: LookupChoiceControl,
+		AppLookupSelectControl: AppLookupSelectControl,
+		AppLookupRadioControl: AppLookupRadioControl,
+		AppLookupChoiceControl: AppLookupChoiceControl,
+		MultipleLookupSelectControl: MultipleLookupSelectControl,
+		MultipleLookupCheckboxControl: MultipleLookupCheckboxControl,
+		MultipleLookupChoiceControl: MultipleLookupChoiceControl,
+		MultipleAppLookupSelectControl: MultipleAppLookupSelectControl,
+		MultipleAppLookupCheckboxControl: MultipleAppLookupCheckboxControl,
+		MultipleAppLookupChoiceControl: MultipleAppLookupChoiceControl,
+		FileControl: FileControl,
+		FileSignatureControl: FileSignatureControl,
+		GeoControl: GeoControl,
+		ViewControl: ViewControl,
+		Record: Record,
+		ImageAttachment: ImageAttachment,
+		FileAttachment: FileAttachment,
+		URLAttachment: URLAttachment,
+		NoteAttachment: NoteAttachment,
+		JSONAttachment: JSONAttachment,
+		Installation: Installation,
+		HTMLLayoutControl: HTMLLayoutControl,
+		ImageLayoutControl: ImageLayoutControl,
+		ButtonLayoutControl: ButtonLayoutControl,
+		View: View,
+		DataSource: DataSource,
+		LookupItem: LookupItem,
+		ViewLookupItem: ViewLookupItem,
+		Category: Category,
+		AppParameter: AppParameter,
+	}
+);
