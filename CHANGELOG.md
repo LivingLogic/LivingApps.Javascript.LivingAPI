@@ -1,5 +1,30 @@
 # Changes
 
+## 0.14.0 (2002-06-??)
+
+Merged form functionality into the LivingAPI, i.e. in mode `form/*/*` when
+getting or setting field attributes of fields of the global `record` variable,
+values are fetched from/set on the DOM.
+
+Added support for UL4 type objects for all LivingAPI classes.
+
+Added support for custom attributes (whose name starts with `x_`) to most
+LivingAPI classes.
+
+Added several shortcut attributes for layout controls and parameters.
+
+`Globals` now supports the standard LivingAPI logging functions
+(`Globals.log_debug()` etc.) They log to the Javascript console.
+
+Added `ButtonLayoutControl`.
+
+Added `Globals.current_geo()` which returns the current geographical location
+(which must be set beforehand via `Globals.set_current_geo()`).
+
+Added attributes to `NumberControl`: `precision`, `minimum` and `maximum`.
+
+Updated `File` attributes: Added `url`, `archived_url`, `archive` and `geo`.
+
 
 ## 0.13.2 (2022-02-22)
 
