@@ -1,6 +1,6 @@
 # Changes
 
-## 0.14.0 (2002-06-??)
+## 0.14.0 (2002-06-14)
 
 Merged form functionality into the LivingAPI, i.e. in mode `form/*/*` when
 getting or setting field attributes of fields of the global `record` variable,
