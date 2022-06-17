@@ -1,5 +1,14 @@
 # Changes
 
+## 0.14.1 (2002-06-17)
+
+When setting a field to a value in the form, avoid creating `Record.values`
+when we don't have to.
+
+Treat `null` as an empty value for string field, instead of generating the
+string `"null"`.
+
+
 ## 0.14.0 (2002-06-14)
 
 Merged form functionality into the LivingAPI, i.e. in mode `form/*/*` when
