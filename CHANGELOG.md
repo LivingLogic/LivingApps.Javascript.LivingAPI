@@ -1,5 +1,10 @@
 # Changes
 
+## 0.14.2 (2002-06-17)
+
+Fixed a typo in the setter for `Field.value`.
+
+
 ## 0.14.1 (2002-06-17)
 
 When setting a field to a value in the form, avoid creating `Record.values`

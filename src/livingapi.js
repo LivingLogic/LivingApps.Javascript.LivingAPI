@@ -1026,7 +1026,7 @@ export class Field extends Base
 
 		if (ul4._ne(oldvalue, change.value))
 		{
-			if (this.record_values !== null)
+			if (this.record._values !== null)
 				this.record._values.set(this.control.identifier, change.value);
 			this._value = change.value;
 			this._dirty = true;
