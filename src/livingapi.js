@@ -1026,7 +1026,8 @@ export class Field extends Base
 
 		if (ul4._ne(oldvalue, change.value))
 		{
-			this.record.values.set(this.control.identifier, change.value);
+			if (this.record_values !== null)
+				this.record._values.set(this.control.identifier, change.value);
 			this._value = change.value;
 			this._dirty = true;
 		}
@@ -1215,7 +1216,7 @@ export class Field extends Base
 
 	_set_dom_value(value)
 	{
-		this._dom_control.value = value;
+		this._dom_control.value = value !== null ? value : "";
 	}
 
 	get visible()
@@ -1415,7 +1416,7 @@ export class IntField extends Field
 
 	_set_dom_value(value)
 	{
-		super._set_dom_value(value + "");
+		super._set_dom_value(value !== null ? value + "" : "");
 	}
 
 	value_as_text(maxlevel=3)
@@ -1600,6 +1601,8 @@ export class NumberField extends Field
 			if (this.control.precision !== null)
 				value = value.toFixed(this.control.precision);
 		}
+		else if (value === null)
+			value = "";
 		value += "";
 		if (this.globals.lang == "de" && this.control.precision === null)
 			value = value.replace(".", ",");
@@ -2286,6 +2289,8 @@ export class DateFieldBase extends Field
 	{
 		if (value !== null)
 			value = ul4._format(value, this.control.formatstring(), this.globals.lang);
+		else
+			value = "";
 		super._set_dom_value(value);
 	}
 };
