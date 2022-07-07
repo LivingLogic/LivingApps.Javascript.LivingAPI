@@ -5443,6 +5443,7 @@ export class Form extends ul4.Proto
 	{
 		let vars = {
 			"record": this.globals.record,
+			"app": this.globals.app,
 			"fields": this.globals.record.fields,
 			"identifier": identifier
 		};
