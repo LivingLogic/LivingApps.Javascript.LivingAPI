@@ -1,8 +1,10 @@
 # Changes
 
-## 0.14.3 (2002-07-07)
+## 0.14.3 (2002-07-11)
 
 Pass `app` when rendering the update templates.
+
+Updated dependencies.
 
 
 ## 0.14.2 (2022-06-17)
