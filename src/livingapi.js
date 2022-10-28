@@ -5458,10 +5458,17 @@ export class AppParameter extends Base
 	{
 		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
+
+	get app()
+	{
+		if (this.owner instanceof App)
+			return this.owner;
+		return null;
+	}
 };
 
-AppParameter.prototype._ul4onattrs = ["app", "identifier", "description", "value"];
-AppParameter.prototype._ul4attrs = new Set(["id", "app", "identifier", "description", "value"]);
+AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"];
+AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class FormType extends ul4.Type

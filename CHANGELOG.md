@@ -8,6 +8,8 @@ Added the following methods to `App`: `template_url`, `new_embedded_url` and
 Added the following methods to `Record`: `template_url`, `edit_embedded_url` and
 `edit_standalone_url`.
 
+Update attributes of `AppParameter`.
+
 
 ## 0.14.3 (2022-07-11)
 
