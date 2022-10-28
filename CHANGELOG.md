@@ -1,5 +1,14 @@
 # Changes
 
+## HEAD (2022-10-??)
+
+Added the following methods to `App`: `template_url`, `new_embedded_url` and
+`new_standalone_url`.
+
+Added the following methods to `Record`: `template_url`, `edit_embedded_url` and
+`edit_standalone_url`.
+
+
 ## 0.14.3 (2022-07-11)
 
 Pass `app` when rendering the update templates.
