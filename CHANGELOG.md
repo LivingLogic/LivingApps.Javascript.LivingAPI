@@ -17,7 +17,7 @@ Fixed a typo in the setter for `Field.value`.
 When setting a field to a value in the form, avoid creating `Record.values`
 when we don't have to.
 
-Treat `null` as an empty value for string field, instead of generating the
+Treat `null` as an empty value for string fields, instead of generating the
 string `"null"`.
 
 
