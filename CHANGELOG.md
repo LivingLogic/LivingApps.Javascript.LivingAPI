@@ -1,6 +1,17 @@
 # Changes
 
-## 0.14.3 (2002-07-11)
+## 0.15.0 (2022-11-02)
+
+Added the following methods to `App`: `template_url`, `new_embedded_url` and
+`new_standalone_url`.
+
+Added the following methods to `Record`: `template_url`, `edit_embedded_url` and
+`edit_standalone_url`.
+
+Update attributes of `AppParameter`.
+
+
+## 0.14.3 (2022-07-11)
 
 Pass `app` when rendering the update templates.
 
@@ -17,7 +28,7 @@ Fixed a typo in the setter for `Field.value`.
 When setting a field to a value in the form, avoid creating `Record.values`
 when we don't have to.
 
-Treat `null` as an empty value for string field, instead of generating the
+Treat `null` as an empty value for string fields, instead of generating the
 string `"null"`.
 
 

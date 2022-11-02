@@ -58,6 +58,57 @@ export function element(name, ...args)
 }
 
 
+function _append_param_to_url(urlparams, name, value)
+{
+	if (ul4._islist(value))
+	{
+		for (let v of value)
+			_append_param_to_url(urlparams, name, v);
+	}
+	else if (typeof(value) === "string")
+		urlparams.append(name, value);
+	else if (value !== null)
+		urlparams.append(name, ul4._str(value));
+}
+
+export function url_with_params(url, ...params)
+{
+	let urlparams = new URLSearchParams();
+
+	for (let param of params)
+	{
+		if (ul4._islist(param) && param.length == 2)
+		{
+			_append_param_to_url(urlparams, ...param);
+		}
+		else if (Object.prototype.toString.call(param) === "[object Object]" && !(param instanceof ul4.Proto))
+		{
+			for (let name in param)
+				_append_param_to_url(urlparams, name, param[name]);
+		}
+		else if (param !== null && typeof(param) === "object" && typeof(param.__proto__) === "object" && param.__proto__ === Map.prototype)
+		{
+			for (let [name, value] of param)
+				_append_param_to_url(urlparams, name, value);
+		}
+	}
+	urlparams = urlparams.toString().replace("+", "%20");
+	if (urlparams.length > 0)
+		url += "?" + urlparams;
+	return url;
+}
+
+/*
+		let urlparams = new URLSearchParams({"template": identifier});
+		for (let [name, value] of params)
+		{
+			if (Object.prototype.toString.call(v) === "[object Array]")
+			{
+				for (let [n, v])
+			}
+			urlparams.append()
+*/
+
 export class Base extends ul4.Proto
 {
 	constructor(id)
@@ -526,6 +577,26 @@ export class App extends Base
 		return record;
 	}
 
+	template_url(identifier, record=null, params)
+	{
+		let url = "/gateway/apps/" + this.id;
+		if (record !== null)
+			url += "/" + record.id;
+		return url_with_params(url, ['template', identifier], params);
+	}
+
+	new_embedded_url(params)
+	{
+		let url = "/dateneingabe/" + this.id + "/new";
+		return url_with_params(url, params);
+	}
+
+	new_standalone_url(params)
+	{
+		let url = "/gateway/apps/" + this.id + "/new";
+		return url_with_params(url, params);
+	}
+
 	get layout_controls()
 	{
 		if (this.active_view === null)
@@ -630,9 +701,12 @@ export class App extends Base
 
 
 App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite", "_active_view"]);
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
+ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
+ul4.expose(App.prototype.new_embedded_url, ["params", "**"]);
+ul4.expose(App.prototype.new_standalone_url, ["params", "**"]);
 
 
 class ViewType extends ul4.Type
@@ -903,6 +977,24 @@ export class Record extends Base
 		this.app.globals.handler.save(this);
 	}
 
+	template_url(identifier, params)
+	{
+		let url = "/gateway/apps/" + this.app.id + "/" + this.id;
+		return url_with_params(url, ['template', identifier], params);
+	}
+
+	edit_embedded_url(params)
+	{
+		let url = "/dateneingabe/" + this.app.id + "/" + this.id + "/edit";
+		return url_with_params(url, params);
+	}
+
+	edit_standalone_url(params)
+	{
+		let url = "/gateway/apps/" + this.app.id + "/" + this.id + "/edit";
+		return url_with_params(url, params);
+	}
+
 	search(search)
 	{
 		for (let identifier in search)
@@ -967,12 +1059,15 @@ export class Record extends Base
 };
 
 Record.prototype._ul4onattrs = ["app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "_sparsevalues", "attachments", "children", "errors", "_sparsefielderrors", "_sparsefieldlookupdata"];
-Record.prototype._ul4attrs = new Set(["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "fields", "attachments", "children", "errors"]);
+Record.prototype._ul4attrs = new Set(["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "fields", "attachments", "children", "errors", "template_url", "edit_embedded_url", "edit_standalone_url"]);
 ul4.expose(Record.prototype.is_dirty, []);
 ul4.expose(Record.prototype.has_errors, []);
 ul4.expose(Record.prototype.delete, []);
 ul4.expose(Record.prototype.save, []);
 ul4.expose(Record.prototype.update, ["values", "**"], {"needsobject": true});
+ul4.expose(Record.prototype.template_url, ["identifier", "p", "params", "**"]);
+ul4.expose(Record.prototype.edit_embedded_url, ["params", "**"]);
+ul4.expose(Record.prototype.edit_standalone_url, ["params", "**"]);
 
 
 class FieldType extends ul4.Type
@@ -5363,10 +5458,17 @@ export class AppParameter extends Base
 	{
 		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
+
+	get app()
+	{
+		if (this.owner instanceof App)
+			return this.owner;
+		return null;
+	}
 };
 
-AppParameter.prototype._ul4onattrs = ["app", "identifier", "description", "value"];
-AppParameter.prototype._ul4attrs = new Set(["id", "app", "identifier", "description", "value"]);
+AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"];
+AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class FormType extends ul4.Type
