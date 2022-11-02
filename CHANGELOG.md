@@ -1,6 +1,6 @@
 # Changes
 
-## HEAD (2022-10-??)
+## 0.15.0 (2022-11-02)
 
 Added the following methods to `App`: `template_url`, `new_embedded_url` and
 `new_standalone_url`.
