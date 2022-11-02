@@ -1065,9 +1065,9 @@ ul4.expose(Record.prototype.has_errors, []);
 ul4.expose(Record.prototype.delete, []);
 ul4.expose(Record.prototype.save, []);
 ul4.expose(Record.prototype.update, ["values", "**"], {"needsobject": true});
-ul4.expose(App.prototype.template_url, ["identifier", "p", "params", "**"]);
-ul4.expose(App.prototype.edit_embedded_url, ["params", "**"]);
-ul4.expose(App.prototype.edit_standalone_url, ["params", "**"]);
+ul4.expose(Record.prototype.template_url, ["identifier", "p", "params", "**"]);
+ul4.expose(Record.prototype.edit_embedded_url, ["params", "**"]);
+ul4.expose(Record.prototype.edit_standalone_url, ["params", "**"]);
 
 
 class FieldType extends ul4.Type
