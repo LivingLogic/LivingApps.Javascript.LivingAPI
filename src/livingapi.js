@@ -722,6 +722,11 @@ let viewtype = new ViewType("la", "View", "An input form for a LivingViews appli
 
 export class View extends Base
 {
+	get globals()
+	{
+		return this.app.globals;
+	}
+
 	[ul4.symbols.type]()
 	{
 		return viewtype;
@@ -1054,7 +1059,7 @@ export class Record extends Base
 		else if (name.startsWith("v_"))
 			this.fields.get(name.substr(2)).value = value;
 		else
-			return super[ul4.symbols.setattr](name, value);
+			super[ul4.symbols.setattr](name, value);
 	}
 };
 
@@ -1176,6 +1181,19 @@ export class Field extends Base
 	has_errors()
 	{
 		return this.errors.length !== 0;
+	}
+
+	add_error(error)
+	{
+		this.errors.push(error);
+	}
+
+	set_error(error)
+	{
+		if (error !== null)
+			this.errors = [error];
+		else
+			this.errors = [];
 	}
 
 	search(searchvalue)
@@ -1379,7 +1397,7 @@ export class Field extends Base
 		else if (name === "writable")
 			this.writable = ul4._bool(value);
 		else
-			return super[ul4.symbols.getattr](name);
+			super[ul4.symbols.setattr](name, value);
 	}
 };
 
@@ -3134,12 +3152,12 @@ export class AppLookupFieldBase extends ChoiceFieldBase
 		}
 	}
 
-	[ul4.symbols.setattr](key, value)
+	[ul4.symbols.setattr](name, value)
 	{
-		if (key === "lookupdata")
+		if (name === "lookupdata")
 			this.lookupdata = value;
 		else
-			super[ul4.symbols.setattr](key, value);
+			super[ul4.symbols.setattr](name, value);
 	}
 };
 AppLookupFieldBase.prototype._ul4attrs = new Set([...Field.prototype._ul4attrs, "lookupdata"]);
@@ -4928,6 +4946,18 @@ let layoutcontroltype = new LayoutControlType("la", "LayoutControl", "A decorati
 
 export class LayoutControl extends Base
 {
+	LayoutControl()
+	{
+		this.label = null;
+		this.identifier = null;
+		this.view = null;
+		this.top = null;
+		this.left = null;
+		this.width = null;
+		this.height = null;
+		this._visible = true;
+	}
+
 	[ul4.symbols.type]()
 	{
 		return layoutcontroltype;
@@ -4940,7 +4970,7 @@ export class LayoutControl extends Base
 
 	get globals()
 	{
-		return this.view.app.globals;
+		return this.view.globals;
 	}
 
 	get _sel_root()
@@ -4952,10 +4982,30 @@ export class LayoutControl extends Base
 	{
 		return document.querySelector(this._sel_root);
 	}
+
+	get visible()
+	{
+		return this._visible ?? true;
+	}
+
+	set visible(value)
+	{
+		if (this.globals._in_form())
+			this._dom_root.hidden = !value;
+		this._visible = value;
+	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (name === "visible")
+			this.visible = ul4._bool(value);
+		else
+			super[ul4.symbols.setattr](name, value);
+	}
 };
 
 LayoutControl.prototype._ul4onattrs = ["label", "identifier", "view", "top", "left", "width", "height"];
-LayoutControl.prototype._ul4attrs = new Set(["id", "label", "identifier", "view", "top", "left", "width", "height"]);
+LayoutControl.prototype._ul4attrs = new Set(["id", "label", "identifier", "view", "top", "left", "width", "height", "visible"]);
 
 
 class HTMLLayoutControlType extends LayoutControlType
@@ -4998,11 +5048,11 @@ export class HTMLLayoutControl extends LayoutControl
 		if (name === "value")
 			this.value = value;
 		else
-			return super[ul4.symbols.getattr](name);
+			super[ul4.symbols.setattr](name, value);
 	}
 };
 
-HTMLLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_value"];
+HTMLLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_value", "_visible"];
 HTMLLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "value"]);
 
 
@@ -5025,7 +5075,7 @@ export class ImageLayoutControl extends LayoutControl
 	}
 };
 
-ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "original", "scaled"];
+ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "original", "scaled", "_visible"];
 ImageLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "original", "scaled"]);
 
 
@@ -5047,6 +5097,8 @@ export class ButtonLayoutControl extends LayoutControl
 		return buttonlayoutcontroltype;
 	}
 };
+
+ButtonLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "original", "scaled", "_visible"];
 
 
 class ViewControlType extends ul4.Type
