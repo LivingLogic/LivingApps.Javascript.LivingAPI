@@ -1,5 +1,16 @@
 # Changes
 
+## 0.16.0 (2022-11-29)
+
+Added property `View.globals`.
+
+Added methods `Field.add_error(error)` and `Field.set_error(error)`.
+
+Fixed various implementations of the `[ul4.symbols.setattr]` method.
+
+Added `LayoutControl.visible` as a property and a UL4 attribute.
+
+
 ## 0.15.0 (2022-11-02)
 
 Added the following methods to `App`: `template_url`, `new_embedded_url` and
