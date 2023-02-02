@@ -4,6 +4,8 @@
 
 The image of a `ImageLayoutControl` can now be changed (via Javascript and UL4).
 
+Change format of tag to use `1.0.0` instead of `rel-1-0-0`.
+
 
 ## 0.16.0 (2022-11-29)
 
