@@ -1,5 +1,10 @@
 # Changes
 
+## 1.0.0 (2023-02-02)
+
+The image of a `ImageLayoutControl` can now be changed (via Javascript and UL4).
+
+
 ## 0.16.0 (2022-11-29)
 
 Added property `View.globals`.

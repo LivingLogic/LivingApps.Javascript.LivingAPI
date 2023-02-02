@@ -5073,9 +5073,41 @@ export class ImageLayoutControl extends LayoutControl
 	{
 		return imagelayoutcontroltype;
 	}
+
+	get original()
+	{
+		return this._original;
+	}
+
+	set original(original)
+	{
+		this._original = original;
+		if (this.globals._in_form())
+			this._set_dom_value(this._original);
+	}
+
+	_set_dom_value(value)
+	{
+		let img = this._dom_root.querySelector("img");
+		if (img !== null)
+		{
+			let url = (value === null) ?
+				"data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" :
+				this.globals.scaled_url(value, this.width, this.height);
+			img.setAttribute("src", url);
+		}
+	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (name === "original")
+			this.original = value;
+		else
+			super[ul4.symbols.setattr](name, value);
+	}
 };
 
-ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "original", "scaled", "_visible"];
+ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_original", "scaled", "_visible"];
 ImageLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "original", "scaled"]);
 
 
