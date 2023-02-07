@@ -56,8 +56,6 @@ or (if you need both UL4 and LivingAPI):
 </script>
 ```
 
-
-
 # Authors
 
 - Walter Dörwald: `ul4.js` and `livingapi.js`
