@@ -2510,7 +2510,7 @@ export class ChoiceFieldBase extends Field
 			label,
 			{
 				"value": value,
-				"class": value === this.control.nonekey ? "la-none-option" : null,
+				"class": value === this.control.none_key ? "la-none-option" : null,
 				"selected": selected ? "selected" : null,
 			}
 		);
@@ -2531,18 +2531,18 @@ export class ChoiceFieldBase extends Field
 			let value = dom_option.getAttribute("value");
 			if (lookupdata.has(value))
 				selected.add(value);
-			else if (value === this.control.nonekey)
+			else if (value === this.control.none_key)
 				none_selected = true;
 		}
 
 		let new_children = [];
-		if (this.control.nonekey !== null)
+		if (this.control.none_key !== null)
 		{
 			new_children.push(
 				this._make_option(
 					none_selected,
-					this.control.nonekey,
-					this.control.nonelabel !== null ? this.control.nonelabel : this.globals.msg_nothing_selected()
+					this.control.none_key,
+					this.control.none_label !== null ? this.control.none_label : this.globals.msg_nothing_selected()
 				)
 			);
 		}
@@ -2576,13 +2576,13 @@ export class ChoiceFieldBase extends Field
 			{
 				if (lookupdata.has(value))
 					selected.add(value);
-				else if (value === this.control.nonekey)
+				else if (value === this.control.none_key)
 					none_selected = true;
 
 			}
 		}
 
-		let dom_none_input = this._dom_root.querySelector("input[value=" + this.control.nonekey + "]");
+		let dom_none_input = this._dom_root.querySelector("input[value=" + this.control.none_key + "]");
 		if (dom_none_input !== null)
 			dom_none_input.checked = none_selected;
 
@@ -2741,7 +2741,7 @@ export class LookupField extends LookupFieldBase
 	_validate(change)
 	{
 		let v = change.value;
-		if (v === null || v === "" || this.control.nonekey === v)
+		if (v === null || v === "" || this.control.none_key === v)
 		{
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(v));
@@ -2797,7 +2797,7 @@ export class LookupRadioField extends LookupField
 		if (value instanceof LookupItem)
 			value = value.key;
 		if (value === null)
-			value = this.control.nonekey;
+			value = this.control.none_key;
 
 		for (let node of this._dom_controls)
 			node.checked = node.getAttribute("value") === value;
@@ -2833,7 +2833,7 @@ export class LookupSelectField extends LookupField
 		let value = super._get_dom_value();
 		if (value)
 		{
-			if (value === this.control.nonekey)
+			if (value === this.control.none_key)
 				value = null;
 			else
 				value = this.control.lookupdata.get(value);
@@ -2845,7 +2845,7 @@ export class LookupSelectField extends LookupField
 	{
 		let change = {value: value, errors: []};
 		this._validate(change);
-		super._set_dom_value(change.value != null ? change.value.key : this.control.nonekey);
+		super._set_dom_value(change.value != null ? change.value.key : this.control.none_key);
 	}
 
 	_set_dom_lookupdata(lookupdata)
@@ -2911,7 +2911,7 @@ export class MultipleLookupField extends LookupFieldBase
 		let v = change.value;
 		let islist = (Object.prototype.toString.call(v) === "[object Array]");
 
-		if (v === null || v === "" || this.control.nonekey === v || (islist && v.length === 0))
+		if (v === null || v === "" || this.control.none_key === v || (islist && v.length === 0))
 		{
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(v));
@@ -3234,7 +3234,7 @@ export class AppLookupSelectField extends AppLookupField
 	{
 		let change = {value: value, errors: []};
 		this._validate(change);
-		super._set_dom_value(change.value != null ? change.value.id : this.control.nonekey);
+		super._set_dom_value(change.value != null ? change.value.id : this.control.none_key);
 	}
 
 	_set_dom_lookupdata(lookupdata)
@@ -3312,7 +3312,7 @@ export class MultipleAppLookupField extends AppLookupFieldBase
 		let v = change.value;
 		let islist = (Object.prototype.toString.call(v) === "[object Array]");
 
-		if (v === null || v === "" || this.control.nonekey === v || (islist && v.length === 0))
+		if (v === null || v === "" || this.control.none_key === v || (islist && v.length === 0))
 		{
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(v));
@@ -4261,7 +4261,7 @@ export class LookupControl extends Control
 		return view_control.autoexpandable;
 	}
 
-	get nonekey()
+	get none_key()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)
@@ -4269,7 +4269,7 @@ export class LookupControl extends Control
 		return view_control.lookupnonekey;
 	}
 
-	get nonelabel()
+	get none_label()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)
@@ -4395,7 +4395,7 @@ export class AppLookupControl extends Control
 			return new Map();
 	}
 
-	get nonekey()
+	get none_key()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)
@@ -4403,7 +4403,7 @@ export class AppLookupControl extends Control
 		return view_control.lookupnonekey;
 	}
 
-	get nonelabel()
+	get none_label()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)

@@ -1,5 +1,11 @@
 # Changes
 
+## HEAD (2023-02-??)
+
+Fixed name of the attribute for the "nothing selected" option: `nonekey` has
+been renamed to `none_key` and `nonelabel` has been renamed to `none_label`.
+
+
 ## 1.0.0 (2023-02-02)
 
 The image of a `ImageLayoutControl` can now be changed (via Javascript and UL4).
