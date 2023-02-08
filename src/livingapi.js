@@ -700,8 +700,8 @@ export class App extends Base
 };
 
 
-App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "links"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "links", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -5555,6 +5555,34 @@ AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "ident
 AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
+class LinkType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Link;
+	}
+};
+
+let linktype = new LinkType("la", "Link", "A link that can appear in a menu or panel on the LivingApps pages");
+
+
+export class Link extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return linktype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<Link id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + " display_type=" + ul4._repr(this.display_type) + " target_type=" + ul4._repr(this.target_type) + " target_url=" + ul4._repr(this.target_url) + ">";
+	}
+};
+
+Link.prototype._ul4onattrs = ["app", "name", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"];
+Link.prototype._ul4attrs = new Set(["id", "app", "name", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"]);
+
+
 class FormType extends ul4.Type
 {
 	instancecheck(obj)
@@ -5862,5 +5890,6 @@ export const module = new ul4.Module(
 		ViewLookupItem: ViewLookupItem,
 		Category: Category,
 		AppParameter: AppParameter,
+		Link: Link,
 	}
 );
