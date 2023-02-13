@@ -5575,12 +5575,12 @@ export class Link extends Base
 
 	[ul4.symbols.repr]()
 	{
-		return "<Link id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + " display_type=" + ul4._repr(this.display_type) + " target_type=" + ul4._repr(this.target_type) + " target_url=" + ul4._repr(this.target_url) + ">";
+		return "<Link id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + " display_type=" + ul4._repr(this.display_type) + " target_type=" + ul4._repr(this.target_type) + " target_url=" + ul4._repr(this.target_url) + ">";
 	}
 };
 
-Link.prototype._ul4onattrs = ["app", "name", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"];
-Link.prototype._ul4attrs = new Set(["id", "app", "name", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"]);
+Link.prototype._ul4onattrs = ["app", "label", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"];
+Link.prototype._ul4attrs = new Set(["id", "app", "label", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class FormType extends ul4.Type
