@@ -5594,7 +5594,7 @@ class PanelType extends MenuItemType
 let paneltype = new MenuItemType("la", "Panel", "An additional panel in an app that is displayed on various LivingApps pages and links to a target page.");
 
 
-export class Panel extends Menu
+export class Panel extends MenuItem
 {
 	[ul4.symbols.type]()
 	{
