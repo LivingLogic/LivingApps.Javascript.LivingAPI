@@ -700,8 +700,8 @@ export class App extends Base
 };
 
 
-App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "links"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "links", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -5555,32 +5555,60 @@ AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "ident
 AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
-class LinkType extends ul4.Type
+class MenuItemType extends ul4.Type
 {
 	instancecheck(obj)
 	{
-		return obj instanceof Link;
+		return obj instanceof MenuItem;
 	}
 };
 
-let linktype = new LinkType("la", "Link", "A link that can appear in a menu or panel on the LivingApps pages");
+let menuitemtype = new MenuItemType("la", "MenuItem", "An additional menu item in an app that links to a target page.");
 
 
-export class Link extends Base
+export class MenuItem extends Base
 {
 	[ul4.symbols.type]()
 	{
-		return linktype;
+		return menuitemtype;
 	}
 
 	[ul4.symbols.repr]()
 	{
-		return "<Link id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + " display_type=" + ul4._repr(this.display_type) + " target_type=" + ul4._repr(this.target_type) + " target_url=" + ul4._repr(this.target_url) + ">";
+		return "<MenuItem id=" + ul4._repr(this.id) + "identifier=" + ul4._repr(this.identifier) + " label=" + ul4._repr(this.label) + " type=" + ul4._repr(this.type) + ">";
 	}
 };
 
-Link.prototype._ul4onattrs = ["app", "label", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"];
-Link.prototype._ul4attrs = new Set(["id", "app", "label", "display_type", "target_type", "description", "description_url", "icon", "image", "title", "target", "style", "group_title", "target_url", "order", "row", "column", "width", "height", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "createdat", "createdby", "updatedat", "updatedby"]);
+MenuItem.prototype._ul4onattrs = ["app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"];
+MenuItem.prototype._ul4attrs = new Set(["id", "app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"]);
+
+
+class PanelType extends MenuItemType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Panel;
+	}
+};
+
+let paneltype = new MenuItemType("la", "Panel", "An additional panel in an app that is displayed on various LivingApps pages and links to a target page.");
+
+
+export class Panel extends Menu
+{
+	[ul4.symbols.type]()
+	{
+		return paneltype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<Panel id=" + ul4._repr(this.id) + "identifier=" + ul4._repr(this.identifier) + " label=" + ul4._repr(this.label) + " type=" + ul4._repr(this.type) + ">";
+	}
+};
+
+Panel.prototype._ul4onattrs = [...MenuItem.prototype._ul4onattrs, "description", "description_url", "image", "row", "column", "width", "height"];
+Panel.prototype._ul4attrs = new Set([...MenuItem.prototype._ul4attrs, "description", "description_url", "image", "row", "column", "width", "height"]);
 
 
 class FormType extends ul4.Type
@@ -5752,6 +5780,8 @@ let classes = [
 	FlashMessage,
 	App,
 	View,
+	MenuItem,
+	Panel,
 	DataSource,
 	Record,
 	BoolControl,
@@ -5890,6 +5920,7 @@ export const module = new ul4.Module(
 		ViewLookupItem: ViewLookupItem,
 		Category: Category,
 		AppParameter: AppParameter,
-		Link: Link,
+		MenuItem: ItemItem,
+		Panel: Panel,
 	}
 );

@@ -5,8 +5,8 @@
 Fixed name of the attribute for the "nothing selected" option: `nonekey` has
 been renamed to `none_key` and `nonelabel` has been renamed to `none_label`.
 
-Added the class `Link` and the `App` attribute `links` for the links that
-appear on various LivingApps pages.
+Added the class `MenuItem` and `Panel` and the `App` attributes `menus` and
+`panel` for the menus/panels that appear on various LivingApps pages.
 
 Added attribute `App.datasource`.
 
