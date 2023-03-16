@@ -257,7 +257,7 @@ export class Globals extends Base
 	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
-	geo_dist(geo1, geo2)
+	dist(geo1, geo2)
 	{
 		let sqsin = function sqsin(x) {x = Math.sin(x); return x*x};
 		let sqcos = function sqsos(x) {x = Math.cos(x); return x*x};
@@ -496,12 +496,12 @@ export class Globals extends Base
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "geo_dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error"]);
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
 ul4.expose(Globals.prototype.log_error, ["message", "*"]);
-ul4.expose(Globals.prototype.geo_dist, ["geo1", "pk", "geo2", "pk"]);
+ul4.expose(Globals.prototype.dist, ["geo1", "pk", "geo2", "pk"]);
 ul4.expose(Globals.prototype.current_geo, []);
 ul4.expose(Globals.prototype.scaled_url, [
 	"image", "p",
