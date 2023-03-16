@@ -9,7 +9,7 @@ For more info about LivingApps and the LivingAPI see
 https://my.living-apps.de/docs/LivingAPI.html (in german).
 
 
-# Build instructions
+## Build instructions
 
 Install the npm packages:
 
@@ -25,7 +25,7 @@ npm run build
 ```
 
 
-# Using the LivingAPI in your project
+## Using the LivingAPI in your project
 
 In your HTML include the following:
 
@@ -41,7 +41,7 @@ do
 
 ```html
 <script type="module">
-	import * as la from '/static/livingapi/0.13.0/dist/esm-static/livingapi.js';
+	import * as la from '/static/livingapi/1.0.0/dist/esm-static/livingapi.js';
 	...
 </script>
 ```
@@ -50,15 +50,13 @@ or (if you need both UL4 and LivingAPI):
 
 ```html
 <script type="module">
-	import * as ul4 from '/static/ul4/1.11.0/dist/esm/ul4.js';
-	import * as la from '/static/livingapi/0.13.0/dist/esm-static/livingapi.js';
+	import * as ul4 from '/static/ul4/1.15.1/dist/esm/ul4.js';
+	import * as la from '/static/livingapi/1.0.0/dist/esm-static/livingapi.js';
 	...
 </script>
 ```
 
-
-
-# Authors
+## Authors
 
 - Walter Dörwald: `ul4.js` and `livingapi.js`
 

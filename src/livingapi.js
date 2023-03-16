@@ -2,8 +2,8 @@
  * LivingAPI JavaScript Library
  * https://my.living-apps.de/docs/LivingAPI.html
  *
- * Copyright 2017-2022 by LivingLogic AG, Bayreuth/Germany
- * Copyright 2017-2022 by Walter Dörwald
+ * Copyright 2017-2023 by LivingLogic AG, Bayreuth/Germany
+ * Copyright 2017-2023 by Walter Dörwald
  *
  * All Rights Reserved
  *
@@ -257,7 +257,7 @@ export class Globals extends Base
 	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
-	geo_dist(geo1, geo2)
+	dist(geo1, geo2)
 	{
 		let sqsin = function sqsin(x) {x = Math.sin(x); return x*x};
 		let sqcos = function sqsos(x) {x = Math.cos(x); return x*x};
@@ -496,12 +496,12 @@ export class Globals extends Base
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "geo_dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error"]);
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
 ul4.expose(Globals.prototype.log_error, ["message", "*"]);
-ul4.expose(Globals.prototype.geo_dist, ["geo1", "pk", "geo2", "pk"]);
+ul4.expose(Globals.prototype.dist, ["geo1", "pk", "geo2", "pk"]);
 ul4.expose(Globals.prototype.current_geo, []);
 ul4.expose(Globals.prototype.scaled_url, [
 	"image", "p",
@@ -700,8 +700,8 @@ export class App extends Base
 };
 
 
-App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -2510,7 +2510,7 @@ export class ChoiceFieldBase extends Field
 			label,
 			{
 				"value": value,
-				"class": value === this.control.nonekey ? "la-none-option" : null,
+				"class": value === this.control.none_key ? "la-none-option" : null,
 				"selected": selected ? "selected" : null,
 			}
 		);
@@ -2531,18 +2531,18 @@ export class ChoiceFieldBase extends Field
 			let value = dom_option.getAttribute("value");
 			if (lookupdata.has(value))
 				selected.add(value);
-			else if (value === this.control.nonekey)
+			else if (value === this.control.none_key)
 				none_selected = true;
 		}
 
 		let new_children = [];
-		if (this.control.nonekey !== null)
+		if (this.control.none_key !== null)
 		{
 			new_children.push(
 				this._make_option(
 					none_selected,
-					this.control.nonekey,
-					this.control.nonelabel !== null ? this.control.nonelabel : this.globals.msg_nothing_selected()
+					this.control.none_key,
+					this.control.none_label !== null ? this.control.none_label : this.globals.msg_nothing_selected()
 				)
 			);
 		}
@@ -2576,13 +2576,13 @@ export class ChoiceFieldBase extends Field
 			{
 				if (lookupdata.has(value))
 					selected.add(value);
-				else if (value === this.control.nonekey)
+				else if (value === this.control.none_key)
 					none_selected = true;
 
 			}
 		}
 
-		let dom_none_input = this._dom_root.querySelector("input[value=" + this.control.nonekey + "]");
+		let dom_none_input = this._dom_root.querySelector("input[value=" + this.control.none_key + "]");
 		if (dom_none_input !== null)
 			dom_none_input.checked = none_selected;
 
@@ -2741,7 +2741,7 @@ export class LookupField extends LookupFieldBase
 	_validate(change)
 	{
 		let v = change.value;
-		if (v === null || v === "" || this.control.nonekey === v)
+		if (v === null || v === "" || this.control.none_key === v)
 		{
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(v));
@@ -2797,7 +2797,7 @@ export class LookupRadioField extends LookupField
 		if (value instanceof LookupItem)
 			value = value.key;
 		if (value === null)
-			value = this.control.nonekey;
+			value = this.control.none_key;
 
 		for (let node of this._dom_controls)
 			node.checked = node.getAttribute("value") === value;
@@ -2833,7 +2833,7 @@ export class LookupSelectField extends LookupField
 		let value = super._get_dom_value();
 		if (value)
 		{
-			if (value === this.control.nonekey)
+			if (value === this.control.none_key)
 				value = null;
 			else
 				value = this.control.lookupdata.get(value);
@@ -2845,7 +2845,7 @@ export class LookupSelectField extends LookupField
 	{
 		let change = {value: value, errors: []};
 		this._validate(change);
-		super._set_dom_value(change.value != null ? change.value.key : this.control.nonekey);
+		super._set_dom_value(change.value != null ? change.value.key : this.control.none_key);
 	}
 
 	_set_dom_lookupdata(lookupdata)
@@ -2911,7 +2911,7 @@ export class MultipleLookupField extends LookupFieldBase
 		let v = change.value;
 		let islist = (Object.prototype.toString.call(v) === "[object Array]");
 
-		if (v === null || v === "" || this.control.nonekey === v || (islist && v.length === 0))
+		if (v === null || v === "" || this.control.none_key === v || (islist && v.length === 0))
 		{
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(v));
@@ -3234,7 +3234,7 @@ export class AppLookupSelectField extends AppLookupField
 	{
 		let change = {value: value, errors: []};
 		this._validate(change);
-		super._set_dom_value(change.value != null ? change.value.id : this.control.nonekey);
+		super._set_dom_value(change.value != null ? change.value.id : this.control.none_key);
 	}
 
 	_set_dom_lookupdata(lookupdata)
@@ -3312,7 +3312,7 @@ export class MultipleAppLookupField extends AppLookupFieldBase
 		let v = change.value;
 		let islist = (Object.prototype.toString.call(v) === "[object Array]");
 
-		if (v === null || v === "" || this.control.nonekey === v || (islist && v.length === 0))
+		if (v === null || v === "" || this.control.none_key === v || (islist && v.length === 0))
 		{
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(v));
@@ -4261,7 +4261,7 @@ export class LookupControl extends Control
 		return view_control.autoexpandable;
 	}
 
-	get nonekey()
+	get none_key()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)
@@ -4269,7 +4269,7 @@ export class LookupControl extends Control
 		return view_control.lookupnonekey;
 	}
 
-	get nonelabel()
+	get none_label()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)
@@ -4395,7 +4395,7 @@ export class AppLookupControl extends Control
 			return new Map();
 	}
 
-	get nonekey()
+	get none_key()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)
@@ -4403,7 +4403,7 @@ export class AppLookupControl extends Control
 		return view_control.lookupnonekey;
 	}
 
-	get nonelabel()
+	get none_label()
 	{
 		let view_control = this._view_control();
 		if (view_control === null)
@@ -5555,6 +5555,62 @@ AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "ident
 AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
+class MenuItemType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MenuItem;
+	}
+};
+
+let menuitemtype = new MenuItemType("la", "MenuItem", "An additional menu item in an app that links to a target page.");
+
+
+export class MenuItem extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return menuitemtype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<MenuItem id=" + ul4._repr(this.id) + "identifier=" + ul4._repr(this.identifier) + " label=" + ul4._repr(this.label) + " type=" + ul4._repr(this.type) + ">";
+	}
+};
+
+MenuItem.prototype._ul4onattrs = ["app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"];
+MenuItem.prototype._ul4attrs = new Set(["id", "app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"]);
+
+
+class PanelType extends MenuItemType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Panel;
+	}
+};
+
+let paneltype = new MenuItemType("la", "Panel", "An additional panel in an app that is displayed on various LivingApps pages and links to a target page.");
+
+
+export class Panel extends MenuItem
+{
+	[ul4.symbols.type]()
+	{
+		return paneltype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<Panel id=" + ul4._repr(this.id) + "identifier=" + ul4._repr(this.identifier) + " label=" + ul4._repr(this.label) + " type=" + ul4._repr(this.type) + ">";
+	}
+};
+
+Panel.prototype._ul4onattrs = [...MenuItem.prototype._ul4onattrs, "description", "description_url", "image", "row", "column", "width", "height"];
+Panel.prototype._ul4attrs = new Set([...MenuItem.prototype._ul4attrs, "description", "description_url", "image", "row", "column", "width", "height"]);
+
+
 class FormType extends ul4.Type
 {
 	instancecheck(obj)
@@ -5724,6 +5780,8 @@ let classes = [
 	FlashMessage,
 	App,
 	View,
+	MenuItem,
+	Panel,
 	DataSource,
 	Record,
 	BoolControl,
@@ -5862,5 +5920,7 @@ export const module = new ul4.Module(
 		ViewLookupItem: ViewLookupItem,
 		Category: Category,
 		AppParameter: AppParameter,
+		MenuItem: ItemItem,
+		Panel: Panel,
 	}
 );

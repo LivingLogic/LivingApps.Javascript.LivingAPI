@@ -1,5 +1,18 @@
 # Changes
 
+## 1.0.1 (2023-03-16)
+
+Fixed name of the attribute for the "nothing selected" option: `nonekey` has
+been renamed to `none_key` and `nonelabel` has been renamed to `none_label`.
+
+Added the class `MenuItem` and `Panel` and the `App` attributes `menus` and
+`panel` for the menus/panels that appear on various LivingApps pages.
+
+Added attribute `App.datasource`.
+
+Fixed name of "geo distance" method (`Globals.dist()`).
+
+
 ## 1.0.0 (2023-02-02)
 
 The image of a `ImageLayoutControl` can now be changed (via Javascript and UL4).
