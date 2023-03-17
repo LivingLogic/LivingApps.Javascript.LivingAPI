@@ -5607,7 +5607,7 @@ export class Panel extends MenuItem
 	}
 };
 
-Panel.prototype._ul4onattrs = [...MenuItem.prototype._ul4onattrs, "description", "description_url", "image", "row", "column", "width", "height"];
+Panel.prototype._ul4onattrs = [...MenuItem.prototype._ul4onattrs, "description", "description_url", "image", "row", "column", "width", "height", "header_type", "header_background", "text_color", "background_color1", "background_color2"];
 Panel.prototype._ul4attrs = new Set([...MenuItem.prototype._ul4attrs, "description", "description_url", "image", "row", "column", "width", "height"]);
 
 

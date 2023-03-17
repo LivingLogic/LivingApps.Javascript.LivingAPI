@@ -1,5 +1,11 @@
 # Changes
 
+## 1.1.0 (2023-03-17)
+
+Add `Panel` attributes `header_type`, `header_background`, `text_color`,
+`background_color1` and `background_color2`.
+
+
 ## 1.0.1 (2023-03-16)
 
 Fixed name of the attribute for the "nothing selected" option: `nonekey` has
