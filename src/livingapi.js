@@ -5920,7 +5920,7 @@ export const module = new ul4.Module(
 		ViewLookupItem: ViewLookupItem,
 		Category: Category,
 		AppParameter: AppParameter,
-		MenuItem: ItemItem,
+		MenuItem: MenuItem,
 		Panel: Panel,
 	}
 );
