@@ -1,5 +1,10 @@
 # Changes
 
+## 1.1.3 (2023-03-17)
+
+Regenerate minified files.
+
+
 ## 1.1.2 (2023-03-17)
 
 Fix the UL4 module `la` (`la.MenuItem` was broken).
