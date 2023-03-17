@@ -1,5 +1,10 @@
 # Changes
 
+## 1.1.2 (2023-03-17)
+
+Fix the UL4 module `la` (`la.MenuItem` was broken).
+
+
 ## 1.1.0 (2023-03-17)
 
 Add `Panel` attributes `header_type`, `header_background`, `text_color`,
