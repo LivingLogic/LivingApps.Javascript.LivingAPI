@@ -276,6 +276,9 @@ export class Globals extends Base
 		const C = sqcos(G) * sqcos(l) + sqsin(F) * sqsin(l);
 		const w = Math.atan(Math.sqrt(S/C));
 		const D = 2 * w * radius;
+		if (D === 0.0)
+			/* The "correction" calculation below would fail if the raw distance is 0 */
+			return D;
 		const T = Math.sqrt(S*C)/w;
 		const H1 = (3*T-1)/(2*C);
 		const H2 = (3*T+1)/(2*S);
