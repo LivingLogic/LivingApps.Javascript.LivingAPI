@@ -1,5 +1,11 @@
 # Changes
 
+## 1.1.4 (2023-04-12)
+
+Fixed `Globals.dist` when the distance is zero (which would lead to a division
+by zero).
+
+
 ## 1.1.3 (2023-03-17)
 
 Regenerate minified files.
