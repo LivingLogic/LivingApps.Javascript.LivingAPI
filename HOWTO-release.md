@@ -27,7 +27,7 @@ you see.
 
 	(using the correct version number).
 
-2. Bump the version number in `package.json`. Since the version number is
+2.	Bump the version number in `package.json`. Since the version number is
 	incorporated into the generated source and the generated source is checked
 	in, you have to build the release files, after you update the version number
 	like this:
@@ -42,7 +42,7 @@ you see.
 
 3.	Update UL4 and LivingAPI version number in the example code in `README.md`.
 
-4. Check in the resulting changes.
+4.	Check in the resulting changes.
 
 5.	Close the release branch with the following command:
 
