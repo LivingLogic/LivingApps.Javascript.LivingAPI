@@ -1,5 +1,10 @@
 # Changes
 
+## HEAD (2023-??-??)
+
+Merge app fields `iconlarge` and `iconsmall` into `icon`.
+
+
 ## 1.1.4 (2023-04-12)
 
 Fixed `Globals.dist` when the distance is zero (which would lead to a division
