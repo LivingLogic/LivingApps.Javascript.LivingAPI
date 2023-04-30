@@ -2,7 +2,7 @@
 
 ## HEAD (2023-??-??)
 
-Merge app fields `iconlarge` and `iconsmall` into `icon`.
+Merge app fields `iconlarge` and `iconsmall` into `image`.
 
 
 ## 1.1.4 (2023-04-12)
