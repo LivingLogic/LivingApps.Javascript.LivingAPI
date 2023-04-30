@@ -5188,8 +5188,8 @@ export class User extends Base
 	}
 };
 
-User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"];
-User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
+User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"];
+User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
 
 
 class FileType extends ul4.Type
