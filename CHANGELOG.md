@@ -4,6 +4,10 @@
 
 Merge app fields `iconlarge` and `iconsmall` into `image`.
 
+Merge user fields `avatarlarge` and `avatarsmall` into `image`.
+
+Merge image layout control fields `original` and `scaled` into `image`.
+
 
 ## 1.1.4 (2023-04-12)
 
