@@ -5077,16 +5077,26 @@ export class ImageLayoutControl extends LayoutControl
 		return imagelayoutcontroltype;
 	}
 
+	get image()
+	{
+		return this._image;
+	}
+
+	set image(image)
+	{
+		this._image = image;
+		if (this.globals._in_form())
+			this._set_dom_value(this._image);
+	}
+
 	get original()
 	{
-		return this._original;
+		return this.image;
 	}
 
 	set original(original)
 	{
-		this._original = original;
-		if (this.globals._in_form())
-			this._set_dom_value(this._original);
+		this.image = image;
 	}
 
 	_set_dom_value(value)
@@ -5105,13 +5115,15 @@ export class ImageLayoutControl extends LayoutControl
 	{
 		if (name === "original")
 			this.original = value;
+		else if (name === "image")
+			this.image = value;
 		else
 			super[ul4.symbols.setattr](name, value);
 	}
 };
 
-ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_original", "scaled", "_visible"];
-ImageLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "original", "scaled"]);
+ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_image", "_visible"];
+ImageLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "image", "original"]);
 
 
 class ButtonLayoutControlType extends LayoutControlType
