@@ -5380,30 +5380,6 @@ FileAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "va
 FileAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 
-class ImageAttachmentType extends AttachmentType
-{
-	instancecheck(obj)
-	{
-		return obj instanceof ImageAttachment;
-	}
-};
-
-let imageattachmenttype = new ImageAttachmentType("la", "ImageAttachment", "An image attachment of a record");
-
-
-export class ImageAttachment extends Attachment
-{
-	[ul4.symbols.type]()
-	{
-		return imageattachmenttype;
-	}
-};
-
-ImageAttachment.prototype.type = "imageattachment";
-ImageAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium","large"];
-ImageAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large"]);
-
-
 class JSONAttachmentType extends AttachmentType
 {
 	instancecheck(obj)
@@ -5866,7 +5842,6 @@ let classes = [
 	NoteAttachment,
 	URLAttachment,
 	FileAttachment,
-	ImageAttachment,
 	JSONAttachment,
 	Installation,
 	Category,
@@ -5920,7 +5895,6 @@ export const module = new ul4.Module(
 		GeoControl: GeoControl,
 		ViewControl: ViewControl,
 		Record: Record,
-		ImageAttachment: ImageAttachment,
 		FileAttachment: FileAttachment,
 		URLAttachment: URLAttachment,
 		NoteAttachment: NoteAttachment,

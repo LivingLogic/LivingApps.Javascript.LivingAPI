@@ -8,6 +8,8 @@ Merge user fields `avatarlarge` and `avatarsmall` into `image`.
 
 Merge image layout control fields `original` and `scaled` into `image`.
 
+Remove `ImageAttachment`.
+
 
 ## 1.1.4 (2023-04-12)
 
