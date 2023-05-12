@@ -10,6 +10,8 @@ Merge image layout control fields `original` and `scaled` into `image`.
 
 Remove `ImageAttachment`.
 
+Added attribute `z_index` to `Control`, `ViewControl` and `LayoutControl`.
+
 
 ## 1.1.4 (2023-04-12)
 

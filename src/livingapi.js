@@ -3490,6 +3490,12 @@ export class Control extends Base
 		return view_control !== null ? view_control.height : null;
 	}
 
+	get z_index()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.z_index : null;
+	}
+
 	get liveupdate()
 	{
 		let view_control = this._view_control();
@@ -3568,7 +3574,7 @@ export class Control extends Base
 Control.prototype.type = null;
 Control.prototype.subtype = null;
 Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "priority", "order", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
+Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
 
@@ -5172,8 +5178,8 @@ export class ViewControl extends Base
 	}
 };
 
-ViewControl.prototype._ul4onattrs = ["view", "control", "top", "left", "width", "height", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "_mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"];
-ViewControl.prototype._ul4attrs = new Set(["id", "view", "control", "top", "left", "width", "height", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"]);
+ViewControl.prototype._ul4onattrs = ["view", "control", "top", "left", "width", "height", "z_index", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "_mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"];
+ViewControl.prototype._ul4attrs = new Set(["id", "view", "control", "top", "left", "width", "height", "z_index", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"]);
 
 
 class UserType extends ul4.Type
