@@ -703,8 +703,8 @@ export class App extends Base
 };
 
 
-App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "iconlarge", "iconsmall", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -3490,6 +3490,12 @@ export class Control extends Base
 		return view_control !== null ? view_control.height : null;
 	}
 
+	get z_index()
+	{
+		let view_control = this._view_control();
+		return view_control !== null ? view_control.z_index : null;
+	}
+
 	get liveupdate()
 	{
 		let view_control = this._view_control();
@@ -3568,7 +3574,7 @@ export class Control extends Base
 Control.prototype.type = null;
 Control.prototype.subtype = null;
 Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "priority", "order", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
+Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
 
@@ -5077,16 +5083,26 @@ export class ImageLayoutControl extends LayoutControl
 		return imagelayoutcontroltype;
 	}
 
+	get image()
+	{
+		return this._image;
+	}
+
+	set image(image)
+	{
+		this._image = image;
+		if (this.globals._in_form())
+			this._set_dom_value(this._image);
+	}
+
 	get original()
 	{
-		return this._original;
+		return this.image;
 	}
 
 	set original(original)
 	{
-		this._original = original;
-		if (this.globals._in_form())
-			this._set_dom_value(this._original);
+		this.image = image;
 	}
 
 	_set_dom_value(value)
@@ -5105,13 +5121,15 @@ export class ImageLayoutControl extends LayoutControl
 	{
 		if (name === "original")
 			this.original = value;
+		else if (name === "image")
+			this.image = value;
 		else
 			super[ul4.symbols.setattr](name, value);
 	}
 };
 
-ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_original", "scaled", "_visible"];
-ImageLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "original", "scaled"]);
+ImageLayoutControl.prototype._ul4onattrs = [...LayoutControl.prototype._ul4onattrs, "_image", "_visible"];
+ImageLayoutControl.prototype._ul4attrs = new Set([...LayoutControl.prototype._ul4attrs, "image", "original"]);
 
 
 class ButtonLayoutControlType extends LayoutControlType
@@ -5160,8 +5178,8 @@ export class ViewControl extends Base
 	}
 };
 
-ViewControl.prototype._ul4onattrs = ["view", "control", "top", "left", "width", "height", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "_mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"];
-ViewControl.prototype._ul4attrs = new Set(["id", "view", "control", "top", "left", "width", "height", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"]);
+ViewControl.prototype._ul4onattrs = ["view", "control", "top", "left", "width", "height", "z_index", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "_mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"];
+ViewControl.prototype._ul4attrs = new Set(["id", "view", "control", "top", "left", "width", "height", "z_index", "liveupdate", "default", "tabindex", "minlength", "maxlength", "required", "placeholder", "mode", "labelpos", "lookupnonekey", "lookupnonelabel", "label", "autoalign", "labelwidth", "lookupdata", "autoexpandable"]);
 
 
 class UserType extends ul4.Type
@@ -5188,8 +5206,8 @@ export class User extends Base
 	}
 };
 
-User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"];
-User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "avatarsmall", "avatarlarge", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
+User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"];
+User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
 
 
 class FileType extends ul4.Type
@@ -5366,30 +5384,6 @@ export class FileAttachment extends Attachment
 FileAttachment.prototype.type = "fileattachment";
 FileAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "value"];
 FileAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
-
-
-class ImageAttachmentType extends AttachmentType
-{
-	instancecheck(obj)
-	{
-		return obj instanceof ImageAttachment;
-	}
-};
-
-let imageattachmenttype = new ImageAttachmentType("la", "ImageAttachment", "An image attachment of a record");
-
-
-export class ImageAttachment extends Attachment
-{
-	[ul4.symbols.type]()
-	{
-		return imageattachmenttype;
-	}
-};
-
-ImageAttachment.prototype.type = "imageattachment";
-ImageAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium","large"];
-ImageAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "original", "thumb", "small", "medium", "large"]);
 
 
 class JSONAttachmentType extends AttachmentType
@@ -5582,8 +5576,8 @@ export class MenuItem extends Base
 	}
 };
 
-MenuItem.prototype._ul4onattrs = ["app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"];
-MenuItem.prototype._ul4attrs = new Set(["id", "app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"]);
+MenuItem.prototype._ul4onattrs = ["app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "accessible", "children", "createdat", "createdby", "updatedat", "updatedby"];
+MenuItem.prototype._ul4attrs = new Set(["id", "app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "accessible", "children", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class PanelType extends MenuItemType
@@ -5854,7 +5848,6 @@ let classes = [
 	NoteAttachment,
 	URLAttachment,
 	FileAttachment,
-	ImageAttachment,
 	JSONAttachment,
 	Installation,
 	Category,
@@ -5908,7 +5901,6 @@ export const module = new ul4.Module(
 		GeoControl: GeoControl,
 		ViewControl: ViewControl,
 		Record: Record,
-		ImageAttachment: ImageAttachment,
 		FileAttachment: FileAttachment,
 		URLAttachment: URLAttachment,
 		NoteAttachment: NoteAttachment,

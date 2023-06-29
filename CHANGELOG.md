@@ -1,5 +1,20 @@
 # Changes
 
+## 1.2.0 (2023-06-29)
+
+Merge app fields `iconlarge` and `iconsmall` into `image`.
+
+Merge user fields `avatarlarge` and `avatarsmall` into `image`.
+
+Merge image layout control fields `original` and `scaled` into `image`.
+
+Remove `ImageAttachment`.
+
+Added attribute `z_index` to `Control`, `ViewControl` and `LayoutControl`.
+
+Added attribute `MenuItem.accessible`.
+
+
 ## 1.1.4 (2023-04-12)
 
 Fixed `Globals.dist` when the distance is zero (which would lead to a division
