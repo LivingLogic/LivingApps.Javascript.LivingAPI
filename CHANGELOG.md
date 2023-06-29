@@ -1,6 +1,6 @@
 # Changes
 
-## HEAD (2023-??-??)
+## 1.2.0 (2023-06-29)
 
 Merge app fields `iconlarge` and `iconsmall` into `image`.
 
