@@ -1,5 +1,10 @@
 # Changes
 
+## 1.2.1 (2023-06-29)
+
+Fixed `File.url` and attributes of `File`.
+
+
 ## 1.2.0 (2023-06-29)
 
 Merge app fields `iconlarge` and `iconsmall` into `image`.
