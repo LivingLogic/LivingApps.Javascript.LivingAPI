@@ -5576,8 +5576,8 @@ export class MenuItem extends Base
 	}
 };
 
-MenuItem.prototype._ul4onattrs = ["app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"];
-MenuItem.prototype._ul4attrs = new Set(["id", "app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "children", "createdat", "createdby", "updatedat", "updatedby"]);
+MenuItem.prototype._ul4onattrs = ["app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "accessible", "children", "createdat", "createdby", "updatedat", "updatedby"];
+MenuItem.prototype._ul4attrs = new Set(["id", "app", "identifier", "label", "type", "icon", "title", "target", "cssclass", "url", "order", "start_time", "end_time", "on_app_overview_page", "on_app_detail_page", "on_form_page", "on_iframe_page", "on_custom_overview_page", "accessible", "children", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class PanelType extends MenuItemType

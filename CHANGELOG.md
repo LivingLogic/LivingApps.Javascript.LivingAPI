@@ -12,6 +12,8 @@ Remove `ImageAttachment`.
 
 Added attribute `z_index` to `Control`, `ViewControl` and `LayoutControl`.
 
+Added attribute `MenuItem.accessible`.
+
 
 ## 1.1.4 (2023-04-12)
 
