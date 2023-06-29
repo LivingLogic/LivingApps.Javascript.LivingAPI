@@ -5230,12 +5230,12 @@ export class File extends Base
 
 	[ul4.symbols.repr]()
 	{
-		return "<File id=" + ul4._repr(this.id) + " url=" + ul4._repr(this.url) + " filename=" + ul4._repr(this.filename) + ">";
+		return "<File url=" + ul4._repr(this.url) + " filename=" + ul4._repr(this.filename) + ">";
 	}
 
 	get url()
 	{
-		return "/gateway/files/" + this.id;
+		return "/gateway/files/" + this.contextid + "/" + this.id;
 	}
 
 	get archive_url()
@@ -5246,8 +5246,8 @@ export class File extends Base
 	}
 };
 
-File.prototype._ul4onattrs = ["filename", "mimetype", "width", "height", "internalid", "createdat", "size", "duration", "geo", "storagefilename", "archive"];
-File.prototype._ul4attrs = new Set(["id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "archive", "createdat"]);
+File.prototype._ul4onattrs = ["filename", "mimetype", "width", "height", "internal_id", "createdat", "size", "duration", "geo", "storagefilename", "archive", "context_id"];
+File.prototype._ul4attrs = new Set(["id", "internal_id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "archive", "createdat", "context_id"]);
 
 
 class GeoType extends ul4.Type
