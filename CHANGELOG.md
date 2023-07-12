@@ -1,5 +1,16 @@
 # Changes
 
+## 1.2.2 (2023-07-12)
+
+Add methods `home_url()`, `datamanagement_url()`, `import_url()`, `tasks_url()`, 
+`datamanagement_config_url()`, `permissions_url()` and `datamanageview_url()`
+to class `App` which return the relative urls for the respective menus.
+
+Add methods `my_apps_url()`, `my_tasks_url()`, `catalog_url()`, `chats_url()`,
+`profile_url()`, `account_url()` and `logout_url()` to class `Globals` which
+return the relative urls for the respective menus.
+
+
 ## 1.2.1 (2023-06-29)
 
 Fixed `File.url` and attributes of `File`.
