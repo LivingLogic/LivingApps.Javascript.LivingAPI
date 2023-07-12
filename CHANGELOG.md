@@ -1,6 +1,6 @@
 # Changes
 
-## HEAD (2023-07-??)
+## 1.2.2 (2023-07-12)
 
 Add methods `home_url()`, `datamanagement_url()`, `import_url()`, `tasks_url()`, 
 `datamanagement_config_url()`, `permissions_url()` and `datamanageview_url()`
