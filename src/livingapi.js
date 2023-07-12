@@ -496,10 +496,45 @@ export class Globals extends Base
 		if (console && console.error)
 			console.error(this._make_log_message(message))
 	}
+
+	my_apps_url()
+	{
+		return "/apps.htm";
+	}
+
+	my_tasks_url()
+	{
+		return "/xist4c/web/aufgaben_id_393_.htm";
+	}
+
+	catalog_url()
+	{
+		return "/katalog/home.htm";
+	}
+
+	chats_url()
+	{
+		return "/chats.htm";
+	}
+
+	profile_url()
+	{
+		return "/profil/index.htm";
+	}
+
+	account_url()
+	{
+		return "/account.htm";
+	}
+
+	logout_url()
+	{
+		return "/login.htm?logout=standardCug";
+	}
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error"]);
+Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error", "my_apps_url", "my_tasks_url", "catalog_url", "chats_url", "profile_url", "account_url", "logout_url"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
@@ -598,6 +633,57 @@ export class App extends Base
 	{
 		let url = "/gateway/apps/" + this.id + "/new";
 		return url_with_params(url, params);
+	}
+
+	home_url()
+	{
+		return "/apps/" + this.id + ".htm";
+	}
+
+	datamanagement_url()
+	{
+		return "/_id_36_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true&templateIdentifier=created_" + this.id;
+	}
+
+	import_url()
+	{
+		return "/import-export/"+ this.id + ".htm";
+	}
+
+	tasks_url()
+	{
+		return "/_id_1073_.htm?uuid=" + this.id + "&dId=" + this.id + "&p_tpl_uuid=" + this.id + "&resetInfo=true&templateIdentifier=created_task_" + this.id;
+	}
+
+	// formbuilder_url()
+	// {
+	// 	let lang = this.globals.lang
+	// 	if (!lang)
+	// 		lang = "de"
+	// 	let tpl_id = "???"
+	// 	let cl_id = "???"
+	// 	return "/formbuilder/index.html?lang=" + lang + "&searchDescription=" + tpl_id + "&p_tpl_uuid=" + this.id + "&p_cl_id=" + cl_id;
+	// }
+
+	// tasks_config_url()
+	// {
+	// 	let tpl_id = "???"
+	// 	return "/konfiguration/aufgaben.htm?com.livinglogic.cms.apps.search.model.SearchState.search_submit=true&searchDescription=" + tpl_id + "&dId=" + this.id;
+	// }
+
+	datamanagement_config_url()
+	{
+		return "/datenmanagement-konfigurieren/" + this.id + ".htm";
+	}
+
+	permissions_url()
+	{
+		return "/_id_833_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true";
+	}
+
+	datamanageview_url(identifier)
+	{
+		return "/_id_36_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true&templateIdentifier=created_" + this.id + "_datamanage_master_" + identifier;
 	}
 
 	get layout_controls()
@@ -704,7 +790,7 @@ export class App extends Base
 
 
 App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url"]);
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
