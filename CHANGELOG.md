@@ -1,5 +1,10 @@
 # Changes
 
+## HEAD (2023-10-04)
+
+Pass the variable `datasources` to the update template when it gets rendered.
+
+
 ## 1.2.2 (2023-07-12)
 
 Add methods `home_url()`, `datamanagement_url()`, `import_url()`, `tasks_url()`, 
