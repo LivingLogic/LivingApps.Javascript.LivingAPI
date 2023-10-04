@@ -5767,6 +5767,7 @@ export class Form extends ul4.Proto
 	render_template(identifier)
 	{
 		let vars = {
+			"datasources": this.globals.datasources,
 			"record": this.globals.record,
 			"app": this.globals.app,
 			"fields": this.globals.record.fields,
