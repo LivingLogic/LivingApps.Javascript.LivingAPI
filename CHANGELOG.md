@@ -1,6 +1,6 @@
 # Changes
 
-## HEAD (2023-10-04)
+## 1.2.3 (2023-10-04)
 
 Pass the variable `datasources` to the update template when it gets rendered.
 
