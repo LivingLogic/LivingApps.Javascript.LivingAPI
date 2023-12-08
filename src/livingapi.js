@@ -5970,7 +5970,8 @@ let classes = [
 	Installation,
 	Category,
 	KeyView,
-	AppParameter
+	AppParameter,
+	MutableAppParameter
 ];
 
 for (let constructor of classes)
