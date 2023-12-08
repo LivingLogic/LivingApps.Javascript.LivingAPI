@@ -5638,6 +5638,37 @@ AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "ident
 AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
+class MutableAppParameterType extends AppParameterType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof MutableAppParameter;
+	}
+};
+
+let mutableappparametertype = new MutableAppParameterType("la", "MutableAppParameter", "A mutable parameter of a LivingApps application");
+
+
+export class MutableAppParameter extends AppParameter
+{
+	[ul4.symbols.type]()
+	{
+		return mutableappparametertype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<MutableAppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+	}
+
+	get app()
+	{
+		if (this.owner instanceof App)
+			return this.owner;
+		return null;
+	}
+};
+
 class MenuItemType extends ul4.Type
 {
 	instancecheck(obj)
@@ -6002,6 +6033,7 @@ export const module = new ul4.Module(
 		ViewLookupItem: ViewLookupItem,
 		Category: Category,
 		AppParameter: AppParameter,
+		MutableAppParameter: MutableAppParameter,
 		MenuItem: MenuItem,
 		Panel: Panel,
 	}

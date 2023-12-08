@@ -1,5 +1,10 @@
 # Changes
 
+## 1.3.0 (2023-12-08)
+
+Added class `MutableAppParameter`.
+
+
 ## 1.2.3 (2023-10-04)
 
 Pass the variable `datasources` to the update template when it gets rendered.
