@@ -1,5 +1,10 @@
 # Changes
 
+## 1.3.2 (2023-12-19)
+
+Added `globals` attribute to `File` and `Geo` objects.
+
+
 ## 1.3.1 (2023-12-08)
 
 Register class `MutableAppParameter` for UL4ON loading.
