@@ -355,7 +355,7 @@ export class Globals extends Base
 
 	set_current_geo(position)
 	{
-		this._current_geo = new Geo(position.coords.latitude, position.coords.longitude);
+		this._current_geo = new Geo(this, position.coords.latitude, position.coords.longitude);
 	}
 
 	_in_form()
@@ -5321,7 +5321,7 @@ export class File extends Base
 
 	get url()
 	{
-		return "/gateway/files/" + this.contextid + "/" + this.id;
+		return "/files/" + this.contextid + "/" + this.id;
 	}
 
 	get archive_url()
@@ -5332,8 +5332,8 @@ export class File extends Base
 	}
 };
 
-File.prototype._ul4onattrs = ["filename", "mimetype", "width", "height", "internal_id", "createdat", "size", "duration", "geo", "storagefilename", "archive", "context_id"];
-File.prototype._ul4attrs = new Set(["id", "internal_id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "archive", "createdat", "context_id"]);
+File.prototype._ul4onattrs = ["globals", "filename", "mimetype", "width", "height", "internal_id", "createdat", "size", "duration", "geo", "storagefilename", "archive", "context_id"];
+File.prototype._ul4attrs = new Set(["globals", "id", "internal_id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "archive", "createdat", "context_id"]);
 
 
 class GeoType extends ul4.Type
@@ -5349,9 +5349,10 @@ let geotype = new GeoType("la", "Geo", "Geographical coordinates and location in
 
 export class Geo extends Base
 {
-	constructor(lat, long, info=null)
+	constructor(globals, lat, long, info=null)
 	{
 		super(null);
+		this.globals = globals;
 		this.lat = lat;
 		this.long = long;
 		this.info = info;
@@ -5368,8 +5369,8 @@ export class Geo extends Base
 	}
 };
 
-Geo.prototype._ul4onattrs = ["lat", "long", "info"];
-Geo.prototype._ul4attrs = new Set(["lat", "long", "info"]);
+Geo.prototype._ul4onattrs = ["globals", "lat", "long", "info"];
+Geo.prototype._ul4attrs = new Set(["globals", "lat", "long", "info"]);
 
 
 class AttachmentType extends ul4.Type
