@@ -1,5 +1,10 @@
 # Changes
 
+## 1.3.3 (2023-12-19)
+
+Fix `GeoField._get_dom_value()`.
+
+
 ## 1.3.2 (2023-12-19)
 
 Added `globals` attribute to `File` and `Geo` objects.

@@ -2096,6 +2096,7 @@ export class GeoField extends Field
 				{
 					value = JSON.parse(value);
 					return new Geo(
+						this.globals,
 						value.geometry.coordinates[0],
 						value.geometry.coordinates[1],
 						value.properties.formatted_address
