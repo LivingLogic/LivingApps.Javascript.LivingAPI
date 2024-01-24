@@ -1,5 +1,10 @@
 # Changes
 
+## 1.4.? (2024-??-??)
+
+Add attribute `App.private_uploads`.
+
+
 ## 1.3.3 (2023-12-19)
 
 Fix `GeoField._get_dom_value()`.
