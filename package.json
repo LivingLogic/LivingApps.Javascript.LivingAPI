@@ -18,7 +18,8 @@
 	"module": "dist/esm-node/livingapi.js",
 	"browser": "dist/umd/livingapi.js",
 	"dependencies": {
-		"@livinglogic/ul4": "~1.16.1"
+		"@livinglogic/ul4": "~1.16.1",
+		"dompurify": "^3.0.9"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.14.6",

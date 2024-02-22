@@ -32,6 +32,7 @@ import { version } from '../package.json';
 export { version };
 
 import * as ul4 from '@livinglogic/ul4';
+import DOMPurify from 'dompurify';
 
 
 export function element(name, ...args)
@@ -5136,7 +5137,7 @@ export class HTMLLayoutControl extends LayoutControl
 
 	_set_dom_value(value)
 	{
-		this._dom_root.innerHTML = value;
+		this._dom_root.innerHTML = DOMPurify.sanitize(value);
 	}
 
 	[ul4.symbols.setattr](name, value)
