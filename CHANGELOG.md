@@ -1,5 +1,10 @@
 # Changes
 
+## 1.4.1 (2024-02-28)
+
+Properly bump version number.
+
+
 ## 1.4.0 (2024-02-28)
 
 `User` now has an attribute `globals`.
