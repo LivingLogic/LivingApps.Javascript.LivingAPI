@@ -2,8 +2,8 @@
  * LivingAPI JavaScript Library
  * https://my.living-apps.de/docs/LivingAPI.html
  *
- * Copyright 2017-2023 by LivingLogic AG, Bayreuth/Germany
- * Copyright 2017-2023 by Walter Dörwald
+ * Copyright 2017-2024 by LivingLogic AG, Bayreuth/Germany
+ * Copyright 2017-2024 by Walter Dörwald
  *
  * All Rights Reserved
  *
