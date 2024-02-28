@@ -292,13 +292,13 @@ export class Globals extends Base
 
 		if (image instanceof File)
 		{
-			image = "https://" + this.hostname + image.archive_url;
+			image = image.archive_url;
 			filename = encodeURIComponent(image.filename);
 			if (filename != image.filename)
 				filename = null;
 		}
 
-		let result = "";
+		let result = "https://" + this.hostname;
 
 		if (cache)
 			result += "/imgproxycache/insecure";
@@ -499,37 +499,37 @@ export class Globals extends Base
 
 	my_apps_url()
 	{
-		return "/apps.htm";
+		return "https://" + this.hostname + "/apps.htm";
 	}
 
 	my_tasks_url()
 	{
-		return "/xist4c/web/aufgaben_id_393_.htm";
+		return "https://" + this.hostname + "/xist4c/web/aufgaben_id_393_.htm";
 	}
 
 	catalog_url()
 	{
-		return "/katalog/home.htm";
+		return "https://" + this.hostname + "/katalog/home.htm";
 	}
 
 	chats_url()
 	{
-		return "/chats.htm";
+		return "https://" + this.hostname + "/chats.htm";
 	}
 
 	profile_url()
 	{
-		return "/profil/index.htm";
+		return "https://" + this.hostname + "/profil/index.htm";
 	}
 
 	account_url()
 	{
-		return "/account.htm";
+		return "https://" + this.hostname + "/account.htm";
 	}
 
 	logout_url()
 	{
-		return "/login.htm?logout=standardCug";
+		return "https://" + this.hostname + "/login.htm?logout=standardCug";
 	}
 };
 
@@ -617,7 +617,7 @@ export class App extends Base
 
 	template_url(identifier, record=null, params)
 	{
-		let url = "/gateway/apps/" + this.id;
+		let url = "https://" + this.globals.hostname + "/gateway/apps/" + this.id;
 		if (record !== null)
 			url += "/" + record.id;
 		return url_with_params(url, ['template', identifier], params);
@@ -625,34 +625,34 @@ export class App extends Base
 
 	new_embedded_url(params)
 	{
-		let url = "/dateneingabe/" + this.id + "/new";
+		let url = "https://" + this.globals.hostname + "/dateneingabe/" + this.id + "/new";
 		return url_with_params(url, params);
 	}
 
 	new_standalone_url(params)
 	{
-		let url = "/gateway/apps/" + this.id + "/new";
+		let url = "https://" + this.globals.hostname + "/gateway/apps/" + this.id + "/new";
 		return url_with_params(url, params);
 	}
 
 	home_url()
 	{
-		return "/apps/" + this.id + ".htm";
+		return "https://" + this.globals.hostname + "/apps/" + this.id + ".htm";
 	}
 
 	datamanagement_url()
 	{
-		return "/_id_36_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true&templateIdentifier=created_" + this.id;
+		return "https://" + this.globals.hostname + "/_id_36_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true&templateIdentifier=created_" + this.id;
 	}
 
 	import_url()
 	{
-		return "/import-export/"+ this.id + ".htm";
+		return "https://" + this.globals.hostname + "/import-export/"+ this.id + ".htm";
 	}
 
 	tasks_url()
 	{
-		return "/_id_1073_.htm?uuid=" + this.id + "&dId=" + this.id + "&p_tpl_uuid=" + this.id + "&resetInfo=true&templateIdentifier=created_task_" + this.id;
+		return "https://" + this.globals.hostname + "/_id_1073_.htm?uuid=" + this.id + "&dId=" + this.id + "&p_tpl_uuid=" + this.id + "&resetInfo=true&templateIdentifier=created_task_" + this.id;
 	}
 
 	// formbuilder_url()
@@ -662,28 +662,28 @@ export class App extends Base
 	// 		lang = "de"
 	// 	let tpl_id = "???"
 	// 	let cl_id = "???"
-	// 	return "/formbuilder/index.html?lang=" + lang + "&searchDescription=" + tpl_id + "&p_tpl_uuid=" + this.id + "&p_cl_id=" + cl_id;
+	// 	return "https://" + this.globals.hostname + "/formbuilder/index.html?lang=" + lang + "&searchDescription=" + tpl_id + "&p_tpl_uuid=" + this.id + "&p_cl_id=" + cl_id;
 	// }
 
 	// tasks_config_url()
 	// {
 	// 	let tpl_id = "???"
-	// 	return "/konfiguration/aufgaben.htm?com.livinglogic.cms.apps.search.model.SearchState.search_submit=true&searchDescription=" + tpl_id + "&dId=" + this.id;
+	// 	return "https://" + this.globals.hostname + "/konfiguration/aufgaben.htm?com.livinglogic.cms.apps.search.model.SearchState.search_submit=true&searchDescription=" + tpl_id + "&dId=" + this.id;
 	// }
 
 	datamanagement_config_url()
 	{
-		return "/datenmanagement-konfigurieren/" + this.id + ".htm";
+		return "https://" + this.globals.hostname + "/datenmanagement-konfigurieren/" + this.id + ".htm";
 	}
 
 	permissions_url()
 	{
-		return "/_id_833_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true";
+		return "https://" + this.globals.hostname + "/_id_833_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true";
 	}
 
 	datamanageview_url(identifier)
 	{
-		return "/_id_36_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true&templateIdentifier=created_" + this.id + "_datamanage_master_" + identifier;
+		return "https://" + this.globals.hostname + "/_id_36_.htm?uuid=" + this.id + "&dId=" + this.id + "&resetInfo=true&templateIdentifier=created_" + this.id + "_datamanage_master_" + identifier;
 	}
 
 	get layout_controls()
@@ -1073,19 +1073,19 @@ export class Record extends Base
 
 	template_url(identifier, params)
 	{
-		let url = "/gateway/apps/" + this.app.id + "/" + this.id;
+		let url = "https://" + this.app.globals.hostname + "/gateway/apps/" + this.app.id + "/" + this.id;
 		return url_with_params(url, ['template', identifier], params);
 	}
 
 	edit_embedded_url(params)
 	{
-		let url = "/dateneingabe/" + this.app.id + "/" + this.id + "/edit";
+		let url = "https://" + this.app.globals.hostname + "/dateneingabe/" + this.app.id + "/" + this.id + "/edit";
 		return url_with_params(url, params);
 	}
 
 	edit_standalone_url(params)
 	{
-		let url = "/gateway/apps/" + this.app.id + "/" + this.id + "/edit";
+		let url = "https://" + this.app.globals.hostname + "/gateway/apps/" + this.app.id + "/" + this.id + "/edit";
 		return url_with_params(url, params);
 	}
 
@@ -5293,8 +5293,8 @@ export class User extends Base
 	}
 };
 
-User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"];
-User.prototype._ul4attrs = new Set(["id", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
+User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "globals"];
+User.prototype._ul4attrs = new Set(["id", "globals", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
 
 
 class FileType extends ul4.Type
@@ -5322,7 +5322,7 @@ export class File extends Base
 
 	get url()
 	{
-		return "/files/" + this.contextid + "/" + this.id;
+		return "https://" + this.globals.hostname + "/files/" + this.contextid + "/" + this.id;
 	}
 
 	get archive_url()

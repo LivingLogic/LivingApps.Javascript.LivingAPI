@@ -1,5 +1,14 @@
 # Changes
 
+## 1.4.0 (2024-02-28)
+
+`User` now has an attribute `globals`.
+
+All URLs that the LivingAPI now uses are always absolute (i.e. the
+return values of `Globals.scaled_url()`, `App.template_url()`,
+`Record.edit_url()`, etc. and the attributes `File.url` and `File.archive_url`).
+
+
 ## 1.3.3 (2023-12-19)
 
 Fix `GeoField._get_dom_value()`.
