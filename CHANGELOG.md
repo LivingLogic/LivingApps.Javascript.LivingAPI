@@ -1,5 +1,10 @@
 # Changes
 
+## 1.5.0 (2024-04-04)
+
+Add method `Globals.qrcode_url()`.
+
+
 ## 1.4.1 (2024-02-28)
 
 Properly bump version number.

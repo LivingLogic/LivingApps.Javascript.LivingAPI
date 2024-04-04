@@ -1,6 +1,6 @@
 {
 	"name": "@livinglogic/livingapi",
-	"version": "1.4.1",
+	"version": "1.5.0",
 	"description": "Javascript version of the LivingAPI classes of LivingApps",
 	"repository": {
 		"type": "git",
