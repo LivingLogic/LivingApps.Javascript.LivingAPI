@@ -98,17 +98,6 @@ export function url_with_params(url, ...params)
 	return url;
 }
 
-/*
-		let urlparams = new URLSearchParams({"template": identifier});
-		for (let [name, value] of params)
-		{
-			if (Object.prototype.toString.call(v) === "[object Array]")
-			{
-				for (let [n, v])
-			}
-			urlparams.append()
-*/
-
 export class Base extends ul4.Proto
 {
 	constructor(id)
@@ -1092,6 +1081,28 @@ export class Record extends Base
 	{
 		let url = "https://" + this.app.globals.hostname + "/gateway/apps/" + this.app.id + "/" + this.id + "/edit";
 		return url_with_params(url, params);
+	}
+
+	edit_url(params)
+	{
+		return this.app[ul4.symbols.getattr]("pv_la_default_form_variant") === "standalone" ? this.edit_standalone_url(params) : this.edit_embedded_url(params);
+	}
+
+	display_embedded_url(params)
+	{
+		let url = "https://" + this.app.globals.hostname + "/dateneingabe/" + this.app.id + "/" + this.id + "/display";
+		return url_with_params(url, params);
+	}
+
+	display_standalone_url(params)
+	{
+		let url = "https://" + this.app.globals.hostname + "/gateway/apps/" + this.app.id + "/" + this.id + "/display";
+		return url_with_params(url, params);
+	}
+
+	display_url(params)
+	{
+		return this.app[ul4.symbols.getattr]("pv_la_default_form_variant") === "standalone" ? this.display_standalone_url(params) : this.display_embedded_url(params);
 	}
 
 	search(search)
