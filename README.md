@@ -41,7 +41,7 @@ do
 
 ```html
 <script type="module">
-	import * as la from '/static/livingapi/1.5.0/dist/esm-static/livingapi.js';
+	import * as la from '/static/livingapi/1.6.0/dist/esm-static/livingapi.js';
 	...
 </script>
 ```
