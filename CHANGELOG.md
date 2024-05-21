@@ -1,5 +1,11 @@
 # Changes
 
+## 1.6.0 (2024-05-21)
+
+Add methods `Record.edit_url()`, `Record.display_embedded_url()`,
+`Record.display_standalone_url()` and `Record.display_url()`.
+
+
 ## 1.5.0 (2024-04-04)
 
 Add method `Globals.qrcode_url()`.
