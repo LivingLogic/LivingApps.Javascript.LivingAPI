@@ -467,28 +467,28 @@ export class Globals extends Base
 	{
 		this._start_log_message();
 		if (console && console.debug)
-			console.debug(this._make_log_message(message))
+			console.debug(this._make_log_message(message));
 	}
 
 	log_info(message)
 	{
 		this._start_log_message();
 		if (console && console.info)
-			console.info(this._make_log_message(message))
+			console.info(this._make_log_message(message));
 	}
 
 	log_warning(message)
 	{
 		this._start_log_message();
 		if (console && console.warn)
-			console.warn(this._make_log_message(message))
+			console.warn(this._make_log_message(message));
 	}
 
 	log_error(message)
 	{
 		this._start_log_message();
 		if (console && console.error)
-			console.error(this._make_log_message(message))
+			console.error(this._make_log_message(message));
 	}
 
 	my_apps_url()
