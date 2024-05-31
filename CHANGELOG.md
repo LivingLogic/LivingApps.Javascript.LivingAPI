@@ -1,5 +1,10 @@
 # Changes
 
+## HEAD (2024-05-??)
+
+Fix handling of UL4 arguments for `Globals.log_debug()` and related functions.
+
+
 ## 1.6.0 (2024-05-21)
 
 Add methods `Record.edit_url()`, `Record.display_embedded_url()`,
