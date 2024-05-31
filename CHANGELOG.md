@@ -1,6 +1,6 @@
 # Changes
 
-## HEAD (2024-05-??)
+## 1.7.0 (2024-05-31)
 
 Fix handling of UL4 arguments for `Globals.log_debug()` and related functions.
 This means that for calling them from Javascript code a list of parameters
