@@ -2980,7 +2980,7 @@ export class LookupChoiceField extends LookupField
 	}
 };
 
-LookupChoiceField.prototype._inputevent = "change";
+LookupChoiceField.prototype._inputevent = "llchoice";
 
 
 class MultipleLookupFieldType extends LookupFieldBaseType
@@ -3173,7 +3173,7 @@ export class MultipleLookupChoiceField extends MultipleLookupField
 	}
 };
 
-MultipleLookupChoiceField.prototype._inputevent = "change";
+MultipleLookupChoiceField.prototype._inputevent = "llchoice";
 
 
 class AppLookupFieldBaseType extends FieldType
@@ -3393,7 +3393,7 @@ export class AppLookupChoiceField extends AppLookupField
 	}
 };
 
-AppLookupChoiceField.prototype._inputevent = "change";
+AppLookupChoiceField.prototype._inputevent = "llchoice";
 
 
 class MultipleAppLookupFieldType extends AppLookupFieldBaseType
@@ -3520,7 +3520,7 @@ export class MultipleAppLookupChoiceField extends MultipleAppLookupField
 	}
 };
 
-MultipleAppLookupChoiceField.prototype._inputevent = "change";
+MultipleAppLookupChoiceField.prototype._inputevent = "llchoice";
 
 
 class ControlType extends ul4.Type

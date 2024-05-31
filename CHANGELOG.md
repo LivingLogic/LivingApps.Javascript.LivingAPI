@@ -3,6 +3,12 @@
 ## HEAD (2024-05-??)
 
 Fix handling of UL4 arguments for `Globals.log_debug()` and related functions.
+This means that for calling them from Javascript code a list of parameters
+must be passed now.
+
+Update templates now get called when a selection is made in a `lookup/choice`,
+`applookup/choice`, `multiplelookup/choice` or `multipleapplookup/choice`
+field.
 
 
 ## 1.6.0 (2024-05-21)
