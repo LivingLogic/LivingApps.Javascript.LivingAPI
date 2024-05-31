@@ -4479,6 +4479,7 @@ export class LookupChoiceControl extends LookupControl
 
 LookupChoiceControl.prototype.subtype = "choice";
 LookupChoiceControl.prototype.fieldtype = LookupChoiceField;
+LookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class AppLookupControlType extends ControlType
@@ -4607,6 +4608,7 @@ export class AppLookupChoiceControl extends AppLookupControl
 
 AppLookupChoiceControl.prototype.subtype = "choice";
 AppLookupChoiceControl.prototype.fieldtype = AppLookupChoiceField;
+AppLookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class MultipleLookupControlType extends LookupControlType
@@ -4734,6 +4736,7 @@ export class MultipleLookupChoiceControl extends MultipleLookupControl
 
 MultipleLookupChoiceControl.prototype.subtype = "choice";
 MultipleLookupChoiceControl.prototype.fieldtype = MultipleLookupChoiceField;
+MultipleLookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class MultipleAppLookupControlType extends AppLookupControlType
@@ -4848,6 +4851,7 @@ export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 
 MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 MultipleAppLookupChoiceControl.prototype.fieldtype = MultipleAppLookupChoiceField;
+MultipleAppLookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class GeoControlType extends ControlType
