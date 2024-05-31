@@ -463,32 +463,32 @@ export class Globals extends Base
 		}
 	}
 
-	log_debug(...message)
+	log_debug(message)
 	{
 		this._start_log_message();
 		if (console && console.debug)
-			console.debug(this._make_log_message(message))
+			console.debug(this._make_log_message(message));
 	}
 
-	log_info(...message)
+	log_info(message)
 	{
 		this._start_log_message();
 		if (console && console.info)
-			console.info(this._make_log_message(message))
+			console.info(this._make_log_message(message));
 	}
 
-	log_warning(...message)
+	log_warning(message)
 	{
 		this._start_log_message();
 		if (console && console.warn)
-			console.warn(this._make_log_message(message))
+			console.warn(this._make_log_message(message));
 	}
 
-	log_error(...message)
+	log_error(message)
 	{
 		this._start_log_message();
 		if (console && console.error)
-			console.error(this._make_log_message(message))
+			console.error(this._make_log_message(message));
 	}
 
 	my_apps_url()
@@ -2980,6 +2980,8 @@ export class LookupChoiceField extends LookupField
 	}
 };
 
+LookupChoiceField.prototype._inputevent = "llchoice";
+
 
 class MultipleLookupFieldType extends LookupFieldBaseType
 {
@@ -3170,6 +3172,8 @@ export class MultipleLookupChoiceField extends MultipleLookupField
 		return multiplelookupchoicefieldtype;
 	}
 };
+
+MultipleLookupChoiceField.prototype._inputevent = "llchoice";
 
 
 class AppLookupFieldBaseType extends FieldType
@@ -3389,6 +3393,8 @@ export class AppLookupChoiceField extends AppLookupField
 	}
 };
 
+AppLookupChoiceField.prototype._inputevent = "llchoice";
+
 
 class MultipleAppLookupFieldType extends AppLookupFieldBaseType
 {
@@ -3513,6 +3519,8 @@ export class MultipleAppLookupChoiceField extends MultipleAppLookupField
 		return multipleapplookupchoicefieldtype;
 	}
 };
+
+MultipleAppLookupChoiceField.prototype._inputevent = "llchoice";
 
 
 class ControlType extends ul4.Type
@@ -4479,6 +4487,7 @@ export class LookupChoiceControl extends LookupControl
 
 LookupChoiceControl.prototype.subtype = "choice";
 LookupChoiceControl.prototype.fieldtype = LookupChoiceField;
+LookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class AppLookupControlType extends ControlType
@@ -4607,6 +4616,7 @@ export class AppLookupChoiceControl extends AppLookupControl
 
 AppLookupChoiceControl.prototype.subtype = "choice";
 AppLookupChoiceControl.prototype.fieldtype = AppLookupChoiceField;
+AppLookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class MultipleLookupControlType extends LookupControlType
@@ -4734,6 +4744,7 @@ export class MultipleLookupChoiceControl extends MultipleLookupControl
 
 MultipleLookupChoiceControl.prototype.subtype = "choice";
 MultipleLookupChoiceControl.prototype.fieldtype = MultipleLookupChoiceField;
+MultipleLookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class MultipleAppLookupControlType extends AppLookupControlType
@@ -4848,6 +4859,7 @@ export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 
 MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 MultipleAppLookupChoiceControl.prototype.fieldtype = MultipleAppLookupChoiceField;
+MultipleAppLookupChoiceControl.prototype._cssclass_control = "select";
 
 
 class GeoControlType extends ControlType
