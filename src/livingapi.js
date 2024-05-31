@@ -2980,6 +2980,8 @@ export class LookupChoiceField extends LookupField
 	}
 };
 
+LookupChoiceField.prototype._inputevent = "change";
+
 
 class MultipleLookupFieldType extends LookupFieldBaseType
 {
@@ -3170,6 +3172,8 @@ export class MultipleLookupChoiceField extends MultipleLookupField
 		return multiplelookupchoicefieldtype;
 	}
 };
+
+MultipleLookupChoiceField.prototype._inputevent = "change";
 
 
 class AppLookupFieldBaseType extends FieldType
@@ -3389,6 +3393,8 @@ export class AppLookupChoiceField extends AppLookupField
 	}
 };
 
+AppLookupChoiceField.prototype._inputevent = "change";
+
 
 class MultipleAppLookupFieldType extends AppLookupFieldBaseType
 {
@@ -3513,6 +3519,8 @@ export class MultipleAppLookupChoiceField extends MultipleAppLookupField
 		return multipleapplookupchoicefieldtype;
 	}
 };
+
+MultipleAppLookupChoiceField.prototype._inputevent = "change";
 
 
 class ControlType extends ul4.Type
@@ -4480,7 +4488,6 @@ export class LookupChoiceControl extends LookupControl
 LookupChoiceControl.prototype.subtype = "choice";
 LookupChoiceControl.prototype.fieldtype = LookupChoiceField;
 LookupChoiceControl.prototype._cssclass_control = "select";
-LookupChoiceControl.prototype._inputevent = "change";
 
 
 class AppLookupControlType extends ControlType
@@ -4610,7 +4617,6 @@ export class AppLookupChoiceControl extends AppLookupControl
 AppLookupChoiceControl.prototype.subtype = "choice";
 AppLookupChoiceControl.prototype.fieldtype = AppLookupChoiceField;
 AppLookupChoiceControl.prototype._cssclass_control = "select";
-AppLookupChoiceControl.prototype._inputevent = "change";
 
 
 class MultipleLookupControlType extends LookupControlType
@@ -4739,7 +4745,6 @@ export class MultipleLookupChoiceControl extends MultipleLookupControl
 MultipleLookupChoiceControl.prototype.subtype = "choice";
 MultipleLookupChoiceControl.prototype.fieldtype = MultipleLookupChoiceField;
 MultipleLookupChoiceControl.prototype._cssclass_control = "select";
-MultipleLookupChoiceControl.prototype._inputevent = "change";
 
 
 class MultipleAppLookupControlType extends AppLookupControlType
@@ -4855,7 +4860,6 @@ export class MultipleAppLookupChoiceControl extends MultipleAppLookupControl
 MultipleAppLookupChoiceControl.prototype.subtype = "choice";
 MultipleAppLookupChoiceControl.prototype.fieldtype = MultipleAppLookupChoiceField;
 MultipleAppLookupChoiceControl.prototype._cssclass_control = "select";
-MultipleAppLookupChoiceControl.prototype._inputevent = "change";
 
 
 class GeoControlType extends ControlType
