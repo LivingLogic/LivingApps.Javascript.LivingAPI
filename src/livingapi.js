@@ -1208,6 +1208,7 @@ export class Field extends Base
 		this._enabled = true;
 		this._writable = true;
 		this._visible = true;
+		this._required = null;
 	}
 
 	[ul4.symbols.type]()
@@ -1449,6 +1450,16 @@ export class Field extends Base
 		this._visible = value;
 	}
 
+	get required()
+	{
+		return this._required ?? this.control.required;
+	}
+
+	set required(value)
+	{
+		this._required = value;
+	}
+
 	get enabled()
 	{
 		if (this._in_form())
@@ -1501,13 +1512,15 @@ export class Field extends Base
 			this.enabled = ul4._bool(value);
 		else if (name === "writable")
 			this.writable = ul4._bool(value);
+		else if (name === "required")
+			this.required = ul4._bool(value);
 		else
 			super[ul4.symbols.setattr](name, value);
 	}
 };
 
-Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable"]);
+Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable", "_required"];
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable", "required"]);
 Field.prototype._inputevent = "input";
 
 
