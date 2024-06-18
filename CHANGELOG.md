@@ -1,5 +1,10 @@
 # Changes
 
+## 1.8.0 (2024-06-18)
+
+Add field `required` in class `Field`.
+
+
 ## 1.7.0 (2024-05-31)
 
 Fix handling of UL4 arguments for `Globals.log_debug()` and related functions.
