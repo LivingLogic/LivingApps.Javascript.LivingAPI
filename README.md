@@ -17,8 +17,8 @@ Install the npm packages:
 npm install
 ```
 
-Build `dist/umd/livingapi.js`, `dist/esm-node/livingapi.js` and
-`dist/esm-static/livingapi.js`:
+Build `dist/umd/livingapi.js`, `dist/esm-node/livingapi.js`,
+`dist/esm-static/livingapi.js` and `dist/esm-npm/livingapi.js`:
 
 ```
 npm run build
@@ -34,14 +34,14 @@ In your HTML include the following:
 <script src="{path_to_livingapi}/dist/umd/livingapi.js"></script>
 ```
 
-now you can use the Javascript variable `la`.
+now you can use the Javascript variable `la` (and `ul4`).
 
 Or if you want to use the LivingAPI on https://my.living-apps.de/ as a module,
 do
 
 ```html
 <script type="module">
-	import * as la from '/static/livingapi/1.7.0/dist/esm-static/livingapi.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.9.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```
@@ -50,8 +50,8 @@ or (if you need both UL4 and LivingAPI):
 
 ```html
 <script type="module">
-	import * as ul4 from '/static/ul4/1.16.1/dist/esm/ul4.js';
-	import * as la from '/static/livingapi/1.8.0/dist/esm-static/livingapi.js';
+	import * as ul4 from '/npm/@livinglogic/ul4@1.16.1/dist/esm/ul4.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.9.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```

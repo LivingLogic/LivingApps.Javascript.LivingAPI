@@ -1,5 +1,15 @@
 # Changes
 
+## 1.9.0 (2024-07-04)
+
+The LivingApps platform support provides an NPM proxy. To use the module version
+of the LivingAPI from that proxy use the new build version stored in
+`dist/esm-npm` like this:
+
+```js
+import * as la from '/npm/@livinglogic/livingapi@1.9.0/dist/esm-npm/livingapi.js';
+```
+
 ## 1.8.0 (2024-06-18)
 
 Add field `required` in class `Field`.
