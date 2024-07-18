@@ -1550,6 +1550,18 @@ export class Field extends Base
 			this.writable = ul4._bool(value);
 		else if (name === "required")
 			this.required = ul4._bool(value);
+		else if (name === "top")
+		{
+			if (value !== null && (typeof(value) !== "number"))
+				throw new ul4.ArgumentError("top must be None or an int");
+			this.top = value;
+		}
+		else if (name === "left")
+		{
+			if (value !== null && (typeof(value) !== "number"))
+				throw new ul4.ArgumentError("left must be None or an int");
+			this.left = value;
+		}
 		else
 			super[ul4.symbols.setattr](name, value);
 	}
