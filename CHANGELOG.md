@@ -1,5 +1,11 @@
 # Changes
 
+## 1.10.1 (2024-07-18)
+
+`Field.top` and `Field.left` are now actually settable via UL4 templates not
+just via Javascript code.
+
+
 ## 1.10.0 (2024-07-18)
 
 The new attributes `Field.top`, `Field.left`, `Field.width` and `Field.height`
