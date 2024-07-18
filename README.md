@@ -50,8 +50,8 @@ or (if you need both UL4 and LivingAPI):
 
 ```html
 <script type="module">
-	import * as ul4 from '/npm/@livinglogic/ul4@1.16.1/dist/esm/ul4.js';
-	import * as la from '/npm/@livinglogic/livingapi@1.9.0/dist/esm-npm/livingapi.js';
+	import * as ul4 from '/npm/@livinglogic/ul4@1.17.0/dist/esm/ul4.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.10.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```

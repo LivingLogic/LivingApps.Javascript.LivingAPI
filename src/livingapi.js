@@ -1209,6 +1209,8 @@ export class Field extends Base
 		this._writable = true;
 		this._visible = true;
 		this._required = null;
+		this._top = null;
+		this._left = null;
 	}
 
 	[ul4.symbols.type]()
@@ -1300,6 +1302,40 @@ export class Field extends Base
 			this.errors = [error];
 		else
 			this.errors = [];
+	}
+
+	get top()
+	{
+		return this._top ?? this.control.top;
+	}
+
+	set top(value)
+	{
+		this._top = value;
+		if (this._in_form())
+			this._dom_root.style.top = this.top + "px";
+	}
+
+	get left()
+	{
+		return this._left ?? this.control.left;
+	}
+
+	set left(value)
+	{
+		this._left = value;
+		if (this._in_form())
+			this._dom_root.style.left = this.left + "px";
+	}
+
+	get width()
+	{
+		return this.control.width;
+	}
+
+	get height()
+	{
+		return this.control.width;
 	}
 
 	search(searchvalue)
@@ -1498,7 +1534,7 @@ export class Field extends Base
 			s += " is_dirty()=True";
 		if (this.errors.length > 0)
 			s += " has_errors()=True";
-		s += ">"
+		s += ">";
 		return s;
 	}
 
@@ -1520,7 +1556,7 @@ export class Field extends Base
 };
 
 Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable", "_required"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable", "required"]);
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable", "required", "top", "left", "width", "height"]);
 Field.prototype._inputevent = "input";
 
 

@@ -1,8 +1,17 @@
 # Changes
 
+## 1.10.0 (2024-07-18)
+
+The new attributes `Field.top`, `Field.left`, `Field.width` and `Field.height`
+mirror the `Control` attributes of the same name.
+
+`top` and `left` are settable. If you're in a form and those fields are visible
+in the form, the field will be moved to the appropriate position.
+
+
 ## 1.9.0 (2024-07-04)
 
-The LivingApps platform support provides an NPM proxy. To use the module version
+The LivingApps platform now provides an NPM proxy. To use the module version
 of the LivingAPI from that proxy use the new build version stored in
 `dist/esm-npm` like this:
 
