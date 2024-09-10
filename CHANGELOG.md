@@ -1,5 +1,11 @@
 # Changes
 
+## 1.11.0 (2024-09-10)
+
+Add new UL4 attributes `search_url`, `search_param_name` and `target_param_name` in
+`AppLookupChoiceControl` and `AppLookupChoiceField`.
+
+
 ## 1.10.1 (2024-07-18)
 
 `Field.top` and `Field.left` are now actually settable via UL4 templates not

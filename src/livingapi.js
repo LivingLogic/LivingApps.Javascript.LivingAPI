@@ -3448,13 +3448,52 @@ let applookupchoicefieldtype = new AppLookupChoiceFieldType("la", "AppLookupChoi
 
 export class AppLookupChoiceField extends AppLookupField
 {
+	constructor(control, record, value)
+	{
+		super(null);
+		this._search_url = null;
+		this._search_param_name = null;
+		this._target_param_name = null;
+	}
+
 	[ul4.symbols.type]()
 	{
 		return applookupchoicefieldtype;
 	}
+
+	get search_url()
+	{
+		return this._search_url ?? this.control.search_url;
+	}
+
+	set search_url(value)
+	{
+		this._search_url = value;
+	}
+
+	get search_param_name()
+	{
+		return this._search_param_name ?? this.control.search_param_name;
+	}
+
+	set search_param_name(value)
+	{
+		this._search_param_name = value;
+	}
+
+	get target_param_name()
+	{
+		return this._target_param_name ?? this.control.target_param_name;
+	}
+
+	set target_param_name(value)
+	{
+		this._target_param_name = value;
+	}
 };
 
 AppLookupChoiceField.prototype._inputevent = "llchoice";
+AppLookupChoiceField.prototype._ul4attrs = new Set([...Field.prototype._ul4attrs, "search_url", "search_param_name", "target_param_name"]);
 
 
 class MultipleAppLookupFieldType extends AppLookupFieldBaseType
@@ -4673,11 +4712,27 @@ export class AppLookupChoiceControl extends AppLookupControl
 	{
 		return applookupchoicecontroltype;
 	}
+
+	get search_url()
+	{
+		return "field_" + this.identifier + "_search";
+	}
+
+	get search_param_name()
+	{
+		return "q";
+	}
+
+	get target_param_name()
+	{
+		return "target";
+	}
 };
 
 AppLookupChoiceControl.prototype.subtype = "choice";
 AppLookupChoiceControl.prototype.fieldtype = AppLookupChoiceField;
 AppLookupChoiceControl.prototype._cssclass_control = "select";
+AppLookupChoiceControl.prototype._ul4attrs = new Set([...AppLookupControl.prototype._ul4attrs, "search_url", "search_param_name", "target_param_name"]);
 
 
 class MultipleLookupControlType extends LookupControlType
