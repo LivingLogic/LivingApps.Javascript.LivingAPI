@@ -1,5 +1,42 @@
 # Changes
 
+## 1.12.0 (2024-10-08)
+
+Add new UL4 attribute ``recordedat`` in class ``File`` which holds the point in time when
+the file was recorded.
+
+
+## 1.11.0 (2024-09-10)
+
+Add new UL4 attributes `search_url`, `search_param_name` and `target_param_name` in
+`AppLookupChoiceControl` and `AppLookupChoiceField`.
+
+
+## 1.10.1 (2024-07-18)
+
+`Field.top` and `Field.left` are now actually settable via UL4 templates not
+just via Javascript code.
+
+
+## 1.10.0 (2024-07-18)
+
+The new attributes `Field.top`, `Field.left`, `Field.width` and `Field.height`
+mirror the `Control` attributes of the same name.
+
+`top` and `left` are settable. If you're in a form and those fields are visible
+in the form, the field will be moved to the appropriate position.
+
+
+## 1.9.0 (2024-07-04)
+
+The LivingApps platform now provides an NPM proxy. To use the module version
+of the LivingAPI from that proxy use the new build version stored in
+`dist/esm-npm` like this:
+
+```js
+import * as la from '/npm/@livinglogic/livingapi@1.9.0/dist/esm-npm/livingapi.js';
+```
+
 ## 1.8.0 (2024-06-18)
 
 Add field `required` in class `Field`.

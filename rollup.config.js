@@ -46,7 +46,17 @@ export default [
 				sourcemap: true,
 				globals: {"@livinglogic/ul4": "ul4"},
 				paths: {
-					"@livinglogic/ul4": '/static/ul4/1.13.1/dist/esm/ul4.js'
+					"@livinglogic/ul4": '/static/ul4/1.16.1/dist/esm/ul4.js'
+				}
+			},
+			{
+				file: './dist/esm-npm/livingapi.js',
+				format: 'esm',
+				name: 'la',
+				sourcemap: true,
+				globals: {"@livinglogic/ul4": "ul4"},
+				paths: {
+					"@livinglogic/ul4": '/npm/@livinglogic/ul4@1.16.1/dist/esm/ul4.js'
 				}
 			}
 		],

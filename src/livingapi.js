@@ -1209,6 +1209,8 @@ export class Field extends Base
 		this._writable = true;
 		this._visible = true;
 		this._required = null;
+		this._top = null;
+		this._left = null;
 	}
 
 	[ul4.symbols.type]()
@@ -1300,6 +1302,40 @@ export class Field extends Base
 			this.errors = [error];
 		else
 			this.errors = [];
+	}
+
+	get top()
+	{
+		return this._top ?? this.control.top;
+	}
+
+	set top(value)
+	{
+		this._top = value;
+		if (this._in_form())
+			this._dom_root.style.top = this.top + "px";
+	}
+
+	get left()
+	{
+		return this._left ?? this.control.left;
+	}
+
+	set left(value)
+	{
+		this._left = value;
+		if (this._in_form())
+			this._dom_root.style.left = this.left + "px";
+	}
+
+	get width()
+	{
+		return this.control.width;
+	}
+
+	get height()
+	{
+		return this.control.width;
 	}
 
 	search(searchvalue)
@@ -1498,7 +1534,7 @@ export class Field extends Base
 			s += " is_dirty()=True";
 		if (this.errors.length > 0)
 			s += " has_errors()=True";
-		s += ">"
+		s += ">";
 		return s;
 	}
 
@@ -1514,13 +1550,25 @@ export class Field extends Base
 			this.writable = ul4._bool(value);
 		else if (name === "required")
 			this.required = ul4._bool(value);
+		else if (name === "top")
+		{
+			if (value !== null && (typeof(value) !== "number"))
+				throw new ul4.ArgumentError("top must be None or an int");
+			this.top = value;
+		}
+		else if (name === "left")
+		{
+			if (value !== null && (typeof(value) !== "number"))
+				throw new ul4.ArgumentError("left must be None or an int");
+			this.left = value;
+		}
 		else
 			super[ul4.symbols.setattr](name, value);
 	}
 };
 
 Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable", "_required"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable", "required"]);
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable", "required", "top", "left", "width", "height"]);
 Field.prototype._inputevent = "input";
 
 
@@ -3400,13 +3448,52 @@ let applookupchoicefieldtype = new AppLookupChoiceFieldType("la", "AppLookupChoi
 
 export class AppLookupChoiceField extends AppLookupField
 {
+	constructor(control, record, value)
+	{
+		super(null);
+		this._search_url = null;
+		this._search_param_name = null;
+		this._target_param_name = null;
+	}
+
 	[ul4.symbols.type]()
 	{
 		return applookupchoicefieldtype;
 	}
+
+	get search_url()
+	{
+		return this._search_url ?? this.control.search_url;
+	}
+
+	set search_url(value)
+	{
+		this._search_url = value;
+	}
+
+	get search_param_name()
+	{
+		return this._search_param_name ?? this.control.search_param_name;
+	}
+
+	set search_param_name(value)
+	{
+		this._search_param_name = value;
+	}
+
+	get target_param_name()
+	{
+		return this._target_param_name ?? this.control.target_param_name;
+	}
+
+	set target_param_name(value)
+	{
+		this._target_param_name = value;
+	}
 };
 
 AppLookupChoiceField.prototype._inputevent = "llchoice";
+AppLookupChoiceField.prototype._ul4attrs = new Set([...Field.prototype._ul4attrs, "search_url", "search_param_name", "target_param_name"]);
 
 
 class MultipleAppLookupFieldType extends AppLookupFieldBaseType
@@ -4625,11 +4712,27 @@ export class AppLookupChoiceControl extends AppLookupControl
 	{
 		return applookupchoicecontroltype;
 	}
+
+	get search_url()
+	{
+		return "field_" + this.identifier + "_search";
+	}
+
+	get search_param_name()
+	{
+		return "q";
+	}
+
+	get target_param_name()
+	{
+		return "target";
+	}
 };
 
 AppLookupChoiceControl.prototype.subtype = "choice";
 AppLookupChoiceControl.prototype.fieldtype = AppLookupChoiceField;
 AppLookupChoiceControl.prototype._cssclass_control = "select";
+AppLookupChoiceControl.prototype._ul4attrs = new Set([...AppLookupControl.prototype._ul4attrs, "search_url", "search_param_name", "target_param_name"]);
 
 
 class MultipleLookupControlType extends LookupControlType
@@ -5374,8 +5477,8 @@ export class File extends Base
 	}
 };
 
-File.prototype._ul4onattrs = ["globals", "filename", "mimetype", "width", "height", "internal_id", "createdat", "size", "duration", "geo", "storagefilename", "archive", "context_id"];
-File.prototype._ul4attrs = new Set(["globals", "id", "internal_id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "archive", "createdat", "context_id"]);
+File.prototype._ul4onattrs = ["globals", "filename", "mimetype", "width", "height", "internal_id", "createdat", "size", "duration", "geo", "recordedat", "storagefilename", "archive", "context_id"];
+File.prototype._ul4attrs = new Set(["globals", "id", "internal_id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "recordedat", "archive", "createdat", "context_id"]);
 
 
 class GeoType extends ul4.Type
