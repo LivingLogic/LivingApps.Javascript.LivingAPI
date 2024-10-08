@@ -5477,8 +5477,8 @@ export class File extends Base
 	}
 };
 
-File.prototype._ul4onattrs = ["globals", "filename", "mimetype", "width", "height", "internal_id", "createdat", "size", "duration", "geo", "storagefilename", "archive", "context_id"];
-File.prototype._ul4attrs = new Set(["globals", "id", "internal_id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "archive", "createdat", "context_id"]);
+File.prototype._ul4onattrs = ["globals", "filename", "mimetype", "width", "height", "internal_id", "createdat", "size", "duration", "geo", "recordedat", "storagefilename", "archive", "context_id"];
+File.prototype._ul4attrs = new Set(["globals", "id", "internal_id", "url", "archive_url", "filename", "mimetype", "width", "height", "size", "duration", "geo", "recordedat", "archive", "createdat", "context_id"]);
 
 
 class GeoType extends ul4.Type

@@ -1,5 +1,11 @@
 # Changes
 
+## 1.12.0 (2024-10-08)
+
+Add new UL4 attribute ``recordedat`` in class ``File`` which holds the point in time when
+the file was recorded.
+
+
 ## 1.11.0 (2024-09-10)
 
 Add new UL4 attributes `search_url`, `search_param_name` and `target_param_name` in
