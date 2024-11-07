@@ -1597,6 +1597,17 @@ export class BoolField extends Field
 			if (this.control.required)
 				change.errors.push(this.msg_field_required(change.value));
 		}
+		else if (typeof(change.value) === "string")
+		{
+			if (change.value.length === 0)
+			{
+				if (this.control.required)
+					change.errors.push(this.msg_bool_truerequired(change.value));
+				change.value = false
+			}
+			else
+				change.value = true
+		}
 		else if (typeof(change.value) === "boolean")
 		{
 			if (this.control.required && !change.value)
