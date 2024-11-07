@@ -1,5 +1,10 @@
 # Changes
 
+## 1.13.0 (2024-11-07)
+
+Setting a `BoolField` to an empty string now sets the value to `False`.
+
+
 ## 1.12.0 (2024-10-08)
 
 Add new UL4 attribute ``recordedat`` in class ``File`` which holds the point in time when
