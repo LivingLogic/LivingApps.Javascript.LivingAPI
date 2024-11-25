@@ -1,5 +1,23 @@
 # Changes
 
+## 1.14.0 (2024-11-25)
+
+Setting a `BoolField` to an empty string now sets the value to `None`. Setting
+it to a case insensitive version of `"false"`, `"off"`, `"0"` or `"no"` sets
+it to `False`.
+
+Added `App` attributes `gramgen`, `typename_nom_sin`, `typename_gen_sin`, 
+`typename_dat_sin`, `typename_acc_sin`, `typename_nom_plu`, `typename_gen_plu`,
+`typename_dat_plu` and `typename_acc_plu` which provide a name for the type
+of records of an app.
+
+Added classes `DataSourceChildren` and `RecordChildren` which provide an
+enhanced way to store record children.
+
+Add `Field.mode` which inherits `Control.mode` but can be changed.
+
+Fixed super constructor call in `AppLookupChoiceField.constructor`.
+
 ## 1.13.0 (2024-11-07)
 
 Setting a `BoolField` to an empty string now sets the value to `False`.

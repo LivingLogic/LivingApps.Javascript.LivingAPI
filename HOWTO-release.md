@@ -31,11 +31,11 @@ you see.
 	incorporated into the generated source and the generated source is checked
 	in, you have to build the release files, after you update the version number
 	like this:
-	
+
 	```
 	npm run build
 	```
-	
+
 	This should rebuild `dist/umd/livingapi.js`, `dist/umd/livingapi.js.map`,
 	`dist/esm-node/livingapi.js`, `dist/esm-node/livingapi.js.map`,
 	`dist/esm-static/livingapi.js` and `dist/esm-static/livingapi.js.map`.

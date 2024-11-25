@@ -60,7 +60,7 @@ export function element(name, ...args)
 
 function _append_param_to_url(urlparams, name, value)
 {
-	if (ul4._islist(value))
+	if (ul4._islist(value) || ul4._isset(value))
 	{
 		for (let v of value)
 			_append_param_to_url(urlparams, name, v);
@@ -783,8 +783,10 @@ export class App extends Base
 };
 
 
-App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
+	"startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
+"startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -853,6 +855,62 @@ DataSource.prototype._ul4onattrs = ["identifier", "app", "apps"];
 DataSource.prototype._ul4attrs = new Set(["id", "identifier", "app", "apps"]);
 
 
+class DataSourceChildrenType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DataSourceChildren;
+	}
+};
+
+let datasourcechildrentype = new DataSourceChildrenType("la", "DataSourceChildren", "A master/detail specification in a data source");
+
+
+export class DataSourceChildren extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return datasourcetypechildren;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<DataSourceChildren id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+	}
+};
+
+DataSourceChildren.prototype._ul4onattrs = ["datasource", "identifier", "control"];
+DataSourceChildren.prototype._ul4attrs = new Set(["id", "identifier", "datasource", "control"]);
+
+
+class RecordChildrenType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof RecordChildren;
+	}
+};
+
+let recordchildrentype = new RecordChildrenType("la", "RecordChildren", "The child records of a master record");
+
+
+export class RecordChildren extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return recordtypechildren;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<RecordChildren id=" + ul4._repr(this.id) + ">";
+	}
+};
+
+RecordChildren.prototype._ul4onattrs = ["record", "datasourcechildren", "records"];
+RecordChildren.prototype._ul4attrs = new Set(["id", "record", "datasourcechildren", "records"]);
+
+
 class RecordType extends ul4.Type
 {
 	instancecheck(obj)
@@ -878,7 +936,8 @@ export class Record extends Base
 		this._sparsevalues = new Map();
 		this._values = null;
 		this._fields = null;
-		this.children = new Map();
+		this.details = new Map();
+		this._children = null;
 		this.attachments = null;
 		this.errors = [];
 		this._sparsefielderrors = null;
@@ -1001,6 +1060,19 @@ export class Record extends Base
 		if (this._fields === null)
 			this._make_fields(false, this._sparsevalues, this._sparsefielderrors, this._sparsefieldlookupdata)
 		return this._fields;
+	}
+
+	get children()
+	{
+		if (this._children === null)
+		{
+			this._children = new Map();
+			for (const recordchildren of this.details.values())
+			{
+				this._children.set(recordchildren.datasourcechildren.identifier, recordchildren.records);
+			}
+		}
+		return this._children;
 	}
 
 	is_dirty()
@@ -1148,7 +1220,11 @@ export class Record extends Base
 	[ul4.symbols.getattr](name)
 	{
 		if (name.startsWith("c_"))
+		{
 			return this.children.get(name.substr(2))
+		}
+		else if (name.startsWith("d_"))
+			return this.details.get(name.substr(2))
 		else if (name.startsWith("f_"))
 			return this.fields.get(name.substr(2))
 		else if (name.startsWith("v_"))
@@ -1168,8 +1244,8 @@ export class Record extends Base
 	}
 };
 
-Record.prototype._ul4onattrs = ["app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "_sparsevalues", "attachments", "children", "errors", "_sparsefielderrors", "_sparsefieldlookupdata"];
-Record.prototype._ul4attrs = new Set(["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "fields", "attachments", "children", "errors", "template_url", "edit_embedded_url", "edit_standalone_url"]);
+Record.prototype._ul4onattrs = ["app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "_sparsevalues", "attachments", "details", "errors", "_sparsefielderrors", "_sparsefieldlookupdata"];
+Record.prototype._ul4attrs = new Set(["id", "app", "createdat", "createdby", "updatedat", "updatedby", "updatecount", "values", "fields", "attachments", "details", "children", "errors", "template_url", "edit_embedded_url", "edit_standalone_url"]);
 ul4.expose(Record.prototype.is_dirty, []);
 ul4.expose(Record.prototype.has_errors, []);
 ul4.expose(Record.prototype.delete, []);
@@ -1258,6 +1334,16 @@ export class Field extends Base
 	{
 		if (this._in_form())
 			this._dom_label.textContent = this.label;
+	}
+
+	get mode()
+	{
+		return this._mode ?? this.control.mode;
+	}
+
+	set mode(value)
+	{
+		this._mode = value;
 	}
 
 	get label()
@@ -1568,7 +1654,7 @@ export class Field extends Base
 };
 
 Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable", "_required"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable", "required", "top", "left", "width", "height"]);
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "mode", "errors", "visible", "enabled", "writable", "required", "top", "left", "width", "height"]);
 Field.prototype._inputevent = "input";
 
 
@@ -1603,10 +1689,16 @@ export class BoolField extends Field
 			{
 				if (this.control.required)
 					change.errors.push(this.msg_bool_truerequired(change.value));
-				change.value = false
+				change.value = null;
+			}
+			else if (["false", "no", "0", "off"].includes(change.value.toLowerCase()))
+			{
+				change.value = false;
 			}
 			else
-				change.value = true
+			{
+				change.value = true;
+			}
 		}
 		else if (typeof(change.value) === "boolean")
 		{
@@ -3461,7 +3553,7 @@ export class AppLookupChoiceField extends AppLookupField
 {
 	constructor(control, record, value)
 	{
-		super(null);
+		super(control, record, value);
 		this._search_url = null;
 		this._search_param_name = null;
 		this._target_param_name = null;
@@ -6055,6 +6147,8 @@ let classes = [
 	MenuItem,
 	Panel,
 	DataSource,
+	DataSourceChildren,
+	RecordChildren,
 	Record,
 	BoolControl,
 	IntControl,
@@ -6176,6 +6270,7 @@ export const module = new ul4.Module(
 		FileSignatureControl: FileSignatureControl,
 		GeoControl: GeoControl,
 		ViewControl: ViewControl,
+		RecordChildren: RecordChildren,
 		Record: Record,
 		FileAttachment: FileAttachment,
 		URLAttachment: URLAttachment,
@@ -6187,6 +6282,7 @@ export const module = new ul4.Module(
 		ButtonLayoutControl: ButtonLayoutControl,
 		View: View,
 		DataSource: DataSource,
+		DataSourceChildren: DataSourceChildren,
 		LookupItem: LookupItem,
 		ViewLookupItem: ViewLookupItem,
 		Category: Category,
