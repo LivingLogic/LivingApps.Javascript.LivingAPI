@@ -3553,7 +3553,7 @@ export class AppLookupChoiceField extends AppLookupField
 {
 	constructor(control, record, value)
 	{
-		super(null);
+		super(control, record, value);
 		this._search_url = null;
 		this._search_param_name = null;
 		this._target_param_name = null;
