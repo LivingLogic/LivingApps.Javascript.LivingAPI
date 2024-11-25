@@ -1679,10 +1679,16 @@ export class BoolField extends Field
 			{
 				if (this.control.required)
 					change.errors.push(this.msg_bool_truerequired(change.value));
-				change.value = false
+				change.value = null;
+			}
+			else if (["false", "no", "0", "off"].includes(change.value.toLowerCase()))
+			{
+				change.value = false;
 			}
 			else
-				change.value = true
+			{
+				change.value = true;
+			}
 		}
 		else if (typeof(change.value) === "boolean")
 		{
