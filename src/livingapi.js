@@ -60,7 +60,7 @@ export function element(name, ...args)
 
 function _append_param_to_url(urlparams, name, value)
 {
-	if (ul4._islist(value))
+	if (ul4._islist(value) || ul4._isset(value))
 	{
 		for (let v of value)
 			_append_param_to_url(urlparams, name, v);
