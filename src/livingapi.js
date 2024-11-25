@@ -1336,6 +1336,16 @@ export class Field extends Base
 			this._dom_label.textContent = this.label;
 	}
 
+	get mode()
+	{
+		return this._mode ?? this.control.mode;
+	}
+
+	set mode(value)
+	{
+		this._mode = value;
+	}
+
 	get label()
 	{
 		return this._label ?? this.control.label;
@@ -1644,7 +1654,7 @@ export class Field extends Base
 };
 
 Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable", "_required"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "errors", "visible", "enabled", "writable", "required", "top", "left", "width", "height"]);
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "mode", "errors", "visible", "enabled", "writable", "required", "top", "left", "width", "height"]);
 Field.prototype._inputevent = "input";
 
 
