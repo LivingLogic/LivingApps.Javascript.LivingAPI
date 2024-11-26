@@ -41,7 +41,7 @@ do
 
 ```html
 <script type="module">
-	import * as la from '/npm/@livinglogic/livingapi@1.13.0/dist/esm-npm/livingapi.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.15.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```
@@ -50,8 +50,8 @@ or (if you need both UL4 and LivingAPI):
 
 ```html
 <script type="module">
-	import * as ul4 from '/npm/@livinglogic/ul4@1.17.0/dist/esm/ul4.js';
-	import * as la from '/npm/@livinglogic/livingapi@1.14.0/dist/esm-npm/livingapi.js';
+	import * as ul4 from '/npm/@livinglogic/ul4@1.18.0/dist/esm/ul4.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.15.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```
