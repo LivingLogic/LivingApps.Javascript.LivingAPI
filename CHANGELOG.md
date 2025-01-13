@@ -1,5 +1,23 @@
 # Changes
 
+## 1.16.0 (2025-01-13)
+
+Added `Control` attributes `description`, `in_mobile_list` and `in_text`.
+
+Added `Control.in_list` as an alias for `Control.priority`.
+
+`Control.required` now works independent of an active view. However when
+a view is active it mirrors the view fields "required" status.
+
+Added `Field` attributes `description`, `in_list`, `in_mobile_list`, `in_text`
+that mirror the `Control`s attributes.
+
+
+## 1.15.0 (2024-11-25)
+
+Add `MenuItem.on_view_template`.
+
+
 ## 1.14.0 (2024-11-25)
 
 Setting a `BoolField` to an empty string now sets the value to `None`. Setting
@@ -17,6 +35,7 @@ enhanced way to store record children.
 Add `Field.mode` which inherits `Control.mode` but can be changed.
 
 Fixed super constructor call in `AppLookupChoiceField.constructor`.
+
 
 ## 1.13.0 (2024-11-07)
 

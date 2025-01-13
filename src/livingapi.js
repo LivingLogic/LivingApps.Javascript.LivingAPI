@@ -1275,6 +1275,7 @@ export class Field extends Base
 		this.control = control;
 		this.record = record;
 		this._label = null;
+		this._description = null;
 		this._lookupdata = null;
 		this.errors = [];
 		this._value = null;
@@ -1285,6 +1286,7 @@ export class Field extends Base
 		this._writable = true;
 		this._visible = true;
 		this._required = null;
+		this._in_text = null;
 		this._top = null;
 		this._left = null;
 	}
@@ -1355,6 +1357,16 @@ export class Field extends Base
 	{
 		this._label = value;
 		this._set_dom_label();
+	}
+
+	get description()
+	{
+		return this._description ?? this.control.description;
+	}
+
+	set description(value)
+	{
+		this._description = value;
 	}
 
 	get globals()
@@ -1582,6 +1594,26 @@ export class Field extends Base
 		this._required = value;
 	}
 
+	get in_list()
+	{
+		return this.control.in_list;
+	}
+
+	get in_mobile_list()
+	{
+		return this.control.in_mobile_list;
+	}
+
+	get in_text()
+	{
+		return this._in_text ?? this.control.in_text;
+	}
+
+	set in_text(value)
+	{
+		this._in_text = value;
+	}
+
 	get enabled()
 	{
 		if (this._in_form())
@@ -1654,7 +1686,7 @@ export class Field extends Base
 };
 
 Field.prototype._ul4onattrs = ["control", "record", "label", "value", "errors", "_visible", "_enabled", "_writable", "_required"];
-Field.prototype._ul4attrs = new Set(["control", "record", "label", "value", "mode", "errors", "visible", "enabled", "writable", "required", "top", "left", "width", "height"]);
+Field.prototype._ul4attrs = new Set(["control", "record", "label", "description", "value", "mode", "errors", "visible", "enabled", "writable", "required", "in_text", "top", "left", "width", "height"]);
 Field.prototype._inputevent = "input";
 
 
@@ -3775,6 +3807,56 @@ export class Control extends Base
 		this._label = value;
 	}
 
+	get description()
+	{
+		return this._description;
+	}
+
+	set description(value)
+	{
+		this._description = value;
+	}
+
+	get priority()
+	{
+		return this._priority;
+	}
+
+	set priority(value)
+	{
+		this._priority = value;
+	}
+
+	get in_list()
+	{
+		return this._priority;
+	}
+
+	set in_list(value)
+	{
+		this._priority = value;
+	}
+
+	get in_mobile_list()
+	{
+		return this._in_mobile_list;
+	}
+
+	set in_mobile_list(value)
+	{
+		this._in_mobile_list = value;
+	}
+
+	get in_text()
+	{
+		return this._in_text;
+	}
+
+	set in_text(value)
+	{
+		this._in_text = value;
+	}
+
 	get default()
 	{
 		return null;
@@ -3825,7 +3907,12 @@ export class Control extends Base
 	get required()
 	{
 		let view_control = this._view_control();
-		return view_control !== null ? view_control.required : false;
+		return view_control !== null ? view_control.required : this._required;
+	}
+
+	set required(value)
+	{
+		this._required = value;
 	}
 
 	get mode()
@@ -3887,8 +3974,8 @@ export class Control extends Base
 
 Control.prototype.type = null;
 Control.prototype.subtype = null;
-Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "priority", "order", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
+Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "_priority", "_in_mobile_list", "_in_text", "_required", "order", "ininsertprocedure", "inupdateprocedure"];
+Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "in_list", "in_mobile_list", "in_text", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
 
