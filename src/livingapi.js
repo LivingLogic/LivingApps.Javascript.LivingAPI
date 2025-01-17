@@ -783,15 +783,41 @@ export class App extends Base
 };
 
 
-App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "group", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
 	"startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
-"startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "group", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
 ul4.expose(App.prototype.new_embedded_url, ["params", "**"]);
 ul4.expose(App.prototype.new_standalone_url, ["params", "**"]);
+
+
+class AppGroupType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppGroup;
+	}
+};
+
+let appgrouptype = new AppType("la", "AppGroup", "A group of LivingApps");
+
+
+export class AppGroup extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return appgrouptype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<AppGroup id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
+	}
+};
+AppGroup.prototype._ul4onattrs = ["globals", "name", "apps"];
+AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "apps"]);
 
 
 class ViewType extends ul4.Type
@@ -6230,6 +6256,7 @@ let classes = [
 	Globals,
 	FlashMessage,
 	App,
+	AppGroup,
 	View,
 	MenuItem,
 	Panel,
@@ -6328,6 +6355,7 @@ export const module = new ul4.Module(
 		KeyView: KeyView,
 		Globals: Globals,
 		App: App,
+		AppGroup: AppGroup,
 		TextControl: TextControl,
 		URLControl: URLControl,
 		EmailControl: EmailControl,
