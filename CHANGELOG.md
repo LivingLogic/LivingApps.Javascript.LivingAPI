@@ -1,5 +1,10 @@
 # Changes
 
+## HEAD (2025-??-??)
+
+Added attributes `App.main` and class `AppGroup`.
+
+
 ## 1.16.0 (2025-01-13)
 
 Added `Control` attributes `description`, `in_mobile_list` and `in_text`.
