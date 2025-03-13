@@ -230,6 +230,7 @@ export class Globals extends Base
 		this.app = null;
 		this.record = null;
 		this.mode = null;
+		this.groups = null;
 		this.maxdbactions = null;
 		this.maxtemplateruntime = null;
 		this.flashmessages = null;
@@ -528,7 +529,7 @@ export class Globals extends Base
 };
 
 Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["version", "hostname", "platform", "user", "lang", "datasources", "app", "record", "maxdbactions", "maxtemplateruntime", "flashmessages", "mode", "scaled_url", "qrcode_url", "dist", "current_geo", "log_debug", "log_info", "log_warning", "log_error", "my_apps_url", "my_tasks_url", "catalog_url", "chats_url", "profile_url", "account_url", "logout_url"]);
+Globals.prototype._ul4attrs = new Set(["id", "version", "hostname", "platform", "mode", "form", "app", "record", "datasources", "externaldatasources", "groups", "user", "lang", "templates", "pparams", "geo", "dist", "maxdbactions", "maxtemplateruntime", "flashmessages", "scaled_url", "qrcode_url", "current_geo", "log_debug", "log_info", "log_warning", "log_error", "my_apps_url", "my_tasks_url", "catalog_url", "chats_url", "profile_url", "account_url", "logout_url"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
@@ -784,8 +785,8 @@ export class App extends Base
 
 
 App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "group", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
-	"startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "menus", "panels"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "group", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+	"startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "viewtemplates"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "group", "main", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -816,8 +817,8 @@ export class AppGroup extends Base
 		return "<AppGroup id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 };
-AppGroup.prototype._ul4onattrs = ["globals", "name", "apps"];
-AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "apps"]);
+AppGroup.prototype._ul4onattrs = ["globals", "name", "apps", "main_app"];
+AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "apps", "main_map"]);
 
 
 class ViewType extends ul4.Type
@@ -6087,6 +6088,34 @@ Panel.prototype._ul4onattrs = [...MenuItem.prototype._ul4onattrs, "description",
 Panel.prototype._ul4attrs = new Set([...MenuItem.prototype._ul4attrs, "description", "description_url", "image", "row", "column", "width", "height"]);
 
 
+class ViewTemplateInfoType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ViewTemplateInfo;
+	}
+};
+
+let viewtemplateinfotype = new UserType("la", "ViewTemplateInfo", "basic information about a view template");
+
+
+export class ViewTemplateInfo extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return viewtemplateinfotype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<ViewTemplateInfo id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + " name=" + ul4._repr(this.name) + ">";
+	}
+};
+
+ViewTemplateInfo.prototype._ul4onattrs = ["app", "identifier", "name", "icon", "type", "mimetype", "permission_level"];
+ViewTemplateInfo.prototype._ul4attrs = new Set(["app", "id", "identifier", "name", "icon", "type", "mimetype", "permission_level"]);
+
+
 class FormType extends ul4.Type
 {
 	instancecheck(obj)
@@ -6336,7 +6365,8 @@ let classes = [
 	Category,
 	KeyView,
 	AppParameter,
-	MutableAppParameter
+	MutableAppParameter,
+	ViewTemplateInfo
 ];
 
 for (let constructor of classes)
@@ -6405,5 +6435,6 @@ export const module = new ul4.Module(
 		MutableAppParameter: MutableAppParameter,
 		MenuItem: MenuItem,
 		Panel: Panel,
+		ViewTemplateInfo: ViewTemplateInfo
 	}
 );

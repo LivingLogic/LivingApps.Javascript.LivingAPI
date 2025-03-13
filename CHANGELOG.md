@@ -1,5 +1,17 @@
 # Changes
 
+## 1.18.0 (2025-03-13)
+
+Added attributes `Globals.groups`, `AppGroup.main_app` and `App.main`.
+
+Added type `ViewTemplateInfo` and attribute `App.viewtemplate`.
+
+
+## 1.17.0 (2025-01-17)
+
+Added type `AppGroup` and attribute `App.group`.
+
+
 ## 1.16.0 (2025-01-13)
 
 Added `Control` attributes `description`, `in_mobile_list` and `in_text`.
