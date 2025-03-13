@@ -1,6 +1,13 @@
 # Changes
 
-## HEAD (2025-??-??)
+## 1.18.0 (2025-03-13)
+
+Added attributes `Globals.groups`, `AppGroup.main_app` and `App.main`.
+
+Added type `ViewTemplateInfo` and attribute `App.viewtemplate`.
+
+
+## 1.17.0 (2025-01-17)
 
 Added attributes `App.main` and class `AppGroup`.
 
