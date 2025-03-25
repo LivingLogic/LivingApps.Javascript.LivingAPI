@@ -1,5 +1,11 @@
 # Changes
 
+## 1.18.1 (2025-03-25)
+
+Added missing attribute `Control._required_in_view` and fixed logic of
+the `required` getter method.
+
+
 ## 1.18.0 (2025-03-13)
 
 Added attributes `Globals.groups`, `AppGroup.main_app` and `App.main`.
@@ -9,7 +15,7 @@ Added type `ViewTemplateInfo` and attribute `App.viewtemplate`.
 
 ## 1.17.0 (2025-01-17)
 
-Added type `AppGroup` and attribute `App.group`.
+Added class `AppGroup` and attributes `App.group` and `App.main`.
 
 
 ## 1.16.0 (2025-01-13)

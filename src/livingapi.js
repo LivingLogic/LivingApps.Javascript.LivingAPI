@@ -818,7 +818,7 @@ export class AppGroup extends Base
 	}
 };
 AppGroup.prototype._ul4onattrs = ["globals", "name", "apps", "main_app"];
-AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "apps", "main_map"]);
+AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "apps", "main_app"]);
 
 
 class ViewType extends ul4.Type
@@ -3933,8 +3933,18 @@ export class Control extends Base
 
 	get required()
 	{
-		let view_control = this._view_control();
-		return view_control !== null ? view_control.required : this._required;
+		if (this.app._active_view === null)
+		{
+			return this._required ?? this._required_in_view;
+		}
+		else
+		{
+			let view_control = this._view_control();
+			if (view_control === null)
+				return false;
+			else
+				return view_control.required;
+		}
 	}
 
 	set required(value)
@@ -4001,7 +4011,7 @@ export class Control extends Base
 
 Control.prototype.type = null;
 Control.prototype.subtype = null;
-Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "_priority", "_in_mobile_list", "_in_text", "_required", "order", "ininsertprocedure", "inupdateprocedure"];
+Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "_priority", "_in_mobile_list", "_in_text", "_required", "_required_in_view", "order", "ininsertprocedure", "inupdateprocedure"];
 Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "in_list", "in_mobile_list", "in_text", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
