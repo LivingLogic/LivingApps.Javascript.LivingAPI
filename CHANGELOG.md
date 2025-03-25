@@ -1,5 +1,10 @@
 # Changes
 
+## HEAD (2025-??-??)
+
+Added missing attribute `Control._required_in_view` and fixed logic of
+the `required` getter method.
+
 ## 1.18.0 (2025-03-13)
 
 Added attributes `Globals.groups`, `AppGroup.main_app` and `App.main`.
