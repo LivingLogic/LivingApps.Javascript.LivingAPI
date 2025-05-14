@@ -925,7 +925,7 @@ export class RecordChildren extends Base
 {
 	[ul4.symbols.type]()
 	{
-		return recordtypechildren;
+		return recordchildrentype;
 	}
 
 	[ul4.symbols.repr]()
