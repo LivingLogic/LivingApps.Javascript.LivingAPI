@@ -1,5 +1,10 @@
 # Changes
 
+## 1.18.2 (2025-05-14)
+
+Fixed bug in `RecordChildren[ul4.symbols.type]`.
+
+
 ## 1.18.1 (2025-03-25)
 
 Added missing attribute `Control._required_in_view` and fixed logic of
