@@ -603,6 +603,12 @@ export class App extends Base
 		return "<App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 
+	/* For backwards compatibility */
+	get group()
+	{
+		return this.appgroup;
+	}
+
 	insert(values={})
 	{
 		let record = this[ul4.symbols.call](values);
@@ -728,17 +734,23 @@ export class App extends Base
 				throw new ul4.AttributeError(this, name);
 			return this.layout_controls.get(name.substr(3));
 		}
-		else if (name.startsWith("p_") && this.params !== null)
+		else if (name.startsWith("p_"))
 		{
-			if (!this.params.has(name.substr(2)))
-				throw new ul4.AttributeError(this, name);
-			return this.params.get(name.substr(2));
+			let identifier = name.substr(2);
+			if (this.params !== null && this.params.has(identifier))
+				return this.params.get(identifier);
+			else if (this.appgroup !== null && this.appgroup.params !== null && this.appgroup.params.has(identifier))
+				return this.appgroup.params.get(identifier);
+			throw new ul4.AttributeError(this, name);
 		}
-		else if (name.startsWith("pv_") && this.params !== null)
+		else if (name.startsWith("pv_"))
 		{
-			if (!this.params.has(name.substr(3)))
-				throw new ul4.AttributeError(this, name);
-			return this.params.get(name.substr(3)).value;
+			let identifier = name.substr(3);
+			if (this.params !== null && this.params.has(identifier))
+				return this.params.get(identifier).value;
+			else if (this.appgroup !== null && this.appgroup.params !== null && this.appgroup.params.has(identifier))
+				return this.appgroup.params.get(identifier).value;
+			throw new ul4.AttributeError(this, name);
 		}
 		else
 			return super[ul4.symbols.getattr](name);
@@ -784,9 +796,9 @@ export class App extends Base
 };
 
 
-App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "group", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
+App.prototype._ul4onattrs = ["globals", "name", "description", "lang", "appgroup", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu",
 	"startlink", "image", "createdby", "controls", "records", "recordcount", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "viewtemplates"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "group", "main", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "appgroup", "group", "main", "gramgen", "typename_nom_sin", "typename_gen_sin", "typename_dat_sin", "typename_acc_sin", "typename_nom_plu", "typename_gen_plu", "typename_dat_plu", "typename_acc_plu", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "recordcount", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -817,8 +829,8 @@ export class AppGroup extends Base
 		return "<AppGroup id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 };
-AppGroup.prototype._ul4onattrs = ["globals", "name", "apps", "main_app"];
-AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "apps", "main_app"]);
+AppGroup.prototype._ul4onattrs = ["globals", "name", "apps", "main_app", "params"];
+AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "apps", "main_app", "params"]);
 
 
 class ViewType extends ul4.Type
@@ -5998,17 +6010,10 @@ export class AppParameter extends Base
 	{
 		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
-
-	get app()
-	{
-		if (this.owner instanceof App)
-			return this.owner;
-		return null;
-	}
 };
 
-AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"];
-AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
+AppParameter.prototype._ul4onattrs = ["app", "appgroup", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"];
+AppParameter.prototype._ul4attrs = new Set(["id", "app", "appgroup", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class MutableAppParameterType extends AppParameterType
@@ -6032,13 +6037,6 @@ export class MutableAppParameter extends AppParameter
 	[ul4.symbols.repr]()
 	{
 		return "<MutableAppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
-	}
-
-	get app()
-	{
-		if (this.owner instanceof App)
-			return this.owner;
-		return null;
 	}
 };
 
