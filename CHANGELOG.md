@@ -1,5 +1,12 @@
 # Changes
 
+## 1.19.0 (2025-05-20)
+
+Added `AppGroup.params` (i.e. `AppParameter` objects attached to the `AppGroup`).
+
+Replace `AppParameter.owner` with `AppParameter.app` and `AppParameter.appgroup`.
+
+
 ## 1.18.2 (2025-05-14)
 
 Fixed bug in `RecordChildren[ul4.symbols.type]`.
