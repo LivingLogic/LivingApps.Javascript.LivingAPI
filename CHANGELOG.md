@@ -1,5 +1,18 @@
 # Changes
 
+## 1.20.0 (2025-06-24)
+
+`Control.mode` is now settable.
+
+The attribute `App.recordcount` has been renamed to `record_total`.
+Attributes `record_start` and `record_count` have been added that
+contain paging information (when paging parameters are in use or vSQL
+expressions for paging have been configured).
+
+Similar attributes (`record_total`, `record_start` and `record_count`)
+have been added to `RecordChildren`.
+
+
 ## 1.19.0 (2025-05-20)
 
 Added `AppGroup.params` (i.e. `AppParameter` objects attached to the `AppGroup`).
