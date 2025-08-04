@@ -1,5 +1,11 @@
 # Changes
 
+## HEAD (2025-??-??)
+
+Add the attributes `App.ai_generated`, `AppGroup.description` and
+`AppGroup.image`.
+
+
 ## 1.20.0 (2025-06-24)
 
 `Control.mode` is now settable.
