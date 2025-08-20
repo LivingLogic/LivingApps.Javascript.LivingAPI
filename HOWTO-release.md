@@ -64,7 +64,7 @@ you see.
 
 ## Releasing the new version on `npmjs.org`
 
-To push the finish release to `npmjs.org` do the following:
+To push the finished release to `npmjs.org` do the following:
 
 ```
 npm publish --access public
