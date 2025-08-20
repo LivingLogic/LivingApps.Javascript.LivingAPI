@@ -1,6 +1,12 @@
 # Changes
 
-## HEAD (2025-??-??)
+## 1.22.0 (2025-08-20)
+
+Added the internal attribute `App.internl_id`. Added the attributes `filter` and
+`sort` to `DataSource` and `DataSourceChildren`.
+
+
+## 1.21.0 (2025-08-04)
 
 Add the attributes `App.ai_generated`, `AppGroup.description` and
 `AppGroup.image`.
