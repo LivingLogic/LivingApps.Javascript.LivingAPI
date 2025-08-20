@@ -1,5 +1,10 @@
 # Changes
 
+## 1.23.0 (2025-08-20)
+
+Added the attribute `Gbobals.free`.
+
+
 ## 1.22.0 (2025-08-20)
 
 Added the internal attribute `App.internl_id`. Added the attributes `filter` and
