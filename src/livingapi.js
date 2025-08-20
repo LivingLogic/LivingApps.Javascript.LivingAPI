@@ -223,6 +223,7 @@ export class Globals extends Base
 		super(id);
 		this.version = null;
 		this.hostname = null;
+		this.free = false;
 		this.platform = null;
 		this.user = null;
 		this.lang = null;
@@ -528,8 +529,8 @@ export class Globals extends Base
 	}
 };
 
-Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "datasources", "hostname", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["id", "version", "hostname", "platform", "mode", "form", "app", "record", "datasources", "externaldatasources", "groups", "user", "lang", "templates", "pparams", "geo", "dist", "maxdbactions", "maxtemplateruntime", "flashmessages", "scaled_url", "qrcode_url", "current_geo", "log_debug", "log_info", "log_warning", "log_error", "my_apps_url", "my_tasks_url", "catalog_url", "chats_url", "profile_url", "account_url", "logout_url"]);
+Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "datasources", "hostname", "free", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
+Globals.prototype._ul4attrs = new Set(["id", "version", "hostname", "platform", "free", "mode", "form", "app", "record", "datasources", "externaldatasources", "groups", "user", "lang", "templates", "pparams", "geo", "dist", "maxdbactions", "maxtemplateruntime", "flashmessages", "scaled_url", "qrcode_url", "current_geo", "log_debug", "log_info", "log_warning", "log_error", "my_apps_url", "my_tasks_url", "catalog_url", "chats_url", "profile_url", "account_url", "logout_url"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
