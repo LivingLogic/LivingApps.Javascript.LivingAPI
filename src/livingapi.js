@@ -2,8 +2,8 @@
  * LivingAPI JavaScript Library
  * https://my.living-apps.de/docs/LivingAPI.html
  *
- * Copyright 2017-2024 by LivingLogic AG, Bayreuth/Germany
- * Copyright 2017-2024 by Walter Dörwald
+ * Copyright 2017-2025 by LivingLogic AG, Bayreuth/Germany
+ * Copyright 2017-2025 by Walter Dörwald
  *
  * All Rights Reserved
  *
@@ -3903,6 +3903,36 @@ export class Control extends Base
 		this._in_text = value;
 	}
 
+	get in_structured_search()
+	{
+		return this._in_structured_search;
+	}
+
+	set in_structured_search(value)
+	{
+		this._in_structured_search = value;
+	}
+
+	get in_fulltext_search()
+	{
+		return this._in_fulltext_search;
+	}
+
+	set in_fulltext_search(value)
+	{
+		this._in_fulltext_search = value;
+	}
+
+	get in_expert_search()
+	{
+		return this._in_expert_search;
+	}
+
+	set in_expert_search(value)
+	{
+		this._in_expert_search = value;
+	}
+
 	get default()
 	{
 		return null;
@@ -4037,8 +4067,8 @@ export class Control extends Base
 
 Control.prototype.type = null;
 Control.prototype.subtype = null;
-Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "_priority", "_in_mobile_list", "_in_text", "_required", "_required_in_view", "order", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "in_list", "in_mobile_list", "in_text", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
+Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "_priority", "_in_mobile_list", "_in_text", "_in_structured_search", "_in_fulltext_search", "_in_expert_search", "_required", "_required_in_view", "order", "ininsertprocedure", "inupdateprocedure"];
+Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "in_list", "in_mobile_list", "in_text", "in_structured_search", "in_fulltext_search", "in_expert_search", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
 
