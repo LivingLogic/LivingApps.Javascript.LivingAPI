@@ -1,5 +1,11 @@
 # Changes
 
+## 1.24.0 (2026-01-14)
+
+Added the attribute `Control` attributes `in_structured_search`,
+`in_fulltext_search` and `in_expert_search`.
+
+
 ## 1.23.0 (2025-08-20)
 
 Added the attribute `Gbobals.free`.

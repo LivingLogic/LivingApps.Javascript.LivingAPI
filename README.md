@@ -34,14 +34,14 @@ In your HTML include the following:
 <script src="{path_to_livingapi}/dist/umd/livingapi.js"></script>
 ```
 
-now you can use the Javascript variable `la` (and `ul4`).
+now you can use the Javascript variables `la` (and `ul4`).
 
 Or if you want to use the LivingAPI on https://my.living-apps.de/ as a module,
 do
 
 ```html
 <script type="module">
-	import * as la from '/npm/@livinglogic/livingapi@1.22.0/dist/esm-npm/livingapi.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.24.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```
@@ -51,7 +51,7 @@ or (if you need both UL4 and LivingAPI):
 ```html
 <script type="module">
 	import * as ul4 from '/npm/@livinglogic/ul4@1.19.0/dist/esm/ul4.js';
-	import * as la from '/npm/@livinglogic/livingapi@1.22.0/dist/esm-npm/livingapi.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.24.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```
