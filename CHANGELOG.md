@@ -1,5 +1,12 @@
 # Changes
 
+## 1.26.0 (2026-01-30)
+
+The `placeholder` attribute has been removed from `NumberControl`, `NumberField`,
+`DateControl` and `DateField`. Only `StringControl` and `StringField` have a
+attribute now.
+
+
 ## 1.25.0 (2026-01-30)
 
 Make the `placeholder` attribute setable for subclasses of `PlaceholderControl`.

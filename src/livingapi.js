@@ -1730,49 +1730,6 @@ Field.prototype._ul4attrs = new Set(["control", "record", "label", "description"
 Field.prototype._inputevent = "input";
 
 
-class PlaceholderFieldType extends FieldType
-{
-	instancecheck(obj)
-	{
-		return obj instanceof PlaceholderField;
-	}
-};
-
-let placeholderfieldtype = new PlaceholderFieldType("la", "PlaceholderField", "Holds the value of a field with placeholder support of a record (and related information)");
-
-
-export class PlaceholderField extends Field
-{
-	constructor(control, record, value)
-	{
-		super(control, record, value);
-		this._placeholder = null;
-	}
-
-	[ul4.symbols.type]()
-	{
-		return placeholderfieldtype;
-	}
-
-	get placeholder()
-	{
-		if (this._placeholder !== null)
-			return this._placeholder;
-		return this.control.placeholder;
-	}
-
-	set placeholder(value)
-	{
-		this._placeholder = value;
-		if (this._in_form())
-			this._dom_control.placeholder = this.placeholder ?? "";
-	}
-};
-
-PlaceholderField.prototype._ul4onattrs = [...Field.prototype._ul4onattrs, "_placeholder"];
-PlaceholderField.prototype._ul4attrs = new Set([...Field.prototype._ul4attrs, "placeholder"]);
-
-
 class BoolFieldType extends FieldType
 {
 	instancecheck(obj)
@@ -1940,7 +1897,7 @@ export class IntField extends Field
 };
 
 
-class NumberFieldType extends PlaceholderFieldType
+class NumberFieldType extends FieldType
 {
 	instancecheck(obj)
 	{
@@ -1951,7 +1908,7 @@ class NumberFieldType extends PlaceholderFieldType
 let numberfieldtype = new NumberFieldType("la", "NumberField", "Holds the value of a number field of a record (and related information)");
 
 
-export class NumberField extends PlaceholderField
+export class NumberField extends Field
 {
 	[ul4.symbols.type]()
 	{
@@ -2134,7 +2091,7 @@ export class NumberField extends PlaceholderField
 };
 
 
-class StringFieldType extends PlaceholderFieldType
+class StringFieldType extends FieldType
 {
 	instancecheck(obj)
 	{
@@ -2145,11 +2102,31 @@ class StringFieldType extends PlaceholderFieldType
 let stringfieldtype = new StringFieldType("la", "StringField", "Holds the value of a string field of a record (and related information)");
 
 
-export class StringField extends PlaceholderField
+export class StringField extends Field
 {
+	constructor(control, record, value)
+	{
+		super(control, record, value);
+		this._placeholder = null;
+	}
+
 	[ul4.symbols.type]()
 	{
 		return stringfieldtype;
+	}
+
+	get placeholder()
+	{
+		if (this._placeholder !== null)
+			return this._placeholder;
+		return this.control.placeholder;
+	}
+
+	set placeholder(value)
+	{
+		this._placeholder = value;
+		if (this._in_form())
+			this._dom_control.placeholder = this.placeholder ?? "";
 	}
 
 	_validate(change)
@@ -2197,6 +2174,9 @@ export class StringField extends PlaceholderField
 		return this.value;
 	}
 };
+
+StringField.prototype._ul4onattrs = [...Field.prototype._ul4onattrs, "_placeholder"];
+StringField.prototype._ul4attrs = new Set([...Field.prototype._ul4attrs, "placeholder"]);
 
 
 class PasswordFieldType extends StringFieldType
@@ -2539,7 +2519,7 @@ export class FileSignatureField extends FileField
 };
 
 
-class DateFieldBaseType extends PlaceholderFieldType
+class DateFieldBaseType extends FieldType
 {
 	instancecheck(obj)
 	{
@@ -2550,7 +2530,7 @@ class DateFieldBaseType extends PlaceholderFieldType
 let datefieldbasetype = new DateFieldBaseType("la", "DateFieldBase", "Holds the value of a date field of a record (and related information)");
 
 
-export class DateFieldBase extends PlaceholderField
+export class DateFieldBase extends Field
 {
 	[ul4.symbols.type]()
 	{
@@ -4182,37 +4162,7 @@ IntControl.prototype.type = "int";
 IntControl.prototype.fieldtype = IntField;
 
 
-class PlaceholderControlType extends ControlType
-{
-	instancecheck(obj)
-	{
-		return obj instanceof PlaceholderControld;
-	}
-};
-
-let placeholdercontroltype = new PlaceholderControlType("la", "PlaceholderControl", "A LivingApps field that has a placeholder");
-
-
-class PlaceholderControl extends Control
-{
-	[ul4.symbols.type]()
-	{
-		return placeholdercontroltype;
-	}
-
-	get placeholder()
-	{
-		let view_control = this._view_control();
-		if (view_control !== null)
-			return view_control.placeholder;
-		return this._placeholder;
-	}
-};
-
-PlaceholderControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "placeholder"]);
-
-
-class NumberControlType extends PlaceholderControlType
+class NumberControlType extends ControlType
 {
 	instancecheck(obj)
 	{
@@ -4223,7 +4173,7 @@ class NumberControlType extends PlaceholderControlType
 let numbercontroltype = new NumberControlType("la", "NumberControl", "A LivingApps number field (type 'number')");
 
 
-export class NumberControl extends PlaceholderControl
+export class NumberControl extends Control
 {
 	[ul4.symbols.type]()
 	{
@@ -4253,7 +4203,7 @@ NumberControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "precis
 NumberControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "precision", "minimum", "maximum"]);
 
 
-class StringControlType extends PlaceholderControlType
+class StringControlType extends ControlType
 {
 	instancecheck(obj)
 	{
@@ -4264,11 +4214,19 @@ class StringControlType extends PlaceholderControlType
 let stringcontroltype = new StringControlType("la", "StringControl", "A LivingApps number field (type 'string')");
 
 
-export class StringControl extends PlaceholderControl
+export class StringControl extends Control
 {
 	[ul4.symbols.type]()
 	{
 		return stringcontroltype;
+	}
+
+	get placeholder()
+	{
+		let view_control = this._view_control();
+		if (view_control !== null)
+			return view_control.placeholder;
+		return this._placeholder;
 	}
 
 	_user_placeholder(user, placeholder)
@@ -4379,6 +4337,7 @@ export class StringControl extends PlaceholderControl
 };
 
 StringControl.prototype.type = "string";
+StringControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "minlength", "maxlength", "placeholder"]);
 
 
 class TextControlType extends StringControlType
@@ -4560,7 +4519,7 @@ HTMLControl.prototype.subtype = "html";
 HTMLControl.prototype.fieldtype = HTMLField;
 
 
-class DateControlType extends PlaceholderControlType
+class DateControlType extends ControlType
 {
 	instancecheck(obj)
 	{
@@ -4571,7 +4530,7 @@ class DateControlType extends PlaceholderControlType
 let datecontroltype = new DateControlType("la", "DateControl", "A LivingApps date field (type 'date/date')");
 
 
-export class DateControl extends PlaceholderControl
+export class DateControl extends Control
 {
 	[ul4.symbols.type]()
 	{
