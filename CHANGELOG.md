@@ -1,5 +1,12 @@
 # Changes
 
+## 1.25.0 (2026-01-30)
+
+Make the `placeholder` attribute setable for subclasses of `PlaceholderControl`.
+
+Reflect that attribute in the appropriate `Field` subclasses.
+
+
 ## 1.24.0 (2026-01-14)
 
 Added the attribute `Control` attributes `in_structured_search`,
