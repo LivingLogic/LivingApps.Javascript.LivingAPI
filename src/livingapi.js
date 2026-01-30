@@ -1730,6 +1730,49 @@ Field.prototype._ul4attrs = new Set(["control", "record", "label", "description"
 Field.prototype._inputevent = "input";
 
 
+class PlaceholderFieldType extends FieldType
+{
+	instancecheck(obj)
+	{
+		return obj instanceof PlaceholderField;
+	}
+};
+
+let placeholderfieldtype = new PlaceholderFieldType("la", "PlaceholderField", "Holds the value of a field with placeholder support of a record (and related information)");
+
+
+export class PlaceholderField extends Field
+{
+	constructor(control, record, value)
+	{
+		super(control, record, value);
+		this._placeholder = null;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return placeholderfieldtype;
+	}
+
+	get placeholder()
+	{
+		if (this._placeholder !== null)
+			return this._placeholder;
+		return this.control.placeholder;
+	}
+
+	set placeholder(value)
+	{
+		this._placeholder = value;
+		if (this._in_form())
+			this._dom_control.placeholder = this.placeholder ?? "";
+	}
+};
+
+PlaceholderField.prototype._ul4onattrs = [...Field.prototype._ul4onattrs, "_placeholder"];
+PlaceholderField.prototype._ul4attrs = new Set([...Field.prototype._ul4attrs, "placeholder"]);
+
+
 class BoolFieldType extends FieldType
 {
 	instancecheck(obj)
@@ -1897,7 +1940,7 @@ export class IntField extends Field
 };
 
 
-class NumberFieldType extends FieldType
+class NumberFieldType extends PlaceholderFieldType
 {
 	instancecheck(obj)
 	{
@@ -1908,7 +1951,7 @@ class NumberFieldType extends FieldType
 let numberfieldtype = new NumberFieldType("la", "NumberField", "Holds the value of a number field of a record (and related information)");
 
 
-export class NumberField extends Field
+export class NumberField extends PlaceholderField
 {
 	[ul4.symbols.type]()
 	{
@@ -2091,7 +2134,7 @@ export class NumberField extends Field
 };
 
 
-class StringFieldType extends FieldType
+class StringFieldType extends PlaceholderFieldType
 {
 	instancecheck(obj)
 	{
@@ -2102,7 +2145,7 @@ class StringFieldType extends FieldType
 let stringfieldtype = new StringFieldType("la", "StringField", "Holds the value of a string field of a record (and related information)");
 
 
-export class StringField extends Field
+export class StringField extends PlaceholderField
 {
 	[ul4.symbols.type]()
 	{
@@ -2496,7 +2539,7 @@ export class FileSignatureField extends FileField
 };
 
 
-class DateFieldBaseType extends FieldType
+class DateFieldBaseType extends PlaceholderFieldType
 {
 	instancecheck(obj)
 	{
@@ -2507,7 +2550,7 @@ class DateFieldBaseType extends FieldType
 let datefieldbasetype = new DateFieldBaseType("la", "DateFieldBase", "Holds the value of a date field of a record (and related information)");
 
 
-export class DateFieldBase extends Field
+export class DateFieldBase extends PlaceholderField
 {
 	[ul4.symbols.type]()
 	{
@@ -4160,9 +4203,9 @@ class PlaceholderControl extends Control
 	get placeholder()
 	{
 		let view_control = this._view_control();
-		if (view_control === null)
-			return null;
-		return view_control.placeholder;
+		if (view_control !== null)
+			return view_control.placeholder;
+		return this._placeholder;
 	}
 };
 
