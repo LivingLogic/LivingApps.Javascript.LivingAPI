@@ -1,5 +1,13 @@
 # Changes
 
+## HEAD (2026-??-??)
+
+Renamed the grammatical UL4 field names to `typename_grammatical_gender`,
+`typename_nominative_singular`, `typename_genitive_singular`, `typename_dative_singular`,
+`typename_accusative_singular`, `typename_nominative_plural`, `typename_genitive_plural`,
+`typename_dative_plural` and `typename_accusative_plural`.
+
+
 ## 1.26.0 (2026-01-30)
 
 The `placeholder` attribute has been removed from `NumberControl`, `NumberField`,
