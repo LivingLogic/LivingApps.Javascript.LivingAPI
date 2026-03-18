@@ -4090,8 +4090,8 @@ export class Control extends Base
 
 Control.prototype.type = null;
 Control.prototype.subtype = null;
-Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "_priority", "_in_mobile_list", "_in_text", "_in_structured_search", "_in_fulltext_search", "_in_expert_search", "_required", "_required_in_view", "order", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "priority", "in_list", "in_mobile_list", "in_text", "in_structured_search", "in_fulltext_search", "in_expert_search", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
+Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "base_mode", "in_sum", "_priority", "_in_mobile_list", "_in_text", "_in_structured_search", "_in_fulltext_search", "_in_expert_search", "_required", "_required_in_view", "order", "ininsertprocedure", "inupdateprocedure"];
+Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "base_mode", "in_sum", "priority", "in_list", "in_mobile_list", "in_text", "in_structured_search", "in_fulltext_search", "in_expert_search", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
 
@@ -4227,6 +4227,18 @@ export class StringControl extends Control
 		if (view_control !== null)
 			return view_control.placeholder;
 		return this._placeholder;
+	}
+
+	set placeholder(placeholder)
+	{
+		this._placeholder = placeholder;
+
+		const globals = this.app.globals;
+		if (globals._in_form() && this.app === globals.record.app)
+		{
+			const field = globals.record.fields.get(this.identifier);
+			field._dom_control.placeholder = field.placeholder;
+		}
 	}
 
 	_user_placeholder(user, placeholder)
