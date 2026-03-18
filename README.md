@@ -24,7 +24,6 @@ Build `dist/umd/livingapi.js`, `dist/esm-node/livingapi.js`,
 npm run build
 ```
 
-2
 ## Using the LivingAPI in your project
 
 In your HTML include the following:
@@ -41,7 +40,7 @@ do
 
 ```html
 <script type="module">
-	import * as la from '/npm/@livinglogic/livingapi@1.27.0/dist/esm-npm/livingapi.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.28.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```
@@ -51,7 +50,7 @@ or (if you need both UL4 and LivingAPI):
 ```html
 <script type="module">
 	import * as ul4 from '/npm/@livinglogic/ul4@1.19.0/dist/esm/ul4.js';
-	import * as la from '/npm/@livinglogic/livingapi@1.27.0/dist/esm-npm/livingapi.js';
+	import * as la from '/npm/@livinglogic/livingapi@1.28.0/dist/esm-npm/livingapi.js';
 	...
 </script>
 ```

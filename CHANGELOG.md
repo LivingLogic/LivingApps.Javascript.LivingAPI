@@ -1,6 +1,13 @@
 # Changes
 
-## HEAD (2026-??-??)
+## 1.28.0 (2026-03-18)
+
+Added the `Control` attributes `base_mode` and `in_sum`.
+
+Made `StringControl.placeholder` settable.
+
+
+## 1.27.0 (2026-03-03)
 
 Renamed the grammatical UL4 field names to `typename_grammatical_gender`,
 `typename_nominative_singular`, `typename_genitive_singular`, `typename_dative_singular`,
