@@ -581,6 +581,109 @@ FlashMessage.prototype._ul4onattrs = ["timestamp", "type", "title", "message"];
 FlashMessage.prototype._ul4attrs = new Set(["timestamp", "type", "title", "message"]);
 
 
+class PermissionType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Permission;
+	}
+};
+
+let permissiontype = new PermissionType("la", "Permission", "Permission information");
+
+
+export class Permission extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return permissiontype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<Permission id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
+	}
+
+	get edit()
+	{
+		return this.permissions.charAt(0) == '1';
+	}
+
+	get config()
+	{
+		return this.permissions.charAt(1) == '1';
+	}
+
+	get delete()
+	{
+		return this.permissions.charAt(2) == '1';
+	}
+
+	get task_manage()
+	{
+		return this.permissions.charAt(3) == '1';
+	}
+
+	get data_edit()
+	{
+		return this.permissions.charAt(4) == '1';
+	}
+
+	get data_view()
+	{
+		return this.permissions.charAt(5) == '1';
+	}
+
+	get task_view()
+	{
+		return this.permissions.charAt(6) == '1';
+	}
+
+	get frontend()
+	{
+		return this.permissions.charAt(7) == '1';
+	}
+
+	get data_connect_external()
+	{
+		return this.permissions.charAt(8) == '1';
+	}
+
+	get perform_evaluation()
+	{
+		return this.permissions.charAt(9) == '1';
+	}
+
+	get to_catalog()
+	{
+		return this.permissions.charAt(10) == '1';
+	}
+
+	get data_import_export()
+	{
+		return this.permissions.charAt(11) == '1';
+	}
+
+	get mydata_view()
+	{
+		return this.permissions.charAt(12) == '1';
+	}
+
+	get mydata_edit()
+	{
+		return this.permissions.charAt(13) == '1';
+	}
+
+	get user_admin()
+	{
+		return this.permissions.charAt(14) == '1';
+	}
+}
+
+Permission.prototype._ul4onattrs = ["permissions"];
+Permission.prototype._ul4attrs = new Set(["permissions", "edit", "config", "delete", "task_manage", "data_edit", "data_view", "task_view", "frontend", "data_connect_external", "perform_evaluation", "to_catalog", "data_import_export", "mydata_view", "mydata_edit", "user_admin"]);
+
+
 class AppType extends ul4.Type
 {
 	instancecheck(obj)
@@ -794,12 +897,23 @@ export class App extends Base
 			return new Map();
 		return this.active_view.layout_controls;
 	}
+
+	get permissions()
+	{
+		if (typeof(this._permissions) === "string")
+		{
+			const p = this._permissions;
+			this._permissions = new Permission();
+			this._permissions.permissions = p;
+		}
+		return this._permissions;
+	}
 };
 
 
 App.prototype._ul4onattrs = ["globals", "internal_id", "name", "description", "lang", "appgroup", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural",
-	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "appgroup", "group", "main", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "appgroup", "group", "main", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -5955,6 +6069,34 @@ JSONAttachment.prototype._ul4onattrs = [...Attachment.prototype._ul4onattrs, "va
 JSONAttachment.prototype._ul4attrs = new Set([...Attachment.prototype._ul4onattrs, "value"]);
 
 
+class DataActionType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof DataAction;
+	}
+};
+
+let dataactiontype = new DataActionType("la", "DataAction", "A data action configured for an app.");
+
+
+export class DataAction extends Base
+{
+	[ul4.symbols.type]()
+	{
+		return dataactiontype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
+	}
+};
+
+DataAction.prototype._ul4onattrs = ["app", "identifier", "label", "order", "permission", "active", "icon", "description", "message", "filter", "as_multiple_action", "as_single_action", "as_mail_link", "on_edit_form_show", "on_record_edit", "on_record_new", "on_record_delete"];
+DataAction.prototype._ul4attrs = new Set(["app", "id", "identifier", "label", "order", "permission", "active", "icon", "description", "message", "filter", "as_multiple_action", "as_single_action", "as_link", "on_edit_form_show", "on_record_new", "on_record_edit", "on_record_delete"]);
+
+
 class InstallationType extends ul4.Type
 {
 	instancecheck(obj)
@@ -6070,8 +6212,8 @@ export class AppParameter extends Base
 	}
 };
 
-AppParameter.prototype._ul4onattrs = ["app", "appgroup", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"];
-AppParameter.prototype._ul4attrs = new Set(["id", "app", "appgroup", "parent", "app", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
+AppParameter.prototype._ul4onattrs = ["app", "appgroup", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby", "namespace"];
+AppParameter.prototype._ul4attrs = new Set(["id", "app", "appgroup", "parent", "app", "type", "order", "identifier", "namespace", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class MutableAppParameterType extends AppParameterType
