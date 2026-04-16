@@ -1,5 +1,15 @@
 # Changes
 
+## 1.29.0 (2026-04-16)
+
+Added the new type `DataAction`.
+
+Added the `App` attributes `filter_default`, `sort_default`, `filter_owndata`,
+`permissions` and `data_actions`.
+
+Added the `AppParameter` attribute `namespace`.
+
+
 ## 1.28.0 (2026-03-18)
 
 Added the `Control` attributes `base_mode` and `in_sum`.
