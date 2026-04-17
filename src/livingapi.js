@@ -6210,10 +6210,15 @@ export class AppParameter extends Base
 	{
 		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
+
+	get full_identifier()
+	{
+		return this.namespace === null ? this.identifier : `${this.namespace}.${this.identifier}`;
+	}
 };
 
 AppParameter.prototype._ul4onattrs = ["app", "appgroup", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby", "namespace"];
-AppParameter.prototype._ul4attrs = new Set(["id", "app", "appgroup", "parent", "app", "type", "order", "identifier", "namespace", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
+AppParameter.prototype._ul4attrs = new Set(["id", "app", "appgroup", "parent", "app", "type", "order", "identifier", "namespace", "full_identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class MutableAppParameterType extends AppParameterType
@@ -6569,6 +6574,7 @@ let classes = [
 	URLAttachment,
 	FileAttachment,
 	JSONAttachment,
+	DataAction,
 	Installation,
 	Category,
 	KeyView,
@@ -6629,6 +6635,7 @@ export const module = new ul4.Module(
 		URLAttachment: URLAttachment,
 		NoteAttachment: NoteAttachment,
 		JSONAttachment: JSONAttachment,
+		DataAction: DataAction,
 		Installation: Installation,
 		HTMLLayoutControl: HTMLLayoutControl,
 		ImageLayoutControl: ImageLayoutControl,
