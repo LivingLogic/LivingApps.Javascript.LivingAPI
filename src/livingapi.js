@@ -6093,8 +6093,8 @@ export class DataAction extends Base
 	}
 };
 
-DataAction.prototype._ul4onattrs = ["app", "identifier", "label", "order", "permission", "active", "icon", "description", "message", "filter", "as_multiple_action", "as_single_action", "as_mail_link", "on_edit_form_show", "on_record_edit", "on_record_new", "on_record_delete"];
-DataAction.prototype._ul4attrs = new Set(["app", "id", "identifier", "label", "order", "permission", "active", "icon", "description", "message", "filter", "as_multiple_action", "as_single_action", "as_link", "on_edit_form_show", "on_record_new", "on_record_edit", "on_record_delete"]);
+DataAction.prototype._ul4onattrs = ["app", "identifier", "label", "order", "permission", "active", "icon", "description", "message", "filter", "as_multiple_action", "as_single_action", "as_mail_link", "before_record_update_form", "after_record_update", "after_record_insert", "before_record_delete"];
+DataAction.prototype._ul4attrs = new Set(["app", "id", "identifier", "label", "order", "permission", "active", "icon", "description", "message", "filter", "as_multiple_action", "as_single_action", "as_link", "before_record_update_form", "after_record_update", "after_record_insert", "before_record_delete"]);
 
 
 class InstallationType extends ul4.Type
@@ -6213,7 +6213,7 @@ export class AppParameter extends Base
 
 	get full_identifier()
 	{
-		return this.namespace === null ? this.identifier : `${this.namespace}.${this.identifier}`;
+		return this.namespace === null || this.identifier === null ? this.identifier : `${this.namespace}.${this.identifier}`;
 	}
 };
 
