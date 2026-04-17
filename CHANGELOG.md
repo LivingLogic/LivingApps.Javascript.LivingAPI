@@ -1,5 +1,12 @@
 # Changes
 
+## 1.31.0 (2025-04-17)
+
+Fix `AppParameter.full_identifier` when there is no identifier.
+
+Renamed flag fields in `DataAction`.
+
+
 ## 1.30.0 (2025-04-17)
 
 Added the attribute `AppParameter.full_identifier`.
