@@ -1,5 +1,14 @@
 # Changes
 
+## 1.30.0 (2025-04-17)
+
+Added the attribute `AppParameter.full_identifier`.
+
+Fixed UL4ON registration for `DataAction`.
+
+Added `DataAction` to the `la` UL4 module.
+
+
 ## 1.29.0 (2026-04-16)
 
 Added the new type `DataAction`.
