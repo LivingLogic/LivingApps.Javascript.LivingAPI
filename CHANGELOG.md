@@ -1,5 +1,15 @@
 # Changes
 
+## 1.32.0 (2025-04-27)
+
+Added the `Attachment` attribute `namespace`.
+
+Attachments can now be attached to `App`s and `AppGroup`s too.
+
+Added `Record`, `App` and `AppGroup` methods `add_note_attachment`,
+`add_url_attachment`, `add_json_attachment` and `add_file_attachment`.
+
+
 ## 1.31.0 (2025-04-17)
 
 Fix `AppParameter.full_identifier` when there is no identifier.
