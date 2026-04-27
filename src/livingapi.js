@@ -240,6 +240,7 @@ export class Globals extends Base
 		this.handler = new Handler();
 		this._log_stack = [];
 		this._current_geo = null;
+		this._next_attachment_id = 0;
 	}
 
 	[ul4.symbols.type]()
@@ -684,6 +685,48 @@ Permission.prototype._ul4onattrs = ["permissions"];
 Permission.prototype._ul4attrs = new Set(["permissions", "edit", "config", "delete", "task_manage", "data_edit", "data_view", "task_view", "frontend", "data_connect_external", "perform_evaluation", "to_catalog", "data_import_export", "mydata_view", "mydata_edit", "user_admin"]);
 
 
+class WithAttachments extends Base
+{
+	_add_attachment(type, label, namespace, active, value)
+	{
+		if (this.attachments === null)
+			this.attachments = new Map();
+
+		const attachment = new type(
+			null,
+			this,
+			label,
+			namespace,
+			active,
+			value
+		);
+
+		this.attachments[`attachment_${this.globals._next_attachment_id += 1}`] = attachment;
+
+		return attachment
+	}
+
+	add_note_attachment(label, namespace, active, value)
+	{
+		return this._add_attachment(NoteAttachment, label, namespace, active, value);
+	}
+
+	add_url_attachment(label, namespace, active, value)
+	{
+		return this._add_attachment(URLAttachment, label, namespace, active, value);
+	}
+
+	add_json_attachment(label, namespace, active, value)
+	{
+		return this._add_attachment(JSONAttachment, label, namespace, active, value);
+	}
+
+	add_file_attachment(label, namespace, active, value)
+	{
+		return this._add_attachment(fileAttachment, label, namespace, active, value);
+	}
+}
+
 class AppType extends ul4.Type
 {
 	instancecheck(obj)
@@ -695,7 +738,7 @@ class AppType extends ul4.Type
 let apptype = new AppType("la", "App", "A LivingApps application");
 
 
-export class App extends Base
+export class App extends WithAttachments
 {
 	[ul4.symbols.type]()
 	{
@@ -912,8 +955,8 @@ export class App extends Base
 
 
 App.prototype._ul4onattrs = ["globals", "internal_id", "name", "description", "lang", "appgroup", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural",
-	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "appgroup", "group", "main", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "appgroup", "group", "main", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -932,7 +975,7 @@ class AppGroupType extends ul4.Type
 let appgrouptype = new AppType("la", "AppGroup", "A group of LivingApps");
 
 
-export class AppGroup extends Base
+export class AppGroup extends WithAttachments
 {
 	[ul4.symbols.type]()
 	{
@@ -944,8 +987,8 @@ export class AppGroup extends Base
 		return "<AppGroup id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
 };
-AppGroup.prototype._ul4onattrs = ["globals", "name", "description", "image", "apps", "main_app", "params"];
-AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "description", "image", "apps", "main_app", "params"]);
+AppGroup.prototype._ul4onattrs = ["globals", "name", "description", "image", "apps", "main_app", "params", "attachments"];
+AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "description", "image", "apps", "main_app", "params", "attachments"]);
 
 
 class ViewType extends ul4.Type
@@ -1076,7 +1119,7 @@ class RecordType extends ul4.Type
 let recordtype = new RecordType("la", "Record", "A record of a LivingApp application");
 
 
-export class Record extends Base
+export class Record extends WithAttachments
 {
 	constructor(id, app)
 	{
@@ -1103,6 +1146,11 @@ export class Record extends Base
 	[ul4.symbols.type]()
 	{
 		return recordtype;
+	}
+
+	get globals()
+	{
+		return this.app.globals;
 	}
 
 	as_text(maxlevel=3, controls=null)
@@ -5942,6 +5990,16 @@ let attachmenttype = new AttachmentType("la", "Attachment", "An attachment of a 
 
 export class Attachment extends Base
 {
+	constructor(id, owner, label, namespace, active, value)
+	{
+		super(id);
+		this.owner = owner;
+		this.label = label;
+		this.namespace = namespace;
+		this.active = active;
+		this.value = value;
+	}
+
 	[ul4.symbols.type]()
 	{
 		return attachmenttype;
@@ -5951,10 +6009,25 @@ export class Attachment extends Base
 	{
 		return "<" + this.constructor.name + " id=" + ul4._repr(this.id) + " label=" + ul4._repr(this.label) + ">";
 	}
+
+	get app()
+	{
+		return this.owner instanceof App ? this.owner : null;
+	}
+
+	get appgroup()
+	{
+		return this.owner instanceof AppGroup ? this.owner : null;
+	}
+
+	get record()
+	{
+		return this.owner instanceof Record ? this.owner : null;
+	}
 };
 
-Attachment.prototype._ul4onattrs = ["record", "label", "active"];
-Attachment.prototype._ul4attrs = new Set(["id", "record", "label", "active"]);
+Attachment.prototype._ul4onattrs = ["owner", "label", "namespace", "active"];
+Attachment.prototype._ul4attrs = new Set(["id", "owner", "label", "namespace", "active"]);
 
 
 class NoteAttachmentType extends AttachmentType
@@ -6211,14 +6284,24 @@ export class AppParameter extends Base
 		return "<AppParameter id=" + ul4._repr(this.id) + " identifier=" + ul4._repr(this.identifier) + ">";
 	}
 
+	get app()
+	{
+		return this.owner instanceof App ? this.owner : null;
+	}
+
+	get appgroup()
+	{
+		return this.owner instanceof AppGroup ? this.owner : null;
+	}
+
 	get full_identifier()
 	{
 		return this.namespace === null || this.identifier === null ? this.identifier : `${this.namespace}.${this.identifier}`;
 	}
 };
 
-AppParameter.prototype._ul4onattrs = ["app", "appgroup", "parent", "type", "order", "identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby", "namespace"];
-AppParameter.prototype._ul4attrs = new Set(["id", "app", "appgroup", "parent", "app", "type", "order", "identifier", "namespace", "full_identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
+AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "identifier", "namespace", "description", "value", "createdat", "createdby", "updatedat", "updatedby"];
+AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "namespace", "full_identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
 
 
 class MutableAppParameterType extends AppParameterType
