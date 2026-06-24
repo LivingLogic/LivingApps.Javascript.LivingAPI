@@ -1,5 +1,10 @@
 # Changes
 
+## 1.33.0 (2025-06-24)
+
+Added the `App` attribute `order`.
+
+
 ## 1.32.0 (2025-04-27)
 
 Added the `Attachment` attribute `namespace`.
