@@ -727,6 +727,304 @@ class WithAttachments extends Base
 	}
 }
 
+class TranslationsType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof Translations;
+	}
+};
+
+let translationstype = new TranslationsType("la", "Translations", "The translations of the multilingual attributes of a LivingAPI object (one attribute per language)");
+
+
+// The languages for which translations may be created
+const knownlangs = new Set(["de", "en", "fr", "it", "es", "cs"]);
+
+
+export class Translations extends ul4.Proto
+{
+	constructor(owner, langs=null)
+	{
+		super();
+		this.owner = owner;
+		this.langs = langs;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return translationstype;
+	}
+
+	// Return the translations for the language ``lang`` (or for the current
+	// language ``globals.lang`` if ``lang`` is not given); returns ``null``
+	// if there are none
+	get(lang)
+	{
+		if (lang === undefined)
+		{
+			let globals = this.owner.globals;
+			if (globals === null || globals === undefined)
+				return null;
+			lang = globals.lang;
+		}
+		if (this.langs === null || lang === null)
+			return null;
+		let translation = this.langs.get(lang);
+		return translation !== undefined ? translation : null;
+	}
+
+	// Return the translations for the language ``lang``, creating a new empty
+	// translation object if there are none yet and ``lang`` is a known
+	// language (for unknown languages ``null`` will be returned)
+	get_or_add(lang)
+	{
+		if (!knownlangs.has(lang))
+			return null;
+		if (this.langs === null)
+			this.langs = new Map();
+		let translation = this.langs.get(lang);
+		if (translation === undefined)
+		{
+			translation = this.owner._create_translation(lang);
+			this.langs.set(lang, translation);
+		}
+		return translation;
+	}
+
+	// One getter for each known language (must be kept in sync with
+	// ``knownlangs``)
+	get de()
+	{
+		return this.get_or_add("de");
+	}
+
+	get en()
+	{
+		return this.get_or_add("en");
+	}
+
+	get fr()
+	{
+		return this.get_or_add("fr");
+	}
+
+	get it()
+	{
+		return this.get_or_add("it");
+	}
+
+	get es()
+	{
+		return this.get_or_add("es");
+	}
+
+	get cs()
+	{
+		return this.get_or_add("cs");
+	}
+
+	[ul4.symbols.getattr](name)
+	{
+		let translation = this.get_or_add(name);
+		if (translation !== null)
+			return translation;
+		throw new ul4.AttributeError(this, name);
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<Translations owner=" + ul4._repr(this.owner) + " langs=" + ul4._repr(this.langs !== null ? [...this.langs.keys()] : null) + ">";
+	}
+
+	toString()
+	{
+		return this[ul4.symbols.repr]();
+	}
+};
+
+
+export class LangBase extends Base
+{
+	constructor(id, lang=null)
+	{
+		super(id);
+		this.lang = lang;
+	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (this._settableattrs.has(name))
+		{
+			if (value !== null && typeof(value) !== "string")
+				throw new ul4.ArgumentError(name + " must be None or a string");
+			this[name] = value;
+		}
+		else
+			super[ul4.symbols.setattr](name, value);
+	}
+};
+
+LangBase.prototype._ul4attrs = new Set(["id", "lang"]);
+LangBase.prototype._settableattrs = new Set();
+
+
+class AppLangType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppLang;
+	}
+};
+
+let applangtype = new AppLangType("la", "AppLang", "The translations of the multilingual attributes of an app for one language");
+
+
+export class AppLang extends LangBase
+{
+	constructor(id, app=null, lang=null)
+	{
+		super(id, lang);
+		this.app = app;
+		this.name = null;
+		this.description = null;
+		this.typename_grammatical_gender = null;
+		this.typename_nominative_singular = null;
+		this.typename_genitive_singular = null;
+		this.typename_dative_singular = null;
+		this.typename_accusative_singular = null;
+		this.typename_nominative_plural = null;
+		this.typename_genitive_plural = null;
+		this.typename_dative_plural = null;
+		this.typename_accusative_plural = null;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return applangtype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<AppLang lang=" + ul4._repr(this.lang) + " name=" + ul4._repr(this.name) + ">";
+	}
+};
+
+AppLang.prototype._ul4onattrs = ["app", "lang", "name", "description", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural"];
+AppLang.prototype._ul4attrs = new Set(["id", "app", "lang", "name", "description", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural"]);
+AppLang.prototype._settableattrs = new Set(["name", "description", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural"]);
+
+
+class AppGroupLangType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof AppGroupLang;
+	}
+};
+
+let appgrouplangtype = new AppGroupLangType("la", "AppGroupLang", "The translations of the multilingual attributes of an app group for one language");
+
+
+export class AppGroupLang extends LangBase
+{
+	constructor(id, appgroup=null, lang=null)
+	{
+		super(id, lang);
+		this.appgroup = appgroup;
+		this.name = null;
+		this.description = null;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return appgrouplangtype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<AppGroupLang lang=" + ul4._repr(this.lang) + " name=" + ul4._repr(this.name) + ">";
+	}
+};
+
+AppGroupLang.prototype._ul4onattrs = ["appgroup", "lang", "name", "description"];
+AppGroupLang.prototype._ul4attrs = new Set(["id", "appgroup", "lang", "name", "description"]);
+AppGroupLang.prototype._settableattrs = new Set(["name", "description"]);
+
+
+class ControlLangType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof ControlLang;
+	}
+};
+
+let controllangtype = new ControlLangType("la", "ControlLang", "The translations of the multilingual attributes of a control for one language");
+
+
+export class ControlLang extends LangBase
+{
+	constructor(id, control=null, lang=null)
+	{
+		super(id, lang);
+		this.control = control;
+		this.label = null;
+		this.description = null;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return controllangtype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<ControlLang lang=" + ul4._repr(this.lang) + " label=" + ul4._repr(this.label) + ">";
+	}
+};
+
+ControlLang.prototype._ul4onattrs = ["control", "lang", "label", "description"];
+ControlLang.prototype._ul4attrs = new Set(["id", "control", "lang", "label", "description"]);
+ControlLang.prototype._settableattrs = new Set(["label", "description"]);
+
+
+class LookupItemLangType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof LookupItemLang;
+	}
+};
+
+let lookupitemlangtype = new LookupItemLangType("la", "LookupItemLang", "The translations of the multilingual attributes of a lookup item for one language");
+
+
+export class LookupItemLang extends LangBase
+{
+	constructor(id, lookup_item=null, lang=null)
+	{
+		super(id, lang);
+		this.lookup_item = lookup_item;
+		this.label = null;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return lookupitemlangtype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<LookupItemLang lang=" + ul4._repr(this.lang) + " label=" + ul4._repr(this.label) + ">";
+	}
+};
+
+LookupItemLang.prototype._ul4onattrs = ["lookup_item", "lang", "label"];
+LookupItemLang.prototype._ul4attrs = new Set(["id", "lookup_item", "lang", "label"]);
+LookupItemLang.prototype._settableattrs = new Set(["label"]);
+
+
 class AppType extends ul4.Type
 {
 	instancecheck(obj)
@@ -754,6 +1052,185 @@ export class App extends WithAttachments
 	get group()
 	{
 		return this.appgroup;
+	}
+
+	get translations()
+	{
+		if (this._translations === undefined)
+			this._translations = new Translations(this);
+		return this._translations;
+	}
+
+	_create_translation(lang)
+	{
+		return new AppLang(null, this, lang);
+	}
+
+	get name()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.name !== null)
+			return translation.name;
+		return this._name;
+	}
+
+	set name(value)
+	{
+		this._name = value;
+	}
+
+	get description()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.description !== null)
+			return translation.description;
+		return this._description;
+	}
+
+	set description(value)
+	{
+		this._description = value;
+	}
+
+	get typename_grammatical_gender()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_grammatical_gender !== null)
+			return translation.typename_grammatical_gender;
+		return this._typename_grammatical_gender;
+	}
+
+	set typename_grammatical_gender(value)
+	{
+		this._typename_grammatical_gender = value;
+	}
+
+	get typename_nominative_singular()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_nominative_singular !== null)
+			return translation.typename_nominative_singular;
+		return this._typename_nominative_singular;
+	}
+
+	set typename_nominative_singular(value)
+	{
+		this._typename_nominative_singular = value;
+	}
+
+	get typename_genitive_singular()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_genitive_singular !== null)
+			return translation.typename_genitive_singular;
+		return this._typename_genitive_singular;
+	}
+
+	set typename_genitive_singular(value)
+	{
+		this._typename_genitive_singular = value;
+	}
+
+	get typename_dative_singular()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_dative_singular !== null)
+			return translation.typename_dative_singular;
+		return this._typename_dative_singular;
+	}
+
+	set typename_dative_singular(value)
+	{
+		this._typename_dative_singular = value;
+	}
+
+	get typename_accusative_singular()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_accusative_singular !== null)
+			return translation.typename_accusative_singular;
+		return this._typename_accusative_singular;
+	}
+
+	set typename_accusative_singular(value)
+	{
+		this._typename_accusative_singular = value;
+	}
+
+	get typename_nominative_plural()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_nominative_plural !== null)
+			return translation.typename_nominative_plural;
+		return this._typename_nominative_plural;
+	}
+
+	set typename_nominative_plural(value)
+	{
+		this._typename_nominative_plural = value;
+	}
+
+	get typename_genitive_plural()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_genitive_plural !== null)
+			return translation.typename_genitive_plural;
+		return this._typename_genitive_plural;
+	}
+
+	set typename_genitive_plural(value)
+	{
+		this._typename_genitive_plural = value;
+	}
+
+	get typename_dative_plural()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_dative_plural !== null)
+			return translation.typename_dative_plural;
+		return this._typename_dative_plural;
+	}
+
+	set typename_dative_plural(value)
+	{
+		this._typename_dative_plural = value;
+	}
+
+	get typename_accusative_plural()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typename_accusative_plural !== null)
+			return translation.typename_accusative_plural;
+		return this._typename_accusative_plural;
+	}
+
+	set typename_accusative_plural(value)
+	{
+		this._typename_accusative_plural = value;
+	}
+
+	_dumpUL4ONAttr(name)
+	{
+		if (name === "translations")
+			return this.translations.langs;
+		else
+			return this[name];
+	}
+
+	_loadUL4ONAttr(name, value)
+	{
+		if (name === "translations")
+			this.translations.langs = value;
+		else
+			this[name] = value;
+	}
+
+	_setDefaultUL4ONAttr(name)
+	{
+		if (name === "translations")
+			this.translations.langs = null;
+		else
+			this[name] = null;
 	}
 
 	insert(values={})
@@ -954,9 +1431,9 @@ export class App extends WithAttachments
 };
 
 
-App.prototype._ul4onattrs = ["globals", "internal_id", "name", "description", "lang", "appgroup", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural",
-	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments", "order"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+App.prototype._ul4onattrs = ["globals", "internal_id", "_name", "_description", "lang", "appgroup", "_typename_grammatical_gender", "_typename_nominative_singular", "_typename_genitive_singular", "_typename_dative_singular", "_typename_accusative_singular", "_typename_nominative_plural", "_typename_genitive_plural", "_typename_dative_plural", "_typename_accusative_plural",
+	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments", "order", "translations"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "translations", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -986,9 +1463,71 @@ export class AppGroup extends WithAttachments
 	{
 		return "<AppGroup id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
 	}
+
+	get translations()
+	{
+		if (this._translations === undefined)
+			this._translations = new Translations(this);
+		return this._translations;
+	}
+
+	_create_translation(lang)
+	{
+		return new AppGroupLang(null, this, lang);
+	}
+
+	get name()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.name !== null)
+			return translation.name;
+		return this._name;
+	}
+
+	set name(value)
+	{
+		this._name = value;
+	}
+
+	get description()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.description !== null)
+			return translation.description;
+		return this._description;
+	}
+
+	set description(value)
+	{
+		this._description = value;
+	}
+
+	_dumpUL4ONAttr(name)
+	{
+		if (name === "translations")
+			return this.translations.langs;
+		else
+			return this[name];
+	}
+
+	_loadUL4ONAttr(name, value)
+	{
+		if (name === "translations")
+			this.translations.langs = value;
+		else
+			this[name] = value;
+	}
+
+	_setDefaultUL4ONAttr(name)
+	{
+		if (name === "translations")
+			this.translations.langs = null;
+		else
+			this[name] = null;
+	}
 };
-AppGroup.prototype._ul4onattrs = ["globals", "name", "description", "image", "apps", "main_app", "params", "attachments"];
-AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "description", "image", "apps", "main_app", "params", "attachments"]);
+AppGroup.prototype._ul4onattrs = ["globals", "_name", "_description", "image", "apps", "main_app", "params", "attachments", "translations"];
+AppGroup.prototype._ul4attrs = new Set(["globals", "id", "name", "description", "translations", "image", "apps", "main_app", "params", "attachments"]);
 
 
 class ViewType extends ul4.Type
@@ -4022,15 +4561,31 @@ export class Control extends Base
 		return this.subtype ? this.type + "/" + this.subtype : this.type;
 	}
 
+	get translations()
+	{
+		if (this._translations === undefined)
+			this._translations = new Translations(this);
+		return this._translations;
+	}
+
+	_create_translation(lang)
+	{
+		return new ControlLang(null, this, lang);
+	}
+
 	get label()
 	{
 		let view_control = this._view_control();
-		if (view_control === null)
-			return this._label;
-		let label = view_control.label;
-		if (label === null)
-			return this._label;
-		return label;
+		if (view_control !== null)
+		{
+			let label = view_control.label;
+			if (label !== null)
+				return label;
+		}
+		let translation = this.translations.get();
+		if (translation !== null && translation.label !== null)
+			return translation.label;
+		return this._label;
 	}
 
 	set label(value)
@@ -4040,12 +4595,39 @@ export class Control extends Base
 
 	get description()
 	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.description !== null)
+			return translation.description;
 		return this._description;
 	}
 
 	set description(value)
 	{
 		this._description = value;
+	}
+
+	_dumpUL4ONAttr(name)
+	{
+		if (name === "translations")
+			return this.translations.langs;
+		else
+			return this[name];
+	}
+
+	_loadUL4ONAttr(name, value)
+	{
+		if (name === "translations")
+			this.translations.langs = value;
+		else
+			this[name] = value;
+	}
+
+	_setDefaultUL4ONAttr(name)
+	{
+		if (name === "translations")
+			this.translations.langs = null;
+		else
+			this[name] = null;
 	}
 
 	get priority()
@@ -4252,8 +4834,8 @@ export class Control extends Base
 
 Control.prototype.type = null;
 Control.prototype.subtype = null;
-Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "base_mode", "in_sum", "_priority", "_in_mobile_list", "_in_text", "_in_structured_search", "_in_fulltext_search", "_in_expert_search", "_required", "_required_in_view", "order", "ininsertprocedure", "inupdateprocedure"];
-Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "base_mode", "in_sum", "priority", "in_list", "in_mobile_list", "in_text", "in_structured_search", "in_fulltext_search", "in_expert_search", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
+Control.prototype._ul4onattrs = ["identifier", "fieldname", "app", "_label", "_description", "base_mode", "in_sum", "_priority", "_in_mobile_list", "_in_text", "_in_structured_search", "_in_fulltext_search", "_in_expert_search", "_required", "_required_in_view", "order", "ininsertprocedure", "inupdateprocedure", "translations"];
+Control.prototype._ul4attrs = new Set(["id", "identifier", "fieldname", "app", "base_mode", "in_sum", "priority", "in_list", "in_mobile_list", "in_text", "in_structured_search", "in_fulltext_search", "in_expert_search", "order", "ininsertprocedure", "inupdateprocedure", "fulltype", "label", "description", "translations", "top", "left", "width", "height", "z_index", "liveupdate", "tabindex", "required", "mode", "labelpos", "autoalign", "in_active_view"]);
 Control.prototype._cssclass_root = "llft-control";
 Control.prototype._cssclass_control = "input";
 
@@ -5548,17 +6130,41 @@ export class LookupItem extends Base
 		return lookupitemtype;
 	}
 
+	get globals()
+	{
+		if (this.control === null || this.control.app === null)
+			return null;
+		return this.control.app.globals;
+	}
+
+	get translations()
+	{
+		if (this._translations === undefined)
+			this._translations = new Translations(this);
+		return this._translations;
+	}
+
+	_create_translation(lang)
+	{
+		return new LookupItemLang(null, this, lang);
+	}
+
 	get label()
 	{
-		if (this.control === null)
-			return this._label;
-		let view_lookupitem = this._view_lookupitem();
-		if (view_lookupitem === null)
-			return this._label;
-		let label = view_lookupitem.label;
-		if (label === null)
-			return this._label;
-		return label;
+		if (this.control !== null)
+		{
+			let view_lookupitem = this._view_lookupitem();
+			if (view_lookupitem !== null)
+			{
+				let label = view_lookupitem.label;
+				if (label !== null)
+					return label;
+			}
+		}
+		let translation = this.translations.get();
+		if (translation !== null && translation.label !== null)
+			return translation.label;
+		return this._label;
 	}
 
 	get visible()
@@ -5588,6 +6194,30 @@ export class LookupItem extends Base
 		return null;
 	}
 
+	_dumpUL4ONAttr(name)
+	{
+		if (name === "translations")
+			return this.translations.langs;
+		else
+			return this[name];
+	}
+
+	_loadUL4ONAttr(name, value)
+	{
+		if (name === "translations")
+			this.translations.langs = value;
+		else
+			this[name] = value;
+	}
+
+	_setDefaultUL4ONAttr(name)
+	{
+		if (name === "translations")
+			this.translations.langs = null;
+		else
+			this[name] = null;
+	}
+
 	[ul4.symbols.repr]()
 	{
 		let repr = "<LookupItem key=" + ul4._repr(this.key) + " label=" + ul4._repr(this.label);
@@ -5597,8 +6227,8 @@ export class LookupItem extends Base
 	}
 };
 
-LookupItem.prototype._ul4onattrs = ["control", "key", "_label"];
-LookupItem.prototype._ul4attrs = new Set(["id", "control", "key", "label"]);
+LookupItem.prototype._ul4onattrs = ["control", "key", "_label", "translations"];
+LookupItem.prototype._ul4attrs = new Set(["id", "control", "key", "label", "translations"]);
 
 
 class ViewLookupItemType extends ul4.Type
@@ -6645,6 +7275,10 @@ let classes = [
 	MultipleAppLookupField,
 	LookupItem,
 	ViewLookupItem,
+	AppLang,
+	AppGroupLang,
+	ControlLang,
+	LookupItemLang,
 	LayoutControl,
 	HTMLLayoutControl,
 	ImageLayoutControl,
@@ -6728,6 +7362,11 @@ export const module = new ul4.Module(
 		DataSourceChildren: DataSourceChildren,
 		LookupItem: LookupItem,
 		ViewLookupItem: ViewLookupItem,
+		Translations: Translations,
+		AppLang: AppLang,
+		AppGroupLang: AppGroupLang,
+		ControlLang: ControlLang,
+		LookupItemLang: LookupItemLang,
 		Category: Category,
 		AppParameter: AppParameter,
 		MutableAppParameter: MutableAppParameter,

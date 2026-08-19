@@ -1,5 +1,28 @@
 # Changes
 
+## 1.34.0 (2026-08-19)
+
+Added support for the translations of the multilingual attributes of apps,
+app groups, controls and lookup items via the new classes `AppLang`,
+`AppGroupLang`, `ControlLang` and `LookupItemLang`.
+
+The multilingual attributes themselves (e.g. `control.label`) remain plain
+strings: their getters now return the translation matching `globals.lang`.
+A label from the active view still wins over the translation, and when
+there's no translation (or the translated attribute is `None`) the attribute
+of the object itself is used.
+
+All translations are accessible (and modifiable) in UL4 via the new
+attribute `translations` whose attributes are the language codes (the
+language attributes are available in Javascript too, e.g.
+`control.translations.de`). Accessing a known language for which no
+translations exist yet creates a new empty translation object. Note that (as with all other LivingAPI objects) changes
+to translation objects can not be saved back to the database.
+
+Setting e.g. `control.label` still sets the attribute of the control itself
+and never touches the translations.
+
+
 ## 1.33.0 (2025-06-24)
 
 Added the `App` attribute `order`.
