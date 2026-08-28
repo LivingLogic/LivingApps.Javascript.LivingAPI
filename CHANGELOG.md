@@ -1,6 +1,6 @@
 # Changes
 
-## 1.35.0 (unreleased)
+## 1.35.0 (2026-08-28)
 
 The eight `typename_*` attributes of `AppLang` have been replaced by the
 new read-only attribute `typenames`: a map that maps noun form identifiers
