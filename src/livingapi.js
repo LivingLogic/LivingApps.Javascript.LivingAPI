@@ -2,8 +2,8 @@
  * LivingAPI JavaScript Library
  * https://my.living-apps.de/docs/LivingAPI.html
  *
- * Copyright 2017-2025 by LivingLogic AG, Bayreuth/Germany
- * Copyright 2017-2025 by Walter Dörwald
+ * Copyright 2017-2026 by LivingLogic AG, Bayreuth/Germany
+ * Copyright 2017-2026 by Walter Dörwald
  *
  * All Rights Reserved
  *
@@ -889,14 +889,7 @@ export class AppLang extends LangBase
 		this.name = null;
 		this.description = null;
 		this.typename_grammatical_gender = null;
-		this.typename_nominative_singular = null;
-		this.typename_genitive_singular = null;
-		this.typename_dative_singular = null;
-		this.typename_accusative_singular = null;
-		this.typename_nominative_plural = null;
-		this.typename_genitive_plural = null;
-		this.typename_dative_plural = null;
-		this.typename_accusative_plural = null;
+		this.typenames = null;
 	}
 
 	[ul4.symbols.type]()
@@ -910,9 +903,9 @@ export class AppLang extends LangBase
 	}
 };
 
-AppLang.prototype._ul4onattrs = ["app", "lang", "name", "description", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural"];
-AppLang.prototype._ul4attrs = new Set(["id", "app", "lang", "name", "description", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural"]);
-AppLang.prototype._settableattrs = new Set(["name", "description", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural"]);
+AppLang.prototype._ul4onattrs = ["app", "lang", "name", "description", "typename_grammatical_gender", "typenames"];
+AppLang.prototype._ul4attrs = new Set(["id", "app", "lang", "name", "description", "typename_grammatical_gender", "typenames"]);
+AppLang.prototype._settableattrs = new Set(["name", "description", "typename_grammatical_gender"]);
 
 
 class AppGroupLangType extends ul4.Type
@@ -1108,8 +1101,12 @@ export class App extends WithAttachments
 	get typename_nominative_singular()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_nominative_singular !== null)
-			return translation.typename_nominative_singular;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("nom_sin");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_nominative_singular;
 	}
 
@@ -1121,8 +1118,12 @@ export class App extends WithAttachments
 	get typename_genitive_singular()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_genitive_singular !== null)
-			return translation.typename_genitive_singular;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("gen_sin");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_genitive_singular;
 	}
 
@@ -1134,8 +1135,12 @@ export class App extends WithAttachments
 	get typename_dative_singular()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_dative_singular !== null)
-			return translation.typename_dative_singular;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("dat_sin");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_dative_singular;
 	}
 
@@ -1147,8 +1152,12 @@ export class App extends WithAttachments
 	get typename_accusative_singular()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_accusative_singular !== null)
-			return translation.typename_accusative_singular;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("acc_sin");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_accusative_singular;
 	}
 
@@ -1160,8 +1169,12 @@ export class App extends WithAttachments
 	get typename_nominative_plural()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_nominative_plural !== null)
-			return translation.typename_nominative_plural;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("nom_plu");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_nominative_plural;
 	}
 
@@ -1173,8 +1186,12 @@ export class App extends WithAttachments
 	get typename_genitive_plural()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_genitive_plural !== null)
-			return translation.typename_genitive_plural;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("gen_plu");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_genitive_plural;
 	}
 
@@ -1186,8 +1203,12 @@ export class App extends WithAttachments
 	get typename_dative_plural()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_dative_plural !== null)
-			return translation.typename_dative_plural;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("dat_plu");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_dative_plural;
 	}
 
@@ -1199,14 +1220,29 @@ export class App extends WithAttachments
 	get typename_accusative_plural()
 	{
 		let translation = this.translations.get();
-		if (translation !== null && translation.typename_accusative_plural !== null)
-			return translation.typename_accusative_plural;
+		if (translation !== null && translation.typenames !== null)
+		{
+			let value = translation.typenames.get("acc_plu");
+			if (value !== null && value !== undefined)
+				return value;
+		}
 		return this._typename_accusative_plural;
 	}
 
 	set typename_accusative_plural(value)
 	{
 		this._typename_accusative_plural = value;
+	}
+
+	get typenames()
+	{
+		let translation = this.translations.get();
+		if (translation !== null && translation.typenames !== null && translation.typenames.size !== 0)
+			return translation.typenames;
+		translation = this.translations.get(this.lang);
+		if (translation !== null && translation.typenames !== null && translation.typenames.size !== 0)
+			return translation.typenames;
+		return null;
 	}
 
 	_dumpUL4ONAttr(name)
@@ -1433,7 +1469,7 @@ export class App extends WithAttachments
 
 App.prototype._ul4onattrs = ["globals", "internal_id", "_name", "_description", "lang", "appgroup", "_typename_grammatical_gender", "_typename_nominative_singular", "_typename_genitive_singular", "_typename_dative_singular", "_typename_accusative_singular", "_typename_nominative_plural", "_typename_genitive_plural", "_typename_dative_plural", "_typename_accusative_plural",
 	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments", "order", "translations"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "translations", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "translations", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "typenames", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
