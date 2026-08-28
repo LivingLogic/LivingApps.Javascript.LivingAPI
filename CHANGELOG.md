@@ -1,5 +1,20 @@
 # Changes
 
+## 1.35.0 (unreleased)
+
+The eight `typename_*` attributes of `AppLang` have been replaced by the
+new read-only attribute `typenames`: a map that maps noun form identifiers
+(e.g. `nom_sin` for nominative singular) to the type name in that form.
+This supports arbitrary per-language forms instead of the fixed eight German
+forms. The `typename_*` attributes of the `App` itself are unchanged
+(they hold the system language version); their getters now take the `typenames`
+map of the translation for the current language into account.
+
+`App` has a new read-only attribute `typenames` that mirrors the `typenames`
+map of the translation for the current language (`globals.lang`), falling
+back to the noun forms for the system language.
+
+
 ## 1.34.0 (2026-08-19)
 
 Added support for the translations of the multilingual attributes of apps,
