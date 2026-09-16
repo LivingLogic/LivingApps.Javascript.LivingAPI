@@ -889,12 +889,34 @@ export class AppLang extends LangBase
 		this.name = null;
 		this.description = null;
 		this.typename_grammatical_gender = null;
-		this.typenames = null;
+		this.typenames = new Map();
 	}
 
 	[ul4.symbols.type]()
 	{
 		return applangtype;
+	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (name === "typenames")
+		{
+			if (ul4._isobject(value))
+				value = new Map(Object.entries(value));
+			else if (value !== null && !(value instanceof Map))
+				throw new ul4.ArgumentError(name + " must be None or a dict");
+			this.typenames = value;
+		}
+		else
+			super[ul4.symbols.setattr](name, value);
+	}
+
+	_setDefaultUL4ONAttr(name)
+	{
+		if (name === "typenames")
+			this.typenames = new Map();
+		else
+			super._setDefaultUL4ONAttr(name);
 	}
 
 	[ul4.symbols.repr]()
@@ -905,7 +927,7 @@ export class AppLang extends LangBase
 
 AppLang.prototype._ul4onattrs = ["app", "lang", "name", "description", "typename_grammatical_gender", "typenames"];
 AppLang.prototype._ul4attrs = new Set(["id", "app", "lang", "name", "description", "typename_grammatical_gender", "typenames"]);
-AppLang.prototype._settableattrs = new Set(["name", "description", "typename_grammatical_gender"]);
+AppLang.prototype._settableattrs = new Set(["name", "description", "typename_grammatical_gender", "typenames"]);
 
 
 class AppGroupLangType extends ul4.Type

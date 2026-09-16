@@ -1,5 +1,14 @@
 # Changes
 
+## 1.36.0 (unreleased)
+
+`AppLang.typenames` is no longer read-only: It can be set from UL4 (to a dict
+or `None`) like the other attributes of the translation objects. A new
+translation object (e.g. created via `app.translations.en`) now starts with
+an empty dict as `typenames` instead of `None`. This mirrors the changes in
+the Java LivingAPI.
+
+
 ## 1.35.0 (2026-08-28)
 
 The eight `typename_*` attributes of `AppLang` have been replaced by the
