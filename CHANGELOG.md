@@ -1,6 +1,20 @@
 # Changes
 
-## 1.36.0 (unreleased)
+## 1.37.0 (unreleased)
+
+`App` has a new method `typename(form)` that returns the type name in the
+noun form `form` (e.g. `nom_sin` for nominative singular) for the current
+language: the form from `translations[globals.lang]` wins, then the form from
+the translation for the system language `app.lang`, then the (German) form
+stored in the app itself. If none of them has the form `None` is returned.
+The read-only attribute `App.typenames` (added in 1.35.0) has been removed
+again.
+
+The eight `typename_*` attributes of `App` use the same lookup as
+`typename()`. This mirrors the changes in the Java and Python LivingAPI.
+
+
+## 1.36.0 (2026-09-16)
 
 `AppLang.typenames` is no longer read-only: It can be set from UL4 (to a dict
 or `None`) like the other attributes of the translation objects. A new
