@@ -1,6 +1,13 @@
 # Changes
 
-## 1.37.0 (unreleased)
+## 1.38.0
+
+`Globals` has a new read-only attribute `sys_lang` that contains the system
+language (e.g. `de` or `en`), i.e. the fallback language that is used when
+no translation for `globals.lang` exists.
+
+
+## 1.37.0
 
 `App` has a new method `typename(form)` that returns the type name in the
 noun form `form` (e.g. `nom_sin` for nominative singular) for the current
