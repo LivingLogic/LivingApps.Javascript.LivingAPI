@@ -5727,8 +5727,9 @@ export class AppLookupControl extends Control
 
 AppLookupControl.prototype.type = "applookup";
 AppLookupControl.prototype.fieldtype = AppLookupField;
-AppLookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"];
-AppLookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control"]);
+// `on_delete` is `null`, `"restrict"` or `"cascade"`
+AppLookupControl.prototype._ul4onattrs = [...Control.prototype._ul4onattrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control", "on_delete"];
+AppLookupControl.prototype._ul4attrs = new Set([...Control.prototype._ul4attrs, "lookup_app", "lookup_controls", "local_master_control", "local_detail_controls", "remote_master_control", "on_delete"]);
 
 
 class AppLookupSelectControlType extends AppLookupControlType

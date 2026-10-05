@@ -1,5 +1,16 @@
 # Changes
 
+## 1.39.0
+
+`AppLookupControl` and `MultipleAppLookupControl` have a new read-only
+attribute `on_delete` that specifies what happens when a record that is
+referenced by a field of this control gets deleted: `null` means that the
+reference is set to `null`, `"restrict"` means that deleting the referenced
+record is prevented and `"cascade"` means that the referencing record is
+deleted too. This mirrors the changes in the Java and Python LivingAPI (where
+the attribute can also be changed and saved).
+
+
 ## 1.38.0
 
 `Globals` has a new read-only attribute `sys_lang` that contains the system
