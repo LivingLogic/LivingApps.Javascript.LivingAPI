@@ -14,6 +14,13 @@
 	"scripts": {
 		"build": "npx rollup -c"
 	},
+	"files": [
+		"dist",
+		"src",
+		"rollup.config.js",
+		"CHANGELOG.md",
+		"HOWTO-release.md"
+	],
 	"main": "dist/umd/livingapi.js",
 	"module": "dist/esm-node/livingapi.js",
 	"browser": "dist/umd/livingapi.js",
