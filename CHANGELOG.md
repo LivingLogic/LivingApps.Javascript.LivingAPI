@@ -1,5 +1,36 @@
 # Changes
 
+## 1.40.0
+
+`Globals` has two new read-only attributes for the versioned template
+library: `template_libraries` is a dict that maps each available version
+number to a `TemplateLibrary` object, and `template_library_version` is the
+version that is used for rendering (the version of the app the dump was made
+for).
+
+`App` has a new attribute `template_library_version` that specifies which
+version of the template library the app uses. It can be set from UL4 (to an
+int); setting it to a version that isn't in `globals.template_libraries`
+raises an error.
+
+The new class `TemplateLibrary` describes one version of the template
+library. It has the read-only attributes `version`, `label`, `description`,
+`templates` and `parameters`.
+
+The UL4ON attributes of `Globals` now contain the `form` string at the
+position where the Java gateway dumps it. Previously it was missing, so that
+`view_template_id` received the form string, `email_template_id` the view
+template id and `view_id` the email template id. The attributes
+`externaldatasources` and `template_params` have been added to the UL4ON
+attributes too.
+
+This mirrors the changes in the Java and Python LivingAPI.
+
+`User` has a new attribute `colorscheme`: the preferred browser color scheme
+of the user as one of the strings `"light"`, `"dark"` or `"auto"` (dumps from
+an older database default to `"auto"`).
+
+
 ## 1.39.0
 
 `AppLookupControl` and `MultipleAppLookupControl` have a new read-only
