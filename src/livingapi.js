@@ -236,8 +236,14 @@ export class Globals extends Base
 		this.maxdbactions = null;
 		this.maxtemplateruntime = null;
 		this.flashmessages = null;
+		this.form = null;
 		this.view_template_id = null;
 		this.email_template_id = null;
+		this.view_id = null;
+		this.externaldatasources = null;
+		this.template_params = null;
+		this.template_library_version = 0;
+		this.template_libraries = null;
 		this.handler = new Handler();
 		this._log_stack = [];
 		this._current_geo = null;
@@ -247,6 +253,15 @@ export class Globals extends Base
 	[ul4.symbols.type]()
 	{
 		return globalstype;
+	}
+
+	_setDefaultUL4ONAttr(name)
+	{
+		// Only dumps from a database before version 143 lack the version; such a database can't be used with this LivingAPI
+		if (name === "template_library_version")
+			this.template_library_version = this.app !== null ? this.app.template_library_version : 0;
+		else
+			super._setDefaultUL4ONAttr(name);
 	}
 
 	// distance between two geo coordinates (see https://de.wikipedia.org/wiki/Orthodrome#Genauere_Formel_zur_Abstandsberechnung_auf_der_Erde)
@@ -531,8 +546,8 @@ export class Globals extends Base
 	}
 };
 
-Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "sys_lang", "datasources", "hostname", "free", "app", "record", "mode", "view_template_id", "email_template_id", "view_id"];
-Globals.prototype._ul4attrs = new Set(["id", "version", "hostname", "platform", "free", "mode", "form", "app", "record", "datasources", "externaldatasources", "groups", "user", "lang", "sys_lang", "templates", "pparams", "geo", "dist", "maxdbactions", "maxtemplateruntime", "flashmessages", "scaled_url", "qrcode_url", "current_geo", "log_debug", "log_info", "log_warning", "log_error", "my_apps_url", "my_tasks_url", "catalog_url", "chats_url", "profile_url", "account_url", "logout_url"]);
+Globals.prototype._ul4onattrs = ["version", "platform", "user", "maxdbactions", "maxtemplateruntime", "lang", "sys_lang", "datasources", "hostname", "free", "app", "record", "mode", "form", "view_template_id", "email_template_id", "view_id", "externaldatasources", "template_params", "template_library_version", "template_libraries"];
+Globals.prototype._ul4attrs = new Set(["id", "version", "hostname", "platform", "free", "mode", "form", "app", "record", "datasources", "externaldatasources", "groups", "user", "lang", "sys_lang", "templates", "pparams", "geo", "dist", "maxdbactions", "maxtemplateruntime", "flashmessages", "template_library_version", "template_libraries", "scaled_url", "qrcode_url", "current_geo", "log_debug", "log_info", "log_warning", "log_error", "my_apps_url", "my_tasks_url", "catalog_url", "chats_url", "profile_url", "account_url", "logout_url"]);
 ul4.expose(Globals.prototype.log_debug, ["message", "*"]);
 ul4.expose(Globals.prototype.log_info, ["message", "*"]);
 ul4.expose(Globals.prototype.log_warning, ["message", "*"]);
@@ -684,6 +699,44 @@ export class Permission extends Base
 
 Permission.prototype._ul4onattrs = ["permissions"];
 Permission.prototype._ul4attrs = new Set(["permissions", "edit", "config", "delete", "task_manage", "data_edit", "data_view", "task_view", "frontend", "data_connect_external", "perform_evaluation", "to_catalog", "data_import_export", "mydata_view", "mydata_edit", "user_admin"]);
+
+
+class TemplateLibraryType extends ul4.Type
+{
+	instancecheck(obj)
+	{
+		return obj instanceof TemplateLibrary;
+	}
+};
+
+let templatelibrarytype = new TemplateLibraryType("la", "TemplateLibrary", "A version of the template library");
+
+
+export class TemplateLibrary extends Base
+{
+	constructor(id)
+	{
+		super(id);
+		this.version = null;
+		this.label = null;
+		this.description = null;
+		this.templates = null;
+		this.parameters = null;
+	}
+
+	[ul4.symbols.type]()
+	{
+		return templatelibrarytype;
+	}
+
+	[ul4.symbols.repr]()
+	{
+		return "<TemplateLibrary version=" + ul4._repr(this.version) + " label=" + ul4._repr(this.label) + ">";
+	}
+};
+
+TemplateLibrary.prototype._ul4onattrs = ["version", "label", "description", "templates", "parameters"];
+TemplateLibrary.prototype._ul4attrs = new Set(["id", "version", "label", "description", "templates", "parameters"]);
 
 
 class WithAttachments extends Base
@@ -1054,6 +1107,12 @@ let apptype = new AppType("la", "App", "A LivingApps application");
 
 export class App extends WithAttachments
 {
+	constructor(id)
+	{
+		super(id);
+		this._template_library_version = 0;
+	}
+
 	[ul4.symbols.type]()
 	{
 		return apptype;
@@ -1062,6 +1121,28 @@ export class App extends WithAttachments
 	[ul4.symbols.repr]()
 	{
 		return "<App id=" + ul4._repr(this.id) + " name=" + ul4._repr(this.name) + ">";
+	}
+
+	get template_library_version()
+	{
+		return this._template_library_version;
+	}
+
+	set template_library_version(version)
+	{
+		if (typeof(version) !== "number" || !Number.isInteger(version))
+			throw new ul4.TypeError("template_library_version must be an int");
+		if (this.globals !== null && this.globals !== undefined && this.globals.template_libraries !== null && !this.globals.template_libraries.has(version))
+			throw new ul4.ValueError("Template library version " + ul4._repr(version) + " not found!");
+		this._template_library_version = version;
+	}
+
+	[ul4.symbols.setattr](name, value)
+	{
+		if (name === "template_library_version")
+			this.template_library_version = value;
+		else
+			super[ul4.symbols.setattr](name, value);
 	}
 
 	/* For backwards compatibility */
@@ -1260,6 +1341,8 @@ export class App extends WithAttachments
 	{
 		if (name === "translations")
 			this.translations.langs = null;
+		else if (name === "template_library_version")
+			this._template_library_version = 0; // only dumps from a database before version 143 lack the version
 		else
 			this[name] = null;
 	}
@@ -1473,8 +1556,8 @@ App._legacy_typename_attrs = new Map([
 	["acc_plu", "_typename_accusative_plural"],
 ]);
 App.prototype._ul4onattrs = ["globals", "internal_id", "_name", "_description", "lang", "appgroup", "_typename_grammatical_gender", "_typename_nominative_singular", "_typename_genitive_singular", "_typename_dative_singular", "_typename_accusative_singular", "_typename_nominative_plural", "_typename_genitive_plural", "_typename_dative_plural", "_typename_accusative_plural",
-	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments", "order", "translations"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "translations", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "typename", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments", "order", "translations", "template_library_version"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "translations", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "typename", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_library_version", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -6567,10 +6650,19 @@ export class User extends Base
 	{
 		return "<User id=" + ul4._repr(this.id) + " firstname=" + ul4._repr(this.firstname) + " surname=" + ul4._repr(this.surname) + " email=" + ul4._repr(this.email) + ">";
 	}
+
+	_setDefaultUL4ONAttr(name)
+	{
+		// Dumps from a database before version 143 lack the color scheme
+		if (name === "colorscheme")
+			this.colorscheme = "auto";
+		else
+			super._setDefaultUL4ONAttr(name);
+	}
 };
 
-User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "globals"];
-User.prototype._ul4attrs = new Set(["id", "globals", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews"]);
+User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "globals", "colorscheme"];
+User.prototype._ul4attrs = new Set(["id", "globals", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "colorscheme"]);
 
 
 class FileType extends ul4.Type
@@ -7340,7 +7432,8 @@ let classes = [
 	KeyView,
 	AppParameter,
 	MutableAppParameter,
-	ViewTemplateInfo
+	ViewTemplateInfo,
+	TemplateLibrary
 ];
 
 for (let constructor of classes)
@@ -7415,6 +7508,7 @@ export const module = new ul4.Module(
 		MutableAppParameter: MutableAppParameter,
 		MenuItem: MenuItem,
 		Panel: Panel,
-		ViewTemplateInfo: ViewTemplateInfo
+		ViewTemplateInfo: ViewTemplateInfo,
+		TemplateLibrary: TemplateLibrary
 	}
 );
