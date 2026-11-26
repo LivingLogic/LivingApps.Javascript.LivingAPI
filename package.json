@@ -30,12 +30,11 @@
 	"devDependencies": {
 		"@babel/core": "^7.14.6",
 		"@babel/preset-env": "^7.14.7",
+		"@rollup/plugin-terser": "^1.0.2",
 		"rollup": "^2.52.7",
 		"rollup-plugin-babel": "^4.4.0",
 		"rollup-plugin-commonjs": "^9.3.4",
 		"rollup-plugin-json": "^4.0.0",
-		"rollup-plugin-node-resolve": "^4.2.4",
-		"rollup-plugin-sourcemaps": "^0.6.3",
-		"rollup-plugin-terser": "^7.0.2"
+		"rollup-plugin-node-resolve": "^4.2.4"
 	}
 }
