@@ -1,5 +1,22 @@
 # Changes
 
+## 1.41.0
+
+App parameters can now have a version that is specific to the current user
+(database version 144): `App` has the new attribute `userparams` (a map of
+the parameters of the app that are specific to the current user), and
+`app.p_...` and `app.pv_...` prefer these over the parameters in
+`app.params`. `AppParameter` has the new attributes `user` (the user for
+which the parameter is specific, `null` for a parameter that applies to all
+users) and `user_override` (may users have their own version of this
+parameter?).
+
+Users can now have attachments: `User` has the new attribute `attachments`
+(`null` for every user except the current one, and when the attachments
+haven't been loaded on the server), and `Attachment` has the new attribute
+`user`.
+
+
 ## 1.40.0
 
 `Globals` has two new read-only attributes for the versioned template

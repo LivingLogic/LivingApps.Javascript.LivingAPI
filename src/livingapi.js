@@ -1475,6 +1475,9 @@ export class App extends WithAttachments
 		else if (name.startsWith("p_"))
 		{
 			let identifier = name.substr(2);
+			// A parameter that is specific to the current user replaces the one for all users
+			if (this.userparams !== null && this.userparams !== undefined && this.userparams.has(identifier))
+				return this.userparams.get(identifier);
 			if (this.params !== null && this.params.has(identifier))
 				return this.params.get(identifier);
 			else if (this.appgroup !== null && this.appgroup.params !== null && this.appgroup.params.has(identifier))
@@ -1484,6 +1487,8 @@ export class App extends WithAttachments
 		else if (name.startsWith("pv_"))
 		{
 			let identifier = name.substr(3);
+			if (this.userparams !== null && this.userparams !== undefined && this.userparams.has(identifier))
+				return this.userparams.get(identifier).value;
 			if (this.params !== null && this.params.has(identifier))
 				return this.params.get(identifier).value;
 			else if (this.appgroup !== null && this.appgroup.params !== null && this.appgroup.params.has(identifier))
@@ -1556,8 +1561,8 @@ App._legacy_typename_attrs = new Map([
 	["acc_plu", "_typename_accusative_plural"],
 ]);
 App.prototype._ul4onattrs = ["globals", "internal_id", "_name", "_description", "lang", "appgroup", "_typename_grammatical_gender", "_typename_nominative_singular", "_typename_genitive_singular", "_typename_dative_singular", "_typename_accusative_singular", "_typename_nominative_plural", "_typename_genitive_plural", "_typename_dative_plural", "_typename_accusative_plural",
-	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments", "order", "translations", "template_library_version"];
-App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "translations", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "typename", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_library_version", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
+	"startlink", "image", "createdby", "controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "views", "datamanagement_identifier", "basetable", "primarykey", "insertprocedure", "updateprocedure", "deleteprocedure", "templates", "createdat", "updatedat", "updatedby", "superid", "favorite", "_active_view", "datasource", "main", "ai_generated", "viewtemplates", "filter_default", "sort_default", "filter_owndata", "_permissions", "data_actions", "attachments", "order", "translations", "template_library_version", "userparams"];
+App.prototype._ul4attrs = new Set(["id", "globals", "name", "description", "translations", "lang", "appgroup", "group", "main", "order", "ai_generated", "typename_grammatical_gender", "typename_nominative_singular", "typename_genitive_singular", "typename_dative_singular", "typename_accusative_singular", "typename_nominative_plural", "typename_genitive_plural", "typename_dative_plural", "typename_accusative_plural", "typename", "startlink", "image", "createdat", "createdby", "updatedat", "updatedby", "controls", "layout_controls", "records", "record_start", "record_count", "record_total", "installation", "categories", "params", "userparams", "views", "menus", "panels", "datasource", "datamanagement_identifier", "insert", "favorite", "_active_view", "filter_default", "sort_default", "filter_owndata", "permissions", "data_actions", "attachments", "template_library_version", "template_url", "new_embedded_url", "new_standalone_url", "home_url", "datamanagement_url", "import_url", "tasks_url", /*"formbuilder_url", "tasks_config_url",*/ "datamanagement_config_url", "permissions_url", "datamanageview_url"]);
 ul4.expose(App.prototype[ul4.symbols.call], ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.insert, ["values", "**"], {"needsobject": true});
 ul4.expose(App.prototype.template_url, ["identifier", "p", "record", "p=", null, "params", "**"]);
@@ -6639,7 +6644,7 @@ class UserType extends ul4.Type
 let usertype = new UserType("la", "User", "A LivingApps user/account");
 
 
-export class User extends Base
+export class User extends WithAttachments
 {
 	[ul4.symbols.type]()
 	{
@@ -6661,8 +6666,8 @@ export class User extends Base
 	}
 };
 
-User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "globals", "colorscheme"];
-User.prototype._ul4attrs = new Set(["id", "globals", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "colorscheme"]);
+User.prototype._ul4onattrs = ["_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "globals", "colorscheme", "attachments"];
+User.prototype._ul4attrs = new Set(["id", "globals", "_id", "gender", "title", "firstname", "surname", "initials", "email", "streetname", "streetnumber", "zip", "city", "phone", "fax", "lang", "image", "summary", "interests", "personalwebsite", "companywebsite", "company", "position", "department", "keyviews", "colorscheme", "attachments"]);
 
 
 class FileType extends ul4.Type
@@ -6788,6 +6793,11 @@ export class Attachment extends Base
 	get record()
 	{
 		return this.owner instanceof Record ? this.owner : null;
+	}
+
+	get user()
+	{
+		return this.owner instanceof User ? this.owner : null;
 	}
 };
 
@@ -7065,8 +7075,8 @@ export class AppParameter extends Base
 	}
 };
 
-AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "identifier", "namespace", "description", "value", "createdat", "createdby", "updatedat", "updatedby"];
-AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "namespace", "full_identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby"]);
+AppParameter.prototype._ul4onattrs = ["owner", "parent", "type", "order", "identifier", "namespace", "description", "value", "createdat", "createdby", "updatedat", "updatedby", "user_override", "user"];
+AppParameter.prototype._ul4attrs = new Set(["id", "owner", "parent", "app", "type", "order", "identifier", "namespace", "full_identifier", "description", "value", "createdat", "createdby", "updatedat", "updatedby", "user_override", "user"]);
 
 
 class MutableAppParameterType extends AppParameterType
