@@ -1,6 +1,6 @@
 # Changes
 
-## 1.41.0
+## 1.41.0 (2026-11-26)
 
 App parameters can now have a version that is specific to the current user
 (database version 144): `App` has the new attribute `userparams` (a map of
@@ -17,7 +17,7 @@ haven't been loaded on the server), and `Attachment` has the new attribute
 `user`.
 
 
-## 1.40.0
+## 1.40.0 (2026-11-03)
 
 `Globals` has two new read-only attributes for the versioned template
 library: `template_libraries` is a dict that maps each available version
@@ -48,7 +48,7 @@ of the user as one of the strings `"light"`, `"dark"` or `"auto"` (dumps from
 an older database default to `"auto"`).
 
 
-## 1.39.0
+## 1.39.0 (2026-10-05)
 
 `AppLookupControl` and `MultipleAppLookupControl` have a new read-only
 attribute `on_delete` that specifies what happens when a record that is
@@ -59,14 +59,14 @@ deleted too. This mirrors the changes in the Java and Python LivingAPI (where
 the attribute can also be changed and saved).
 
 
-## 1.38.0
+## 1.38.0 (2026-09-18)
 
 `Globals` has a new read-only attribute `sys_lang` that contains the system
 language (e.g. `de` or `en`), i.e. the fallback language that is used when
 no translation for `globals.lang` exists.
 
 
-## 1.37.0
+## 1.37.0 (2026-09-17)
 
 `App` has a new method `typename(form)` that returns the type name in the
 noun form `form` (e.g. `nom_sin` for nominative singular) for the current
